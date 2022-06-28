@@ -17,3 +17,7 @@ yarn start
 ```
 
 ## What's included
+- [React TypeScript](https://www.typescriptlang.org/docs/handbook/react.html)
+- [ESLint](https://eslint.org/docs/latest/)
+- [React Router](https://reactrouter.com/docs/en/v6)
+- [Chakra UI](https://chakra-ui.com/)
