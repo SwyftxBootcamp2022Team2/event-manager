@@ -26,6 +26,7 @@ def login():
         # get user info from database
         return jsonify(email=userinfo.email, fName=userinfo.fname, lName=userinfo.lname,isAdmin=userinfo.isAdmin), status.HTTP_200_OK
     else: # if not, create new user, send back a token, and add new user into the "user" db
+        # commit the db
         db.session.add(User(email=email, fname=user["fname"], lname=user["lname"], isAdmin=user["isAdmin"]))
         return "Couldn't find user!", status.HTTP_400_BAD_REQUEST
 
@@ -98,6 +99,6 @@ def book_event():
 def unbook_event():
     return True
 
-@app.route("/home", methods=['GET'])
+@app.route("/", methods=['GET'])
 def home_function():
     return True
