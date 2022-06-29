@@ -41,11 +41,17 @@ def get_user():
 
 @app.route("/event/create", methods=['GET','POST']) # admin is the one who creates
 def create_event():
-    # get data from frontend
+    # get user data and check if user is admin
+    user = request.json
+    email = user["email"]
+    userinfo = db.session.query(User).filter_by(email=email).first()
+    if userinfo.isAdmin == 0:
+        return "You are not an admin!", status.HTTP_400_BAD_REQUEST
+
+    # get event data from frontend and check that the event exists
     event = request.json
-    # check if event exists
     eventID = event["eventID"]
-    eventInfo = db.session.query(User).filter_by(eventID=eventID).first()
+    eventInfo = db.session.query(Event).filter_by(eventID=eventID).first()
     # if not, create new event
     if eventInfo is not None:
         return  "Event Already Exists!", status.HTTP_400_BAD_REQUEST
@@ -56,11 +62,17 @@ def create_event():
 
 @app.route("/event/delete", methods=['DELETE'])
 def delete_event():
+    user = request.json
+    email = user["email"]
+    userinfo = db.session.query(User).filter_by(email=email).first()
+    if userinfo.isAdmin == 0:
+        return "You are not an admin!", status.HTTP_400_BAD_REQUEST
+
     # get data from frontend
     event = request.json
     # check if event exists
     eventID = event["eventID"]
-    eventInfo = db.session.query(User).filter_by(eventID=eventID).first()
+    eventInfo = db.session.query(Event).filter_by(eventID=eventID).first()
     if eventInfo is not None: # if exists, delete event
         db.session.delete(eventInfo)
     else:
@@ -72,7 +84,7 @@ def view_event():
     event = request.json
     # check if event exists
     eventID = event["eventID"]
-    eventInfo = db.session.query(User).filter_by(eventID=eventID).first()
+    eventInfo = db.session.query(Event).filter_by(eventID=eventID).first()
     if eventInfo is not None: # if it exists, send that mf back
         return jsonify(eventID=eventInfo.eventID, title=eventInfo.title, location=eventInfo.location, start=eventInfo.start, startTime=eventInfo.startTime, endTime=eventInfo.endTime, participationLimit=eventInfo.participationLimit, createdBy=eventInfo.createdBy), status.HTTP_200_OK
     else: # if not, send back a token
@@ -82,7 +94,7 @@ def view_event():
 def book_event():
     return True
 
-@app.route("/event/unbook", methods=['DELETE']) # user is the one who books
+@app.route("/event/unbook", methods=['DELETE']) 
 def unbook_event():
     return True
 
