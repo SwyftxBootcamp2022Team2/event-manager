@@ -1,24 +1,38 @@
 import React from 'react';
-import { Formik } from 'formik';
+import { Formik, Form } from 'formik';
 import * as Yup from 'yup';
 import {
-  FormControl, FormLabel, Input,
+  Box,
+  Button, Flex, Heading, VStack,
 } from '@chakra-ui/react';
+import TextField from '../components/TextField';
 
-const loginSchema = Yup.object({
-  email: Yup.string().email().required(),
+const loginSchema = Yup.object().shape({
+  email: Yup.string().email().required('Required'),
 });
+
+const initialValues = {
+  email: '',
+};
 
 function LoginPage() {
   return (
-    <Formik initialValues={{ email: '' }} validationSchema={loginSchema} onSubmit={() => console.log('submit')}>
-      <form>
-        <FormControl>
-          <FormLabel htmlFor="email">Email address</FormLabel>
-          <Input id="email" type="email" />
-        </FormControl>
-      </form>
-    </Formik>
+    <Flex alignItems="center" justifyContent="center" h="100vh">
+      <Box boxShadow="rgba(149, 157, 165, 0.2) 0px 8px 24px" py={10} px={20}>
+        <Formik
+          initialValues={initialValues}
+          validationSchema={loginSchema}
+          // TODO: connect with backend route.
+          onSubmit={() => { }}
+        >
+          <VStack as={Form} align="start" spacing={5}>
+            <Heading>Log in</Heading>
+            <TextField name="email" aria-label="email" />
+            <Button type="submit" colorScheme="teal">Submit</Button>
+          </VStack>
+        </Formik>
+      </Box>
+    </Flex>
   );
 }
 
