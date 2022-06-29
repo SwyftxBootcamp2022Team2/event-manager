@@ -45,7 +45,8 @@ def initialise_db(conn):
     sql_create_bookings_table = """ CREATE TABLE IF NOT EXISTS bookings (\
                                         bookingID INTEGER PRIMARY KEY AUTOINCREMENT,
                                         eventID INTEGER NOT NULL,
-                                        userID INTEGER NOT NULL, 
+                                        userID INTEGER NOT NULL,
+                                        testing, 
                                         FOREIGN KEY (eventID) REFERENCES events(eventID),
                                         FOREIGN KEY (userID) REFERENCES users(userID)
                                     ); """
