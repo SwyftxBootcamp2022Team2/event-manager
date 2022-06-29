@@ -14,40 +14,22 @@ conn = sql.connect('testdata.db')
 def hello():
     return "Hello, World!"
 
-# @app.route("/login", methods=['GET'])
-# def login():
-#     #jsonify result from frontend
-#     # user = request.json['email', 'fname', 'lname']
-
-#     user = request.json
-#     email = user["email"]
-
-#     userinfo = db.session.query(User).filter_by(email=email).first()
-#     # get user info from database
-#     return jsonify(fname=userinfo.fname, lname=userinfo.lname,isAdmin=userinfo.isAdmin)
-#     if result is not None:     # check if user is in database
-#         return jsonify(result.__dict__) #return exists["isAdmin"] #role, isadmin, smth else # if exists, send back a token
-#     else: # if not, create new user, send back a token
-#         #db.session.add(user)
-#         return "Couldn't find user!", status.HTTP_400_BAD_REQUEST
-
-@app.route("/login", methods=['GET'])
+@app.route("/login", methods=['GET', 'POST'])
 def login():
     #jsonify result from frontend
-    # user = request.json['email', 'fname', 'lname']
+    #user = request.json['email', 'fname', 'lname']
     user = request.json
     email = user["email"]
     userinfo = db.session.query(User).filter_by(email=email).first()
     # check if email exists - if no, return error. If yes, grab first name, lastname, is admin, email and send it back in jsoon format
     if userinfo is not None:     # check if user is in database
         # get user info from database
-        return jsonify(email=userinfo.email, fName=userinfo.fname, lName=userinfo.lname,isAdmin=userinfo.isAdmin)
+        return jsonify(email=userinfo.email, fName=userinfo.fname, lName=userinfo.lname,isAdmin=userinfo.isAdmin), status.HTTP_200_OK
         #return True #return exists["isAdmin"] #role, isadmin, smth else # if exists, send back a token
     else: # if not, create new user, send back a token
-        #db.session.add(user)
+        # add new user into the "user" db
+        db.session.add(User(email=email, fname=user["fname"], lname=user["lname"], isAdmin=user["isAdmin"]))
         return "Couldn't find user!", status.HTTP_400_BAD_REQUEST
-
-
 
 @app.route("/user/get", methods=['GET']) 
 def get_user():
@@ -57,7 +39,6 @@ def get_user():
     # get user should give an email and isAdmin
     return True
 
-    
 @app.route("/home", methods=['GET'])
 def home_function():
     return True

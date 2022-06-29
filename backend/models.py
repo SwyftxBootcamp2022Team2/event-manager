@@ -22,6 +22,7 @@ class Event(db.Model):
     endTime = db.Column(db.DateTime, nullable = False)
     participationLimit = db.Column(db.Integer)
     createdBy = db.Column(db.Integer)
+    email = db.Column(db.Integer, db.ForeignKey("user.email"))
     
     
 class Bookings(db.Model):
@@ -29,3 +30,5 @@ class Bookings(db.Model):
     bookingID = db.Column(db.Integer, primary_key=True)
     eventID = db.Column(db.Integer, nullable = False)
     userID = db.Column(db.Integer, nullable = False)
+    email = db.Column(db.String, db.ForeignKey("user.email"))
+    eventID = db.Column(db.Integer, db.ForeignKey("event.eventID"))
