@@ -10,29 +10,39 @@ app.config["SQLALCHEMY_DATABASE_URI"] = 'sqlite:///testdata.db'
 db.init_app(app)
 conn = sql.connect('testdata.db')
 
-def row2dict(row):
-    d = {}
-    for column in row.__table__.columns:
-        d[column.name] = str(getattr(row, column.name))
-
-    return d
-
 @app.route("/")
 def hello():
     return "Hello, World!"
+
+# @app.route("/login", methods=['GET'])
+# def login():
+#     #jsonify result from frontend
+#     # user = request.json['email', 'fname', 'lname']
+
+#     user = request.json
+#     email = user["email"]
+
+#     userinfo = db.session.query(User).filter_by(email=email).first()
+#     # get user info from database
+#     return jsonify(fname=userinfo.fname, lname=userinfo.lname,isAdmin=userinfo.isAdmin)
+#     if result is not None:     # check if user is in database
+#         return jsonify(result.__dict__) #return exists["isAdmin"] #role, isadmin, smth else # if exists, send back a token
+#     else: # if not, create new user, send back a token
+#         #db.session.add(user)
+#         return "Couldn't find user!", status.HTTP_400_BAD_REQUEST
 
 @app.route("/login", methods=['GET'])
 def login():
     #jsonify result from frontend
     # user = request.json['email', 'fname', 'lname']
-
     user = request.json
     email = user["email"]
-
-    exists = db.session.query(User, User.isAdmin).first()
-    dict = row2dict(exists)
-    if exists is not None:     # check if user is in database
-        return dict["isAdmin"] #return exists["isAdmin"] #role, isadmin, smth else # if exists, send back a token
+    userinfo = db.session.query(User).filter_by(email=email).first()
+    # check if email exists - if no, return error. If yes, grab first name, lastname, is admin, email and send it back in jsoon format
+    if userinfo is not None:     # check if user is in database
+        # get user info from database
+        return jsonify(email=userinfo.email, fName=userinfo.fname, lName=userinfo.lname,isAdmin=userinfo.isAdmin)
+        #return True #return exists["isAdmin"] #role, isadmin, smth else # if exists, send back a token
     else: # if not, create new user, send back a token
         #db.session.add(user)
         return "Couldn't find user!", status.HTTP_400_BAD_REQUEST
