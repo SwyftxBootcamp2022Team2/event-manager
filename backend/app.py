@@ -6,7 +6,7 @@ app = Flask(__name__)
 
 @app.route("/")
 def hello():
-    return "Hello, World!"
+    return "Hello, World! yay"
 
 def create_connection(db_file):
     """ create a database connection to a SQLite database """
@@ -45,7 +45,8 @@ def initialise_db(conn):
     sql_create_bookings_table = """ CREATE TABLE IF NOT EXISTS bookings (\
                                         bookingID INTEGER PRIMARY KEY AUTOINCREMENT,
                                         eventID INTEGER NOT NULL,
-                                        userID INTEGER NOT NULL, 
+                                        userID INTEGER NOT NULL,
+                                        findmeeeee, 
                                         FOREIGN KEY (eventID) REFERENCES events(eventID),
                                         FOREIGN KEY (userID) REFERENCES users(userID)
                                     ); """
