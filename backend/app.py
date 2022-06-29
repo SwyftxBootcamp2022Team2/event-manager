@@ -46,7 +46,8 @@ def initialise_db(conn):
                                         bookingID INTEGER PRIMARY KEY AUTOINCREMENT,
                                         eventID INTEGER NOT NULL,
                                         userID INTEGER NOT NULL,
-                                        testing, 
+                                        testing,
+                                        testing2, 
                                         FOREIGN KEY (eventID) REFERENCES events(eventID),
                                         FOREIGN KEY (userID) REFERENCES users(userID)
                                     ); """
