@@ -1,18 +1,35 @@
-from flask import Flask
+from flask import Flask, jsonify, request
 import sqlite3 as sql
-import app 
-import requests
+from models import User
 
 @app.route("/")
 def hello():
     return "Hello, World!"
 
-@app.route("/login", methods=['POST'])
+@app.route("/login", methods=['POST', 'GET'])
 def login():
-    con = sql.connect("database.db")
-    email = requests.form['email']
-    con.close()
+    # jsonify result from frontend
+    user = request.json['email', 'fname', 'lname', 'isAdmin']
+    email = user["email"]
+    exists = db.session.query(User.email).filter_by(email=email).first() is not None
+    if exists:     # check if user is in database
+        return email #role, isadmin, smth else # if exists, send back a token
+    else: # if not, create new user, send back a token
+        #db.session.add(user)
+        raise Exception("Couldn't find user", 400)
 
+
+
+
+@app.route("/user/get", methods=['GET']) 
+def get_user():
+    # data = [{'userId': 1, 'email': ', ]
+    # check if userId is in database
+    
+    # get user should give an email and isAdmin
+    return True
+
+    
 @app.route("/home", methods=['GET'])
 def home_function():
     return True
@@ -36,3 +53,5 @@ def book_event():
 @app.route("/event/unbook", methods=['DELETE']) # user is the one who books
 def unbook_event():
     return True
+
+
