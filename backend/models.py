@@ -14,8 +14,7 @@ class User(db.Model):
 
 class Event(db.Model):
     __tablename__ = 'events'
-    eventID= db.Column(db.Integer, 
-                          primary_key=True)
+    eventID= db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String, nullable = False)
     location = db.Column(db.String, nullable = False)
     start = db.Column(db.String, nullable = False) 
@@ -26,7 +25,6 @@ class Event(db.Model):
     
 class Bookings(db.Model):
     __tablename__ = 'bookings'
-    bookingID = db.Column(db.Integer, 
-                          primary_key=True)
+    bookingID = db.Column(db.Integer, primary_key=True)
     eventID = db.Column(db.Integer, nullable = False)
     userID = db.Column(db.Integer, nullable = False)
