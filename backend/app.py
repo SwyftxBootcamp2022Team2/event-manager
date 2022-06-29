@@ -1,39 +1,10 @@
-from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask import Flask, jsonify, request
+import sqlite3 as sql
+from models import db
 
 app = Flask(__name__)
-db = SQLAlchemy(app)
-print("__init__.py: app and db initialized")
-
-
-
-class User(db.Model):
-    __tablename__ = 'users'
-    email = db.Column(db.String,primary_key=True, nullable = False)
-    lname = db.Column(db.String, nullable = False)
-    fname = db.Column(db.String, nullable = False)
-    isAdmin = db.Column(db.Integer, nullable = False)
-
-class Event(db.Model):
-    __tablename__ = 'events'
-    eventID= db.Column(db.Integer, 
-                          primary_key=True)
-    title = db.Column(db.String, nullable = False)
-    location = db.Column(db.String, nullable = False)
-    start = db.Column(db.String, nullable = False) 
-    startTime = db.Column(db.String, nullable = False)
-    endTime = db.Column(db.String, nullable = False)
-    participationLimit = db.Column(db.Integer)
-    createdBy = db.Column(db.Integer)
-    
-class Bookings(db.Model):
-    __tablename__ = 'bookings'
-    bookingID = db.Column(db.Integer, 
-                          primary_key=True)
-    eventID = db.Column(db.Integer, nullable = False)
-    userID = db.Column(db.Integer, nullable = False)
-
+db.init_app(app)
 
 @app.route("/")
 def hello():
@@ -41,7 +12,7 @@ def hello():
 
 @app.route("/login", methods=['POST', 'GET'])
 def login():
-    # jsonify result from frontend
+    #jsonify result from frontend
     user = request.json['email', 'fname', 'lname', 'isAdmin']
     email = user["email"]
     exists = db.session.query(User.email).filter_by(email=email).first() is not None
@@ -50,4 +21,44 @@ def login():
     else: # if not, create new user, send back a token
         #db.session.add(user)
         raise Exception("Couldn't find user", 400)
+    return "this works!"
+
+
+@app.route("/user/get", methods=['GET']) 
+def get_user():
+    # data = [{'userId': 1, 'email': ', ]
+    # check if userId is in database
+    
+    # get user should give an email and isAdmin
+    return True
+
+    
+@app.route("/home", methods=['GET'])
+def home_function():
+    return True
+
+@app.route("/event/create", methods=['POST']) # admin is the one who creates
+def create_event():
+    return True
+
+@app.route("/event/delete", methods=['DELETE'])
+def delete_event():
+    return True
+
+@app.route("/event/view", methods=['GET'])
+def view_event():
+    return True
+
+@app.route("/event/book", methods=['POST']) # user is the one who books
+def book_event():
+    return True
+
+@app.route("/event/unbook", methods=['DELETE']) # user is the one who books
+def unbook_event():
+    return True
+
+
+
+
+
 
