@@ -1,5 +1,9 @@
 # event-manager
 
+## Things you need to install
+- Node
+- Yarn
+
 ## Quick Start
 The first things you need to do are cloning this repository and installing its dependencies:
 

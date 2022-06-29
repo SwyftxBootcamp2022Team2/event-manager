@@ -1235,6 +1235,14 @@
   dependencies:
     "@chakra-ui/utils" "2.0.2"
 
+"@chakra-ui/icons@^2.0.2":
+  version "2.0.2"
+  resolved "https://registry.yarnpkg.com/@chakra-ui/icons/-/icons-2.0.2.tgz#4ef4c3e1c6eb7a8f7d5de59635811f0c68104d4b"
+  integrity sha512-UY7vP8E5pv2a4sd1SiezgVbmq1/tRfnehk6PatunrTvGMxQNhSKJJoiRI/wCtUfMoMz+yp9+ekc1ksJVCnokRg==
+  dependencies:
+    "@chakra-ui/icon" "3.0.2"
+    "@types/react" "^18.0.1"
+
 "@chakra-ui/image@2.0.3":
   "integrity" "sha512-GLMJXLdR0y7CCZ0hKHf6YZLb8dlPpx4vdXWTbtLnIU5EfGIOSiCU4N3+0KcjvMtDB69hBr5W4h1XMJNpetP1EA=="
   "resolved" "https://registry.npmjs.org/@chakra-ui/image/-/image-2.0.3.tgz"
@@ -1853,6 +1861,29 @@
     "js-yaml" "^4.1.0"
     "minimatch" "^3.1.2"
     "strip-json-comments" "^3.1.1"
+
+"@fullcalendar/common@~5.11.0":
+  version "5.11.0"
+  resolved "https://registry.yarnpkg.com/@fullcalendar/common/-/common-5.11.0.tgz#d7e47b4272ba6824f95581fb7fb630c5880f4212"
+  integrity sha512-gWjbMAnN1u73Oqlgjbyky7i+3bY0hvFSnGT0YBPx44n874AkQa9e9OU12PMLTMOPy0tXPb8DEwRelFQ7CJNbcw==
+  dependencies:
+    tslib "^2.1.0"
+
+"@fullcalendar/daygrid@^5.11.0":
+  version "5.11.0"
+  resolved "https://registry.yarnpkg.com/@fullcalendar/daygrid/-/daygrid-5.11.0.tgz#fd10391dfc2b6caa3538e0826f8d8f3e83e0e22a"
+  integrity sha512-Ybh/dfHn/VL0qOVIRVyJc9I8oYiqqHl6xQONk8xXCe456QbPzAQLsAxpLLJLH+3smWNCfoQgvDKzR9e9XTzLMQ==
+  dependencies:
+    "@fullcalendar/common" "~5.11.0"
+    tslib "^2.1.0"
+
+"@fullcalendar/react@^5.11.1":
+  version "5.11.1"
+  resolved "https://registry.yarnpkg.com/@fullcalendar/react/-/react-5.11.1.tgz#25f673bd952335792d3ced0c2a2c3f373109eac7"
+  integrity sha512-Mjuz90gzX6MLU0rdr5CVoqQA5vFM9JpHDIFmvlLaY8SvdK0R5BwNhquRJP7D2L2q0XKGyzo+/FBOZ+PFXe7jGA==
+  dependencies:
+    "@fullcalendar/common" "~5.11.0"
+    tslib "^2.1.0"
 
 "@humanwhocodes/config-array@^0.9.2":
   "integrity" "sha512-ObyMyWxZiCu/yTisA7uzx81s40xR2fD5Cg/2Kq7G02ajkNubJf6BopgDTmDyc3U7sXpNKM8cYOw7s7Tyr+DnCw=="
@@ -2666,10 +2697,17 @@
   dependencies:
     "@types/react" "*"
 
+<<<<<<< HEAD
 "@types/react@*", "@types/react@^16.8.0 || ^17.0.0 || ^18.0.0", "@types/react@^16.9.0 || ^17.0.0 || ^18.0.0", "@types/react@^18.0.9":
   "integrity" "sha512-x4gGuASSiWmo0xjDLpm5mPb52syZHJx02VKbqUKdLmKtAwIh63XClGsiTI1K6DO5q7ox4xAsQrU+Gl3+gGXF9Q=="
   "resolved" "https://registry.npmjs.org/@types/react/-/react-18.0.14.tgz"
   "version" "18.0.14"
+=======
+"@types/react@*", "@types/react@^18.0.1", "@types/react@^18.0.9":
+  version "18.0.14"
+  resolved "https://registry.yarnpkg.com/@types/react/-/react-18.0.14.tgz#e016616ffff51dba01b04945610fe3671fdbe06d"
+  integrity sha512-x4gGuASSiWmo0xjDLpm5mPb52syZHJx02VKbqUKdLmKtAwIh63XClGsiTI1K6DO5q7ox4xAsQrU+Gl3+gGXF9Q==
+>>>>>>> main
   dependencies:
     "@types/prop-types" "*"
     "@types/scheduler" "*"
@@ -4712,10 +4750,22 @@
     "object.assign" "^4.1.2"
     "object.entries" "^1.1.5"
 
+<<<<<<< HEAD
 "eslint-config-react-app@^7.0.1":
   "integrity" "sha512-K6rNzvkIeHaTd8m/QEh1Zko0KI7BACWkkneSs6s9cKZC/J27X3eZR6Upt1jkmZ/4FK+XUOPPxMEN7+lbUXfSlA=="
   "resolved" "https://registry.npmjs.org/eslint-config-react-app/-/eslint-config-react-app-7.0.1.tgz"
   "version" "7.0.1"
+=======
+eslint-config-prettier@^8.5.0:
+  version "8.5.0"
+  resolved "https://registry.yarnpkg.com/eslint-config-prettier/-/eslint-config-prettier-8.5.0.tgz#5a81680ec934beca02c7b1a61cf8ca34b66feab1"
+  integrity sha512-obmWKLUNCnhtQRKc+tmnYuQl0pFU1ibYJQ5BGhTVB08bHe9wC8qUeG7c08dj9XX+AuPj1YSGSQIHl1pnDHZR0Q==
+
+eslint-config-react-app@^7.0.1:
+  version "7.0.1"
+  resolved "https://registry.yarnpkg.com/eslint-config-react-app/-/eslint-config-react-app-7.0.1.tgz#73ba3929978001c5c86274c017ea57eb5fa644b4"
+  integrity sha512-K6rNzvkIeHaTd8m/QEh1Zko0KI7BACWkkneSs6s9cKZC/J27X3eZR6Upt1jkmZ/4FK+XUOPPxMEN7+lbUXfSlA==
+>>>>>>> main
   dependencies:
     "@babel/core" "^7.16.0"
     "@babel/eslint-parser" "^7.16.3"
