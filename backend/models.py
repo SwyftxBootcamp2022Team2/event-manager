@@ -23,6 +23,7 @@ class Event(db.Model):
     participationLimit = db.Column(db.Integer)
     createdBy = db.Column(db.Integer)
     
+    
 class Bookings(db.Model):
     __tablename__ = 'bookings'
     bookingID = db.Column(db.Integer, primary_key=True)
