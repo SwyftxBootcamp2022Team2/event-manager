@@ -25,13 +25,13 @@ class User(Base):
 class Event(Base):
     __tablename__ = 'events'
     eventID= Column(Integer, primary_key=True)
+    createdBy = Column(Integer, ForeignKey("users.email"),)
     title = Column(String, nullable = False)
     location = Column(String, nullable = False)
-    start = Column(String, nullable = False) 
     startTime = Column(DateTime, nullable = False)
     endTime = Column(DateTime, nullable = False)
     participationLimit = Column(Integer)
-    createdBy = Column(Integer, ForeignKey("users.email"),)
+    publishTime = Column(DateTime)
     #email = Column(Integer, ForeignKey("user.email"))
     #email = relationship("User")
     #booking = relationship("Bookings")

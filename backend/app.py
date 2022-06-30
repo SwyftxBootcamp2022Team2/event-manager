@@ -4,6 +4,8 @@ from flask import Flask, jsonify, request
 from flask_api import status
 import sqlite3 as sql
 from models import Bookings, User, Event, engine
+from sqlalchemy.orm.exc import NoResultFound
+from sqlalchemy.orm.exc import MultipleResultsFound
 
 
 
@@ -44,37 +46,40 @@ def get_user():
 
 @app.route("/event/create", methods=['GET','POST']) # admin is the one who creates
 def create_event():
-    # get user data and check if user is admin
-    req = request.json
-    email = req["email"]
-    userinfo = db.session.query(User).filter_by(email=email).first()
-    if userinfo.isAdmin == 0:
+    # get user data
+    eventInfo = request.json
+    createdBy = eventInfo["createdBy"]
+    eventTitle = eventInfo["eventTitle"]
+    location = eventInfo["location"]
+    startTime = eventInfo["startTime"]
+    endTime = eventInfo["endTime"]
+    partLimit = eventInfo["participationLimit"]
+    publishTime = eventInfo["publishTime"] 
+
+    # check if the user is an admin
+    if (not isAdmin(createdBy)):
         return "You are not an admin!", status.HTTP_400_BAD_REQUEST
 
+    # otherwise, allow event creation
     try:
+        with Session(engine) as session:
+            event = Event(
+                createdBy = createdBy,
+                title = eventTitle,
+                location = location,
+                startTime = startTime,
+                endTime = endTime,
+                participationLimit = partLimit,
+                publishTime = publishTime
+            )
 
+            session.add(event)
+            session.commit()
+            print_db(Event)
         return "Event successfully created", status.HTTP_201_CREATED
     except:
         return "Error occurred when creating an event", status.HTTP_400_BAD_REQUEST
-    # get event data from frontend and check that the event exists
-    eventInfo = db.session.query(Event).filter_by(eventID=eventID).first()
-    # if not, create new event
-    if eventInfo is not None:
-        return  "Event Already Exists!", status.HTTP_400_BAD_REQUEST
-    else:
-        # add new event into the "event" db
-        db.session.add(Event(eventID=eventID, title=event["title"], location=event["location"], start=event["start"], startTime=event["startTime"], endTime=event["endTime"], participationLimit=event["participationLimit"], createdBy=event["createdBy"]))
-        return "Event Created!", status.HTTP_200_OK
-    # event = request.json
-    # eventID = event["eventID"]
-    # eventInfo = db.session.query(Event).filter_by(eventID=eventID).first()
-    # # if not, create new event
-    # if eventInfo is not None:
-    #     return  "Event Already Exists!", status.HTTP_400_BAD_REQUEST
-    # else:
-    #     # add new event into the "event" db
-    #     db.session.add(Event(eventID=eventID, title=event["title"], location=event["location"], start=event["start"], startTime=event["startTime"], endTime=event["endTime"], participationLimit=event["participationLimit"], createdBy=event["createdBy"]))
-    #     return "Event Created!", status.HTTP_200_OK
+
 
 @app.route("/event/delete", methods=['DELETE'])
 def delete_event():
@@ -113,7 +118,10 @@ def book_event():
     email = bookingInfo["email"]
     try:
         with Session(engine) as session:
-            newBooking = Bookings(eventID=eventID, email=email)
+            newBooking = Bookings(
+                eventID=eventID, 
+                email=email
+            )
             session.add(newBooking)
             session.commit()
 
@@ -141,8 +149,22 @@ def unbook_event():
 def home_function():
     return True
 
+#### HELPER FUNCTION ####
+
 def print_db(modelName):
     with engine.connect() as conn:
             stmt = select(modelName)    
             for row in conn.execute(stmt):
                 print(row)
+
+def isAdmin(email):
+    try:
+        with Session(engine) as session:
+            user = session.get(User, email)
+    except MultipleResultsFound:
+        return "Multiple users with this email found", status.HTTP_400_BAD_REQUEST
+
+    except NoResultFound:
+        return "No user with associated email found", status.HTTP_400_BAD_REQUEST
+        
+    return user.isAdmin == 1
