@@ -6,7 +6,7 @@ import {
   Button, Flex, Heading, VStack,
 } from '@chakra-ui/react';
 import TextField from '../components/TextField';
-import axios from 'axios';
+import useAuth from '../useAuth';
 
 const loginSchema = Yup.object().shape({
   email: Yup.string().email().required('Required'),
@@ -17,16 +17,16 @@ const initialValues = {
 };
 
 function LoginPage() {
+  const { login } = useAuth();
+
   return (
     <Flex alignItems="center" justifyContent="center" h="100vh">
       <Box boxShadow="rgba(149, 157, 165, 0.2) 0px 8px 24px" py={10} px={20}>
         <Formik
           initialValues={initialValues}
           validationSchema={loginSchema}
-          // TODO: connect with backend route.
           onSubmit={(values) => {
-            const res = axios.post("http://127.0.0.1:5000/login", values);
-            console.log(res);
+            login(values.email)
           }}
         >
           <VStack as={Form} align="start" spacing={5}>

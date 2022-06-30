@@ -1,12 +1,7 @@
 import React, { ReactNode, useState, createContext, useEffect, useMemo, useContext } from "react";
 import { useNavigate, useLocation } from "react-router-dom"
-
-interface User {
-  email: string;
-  fname: string;
-  lname: string;
-  isAdmin: boolean;
-}
+import { User } from "./types/user"
+import * as sessionsApi from "./api/sessions";
 
 interface AuthContextType {
   user?: User;
@@ -26,15 +21,15 @@ export function AuthProvider({
   const [user, setUser] = useState<User>();
   const [error, setError] = useState<any>();
   const [loading, setLoading] = useState<boolean>(false);
-  const [loadingInitial, setLoadingInitial] = useState<boolean>(true)
+  const [loadingInitial, setLoadingInitial] = useState<boolean>(false)
 
-  const navigate = useNavigate();
-  const location = useLocation();
+  // const navigate = useNavigate();
+  // const location = useLocation();
 
   // reset errors on page change
-  useEffect(() => {
-    if (error) setError(null);
-  }, [location.pathname]);
+  // useEffect(() => {
+  //   if (error) setError(null);
+  // }, [location.pathname]);
 
 
   // check current active session on first mount
@@ -42,10 +37,14 @@ export function AuthProvider({
     // TODO: post to getUser
   }, []);
 
-  function login(email: string) {
+  async function login(email: string) {
     setLoading(true);
-
-    // TODO: post to login 
+    sessionsApi.login(email).then((user) => {
+      setUser(user);
+      // navigate("/calendar");
+    })
+      .catch((error) => setError(error))
+      .finally(() => setLoading(false));
   }
 
   function logout() {
@@ -53,17 +52,19 @@ export function AuthProvider({
   }
 
   // provider should update only when required
-  const memoizedValue = useMemo(() => ({
+  const memoizedValue = {
     user,
     loading,
     error,
     login,
     logout,
-  }), [user, loading, error]);
+  }
+
+  sessionsApi.login("hello@test.com")
 
   return (
     <AuthContext.Provider value={memoizedValue}>
-      {!loadingInitial && children}
+      {children}
     </AuthContext.Provider>
   );
 };
