@@ -1,34 +1,68 @@
 
-from datetime import datetime
 from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy import Column, ForeignKey, Integer, String, DateTime
+from sqlalchemy.orm import declarative_base
+from sqlalchemy.orm import relationship
+from sqlalchemy import create_engine
+from sqlalchemy.orm import Session
 
+Base = declarative_base()
+engine = create_engine("sqlite+pysqlite:///testdata.db", echo=True, future=True)
+Base.metadata.create_all(engine)
 
-db = SQLAlchemy()
-
-class User(db.Model):
+class User(Base):
     __tablename__ = 'users'
-    email = db.Column(db.String,primary_key=True, nullable = False)
-    lname = db.Column(db.String, nullable = False)
-    fname = db.Column(db.String, nullable = False)
-    isAdmin = db.Column(db.Integer, nullable = False)
+    email = Column(String,primary_key=True, nullable = False)
+    lname = Column(String, nullable = False)
+    fname = Column(String, nullable = False)
+    isAdmin = Column(Integer, nullable = False)
 
-class Event(db.Model):
+    #relationships
+    #event = relationship("Event")
+    #booking = relationship("Bookings")
+
+
+class Event(Base):
     __tablename__ = 'events'
-    eventID= db.Column(db.Integer, primary_key=True)
-    title = db.Column(db.String, nullable = False)
-    location = db.Column(db.String, nullable = False)
-    start = db.Column(db.String, nullable = False) 
-    startTime = db.Column(db.DateTime, nullable = False)
-    endTime = db.Column(db.DateTime, nullable = False)
-    participationLimit = db.Column(db.Integer)
-    createdBy = db.Column(db.Integer)
-    email = db.Column(db.Integer, db.ForeignKey("user.email"))
+    eventID= Column(Integer, primary_key=True)
+    title = Column(String, nullable = False)
+    location = Column(String, nullable = False)
+    start = Column(String, nullable = False) 
+    startTime = Column(DateTime, nullable = False)
+    endTime = Column(DateTime, nullable = False)
+    participationLimit = Column(Integer)
+    createdBy = Column(Integer, ForeignKey("users.email"),)
+    #email = Column(Integer, ForeignKey("user.email"))
+    #email = relationship("User")
+    #booking = relationship("Bookings")
     
-    
-class Bookings(db.Model):
+class Bookings(Base):
     __tablename__ = 'bookings'
-    bookingID = db.Column(db.Integer, primary_key=True)
-    eventID = db.Column(db.Integer, nullable = False)
-    userID = db.Column(db.Integer, nullable = False)
-    email = db.Column(db.String, db.ForeignKey("user.email"))
-    eventID = db.Column(db.Integer, db.ForeignKey("event.eventID"))
+    bookingID = Column(Integer, primary_key=True)
+    eventID = Column(Integer, ForeignKey("events.eventID"), nullable = False)
+    email = Column(String, ForeignKey("users.email"),)
+    eventID = Column(Integer)
+
+    #relationships
+    #user = relationship("User")
+    #event = relationship("Event")
+
+# pre-populate data
+with Session(engine) as session:
+    admin = User(
+        email = "admin@gmail.com",
+        fname = "Admin",
+        lname = "User",
+        isAdmin = 1
+    )
+
+    user = User(
+        email = "user@gmail.com",
+        fname = "Average",
+        lname = "User",
+        isAdmin = 0
+    )
+
+    session.add_all([admin, user])
+
+    session.commit()

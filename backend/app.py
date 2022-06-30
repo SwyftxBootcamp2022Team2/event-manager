@@ -1,14 +1,16 @@
-from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy.orm import Session
 from flask import Flask, jsonify, request
 from flask_api import status
 import sqlite3 as sql
-from models import db, User, Event
-from sqlalchemy import create_engine, true
+from models import Bookings, User, Event, engine
+
+
 
 app = Flask(__name__)
-app.config["SQLALCHEMY_DATABASE_URI"] = 'sqlite:///testdata.db'
-db.init_app(app)
-conn = sql.connect('testdata.db')
+
+# app.config["SQLALCHEMY_DATABASE_URI"] = 'sqlite:///testdata.db'
+# db.init_app(app)
+# conn = sql.connect('testdata.db')
 
 @app.route("/")
 def hello():
@@ -42,15 +44,18 @@ def get_user():
 @app.route("/event/create", methods=['GET','POST']) # admin is the one who creates
 def create_event():
     # get user data and check if user is admin
-    user = request.json
-    email = user["email"]
+    req = request.json
+    email = req["email"]
     userinfo = db.session.query(User).filter_by(email=email).first()
     if userinfo.isAdmin == 0:
         return "You are not an admin!", status.HTTP_400_BAD_REQUEST
 
+    try:
+
+        return "Event successfully created", status.HTTP_201_CREATED
+    except:
+        return "Error occurred when creating an event", status.HTTP_400_BAD_REQUEST
     # get event data from frontend and check that the event exists
-    event = request.json
-    eventID = event["eventID"]
     eventInfo = db.session.query(Event).filter_by(eventID=eventID).first()
     # if not, create new event
     if eventInfo is not None:
@@ -59,6 +64,16 @@ def create_event():
         # add new event into the "event" db
         db.session.add(Event(eventID=eventID, title=event["title"], location=event["location"], start=event["start"], startTime=event["startTime"], endTime=event["endTime"], participationLimit=event["participationLimit"], createdBy=event["createdBy"]))
         return "Event Created!", status.HTTP_200_OK
+    # event = request.json
+    # eventID = event["eventID"]
+    # eventInfo = db.session.query(Event).filter_by(eventID=eventID).first()
+    # # if not, create new event
+    # if eventInfo is not None:
+    #     return  "Event Already Exists!", status.HTTP_400_BAD_REQUEST
+    # else:
+    #     # add new event into the "event" db
+    #     db.session.add(Event(eventID=eventID, title=event["title"], location=event["location"], start=event["start"], startTime=event["startTime"], endTime=event["endTime"], participationLimit=event["participationLimit"], createdBy=event["createdBy"]))
+    #     return "Event Created!", status.HTTP_200_OK
 
 @app.route("/event/delete", methods=['DELETE'])
 def delete_event():
@@ -92,11 +107,32 @@ def view_event():
 
 @app.route("/event/book", methods=['POST']) # user is the one who books
 def book_event():
-    return True
+    bookingInfo = request.json
+    eventID = bookingInfo["eventID"]
+    email = bookingInfo["email"]
+    try:
+        with Session(engine) as session:
+            newBooking = Bookings(eventID=eventID, email=email)
+            session.add(newBooking)
+            session.commit()
+
+        return "Booking succesful!", status.HTTP_200_OK
+    except:
+        return "An error occured when booking, please try again later", status.HTTP_400_BAD_REQUEST
+    finally:
+        print("hit finally")
 
 @app.route("/event/unbook", methods=['DELETE']) 
 def unbook_event():
-    return True
+    bookingInfo = request.json #eventID to delete
+    #something wrong here
+    try:
+        user = db.session.query(Bookings).filter(Bookings.eventID == bookingInfo["eventID"]).one()
+        db.session.delete(user)
+        db.session.commit()
+        return "Event successfully unbooked", status.HTTP_200_OK
+    except:
+        return "Error occured when unbooking, please try again later", status.HTTP_400_BAD_REQUEST 
 
 @app.route("/home", methods=['GET'])
 def home_function():

@@ -27,9 +27,9 @@ CREATE TABLE IF NOT EXISTS `events` (
 CREATE TABLE IF NOT EXISTS `bookings` (
     bookingID INTEGER PRIMARY KEY AUTOINCREMENT,
     eventID INTEGER NOT NULL,
-    userID INTEGER NOT NULL, 
+    email TEXT NOT NULL, 
     FOREIGN KEY (eventID) REFERENCES events(eventID),
-    FOREIGN KEY (userID) REFERENCES users(userID)
+    FOREIGN KEY (email) REFERENCES users(email)
 );
 
 -- Insert test users
