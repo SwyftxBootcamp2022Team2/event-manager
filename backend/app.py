@@ -18,6 +18,7 @@ app.config['CORS_HEADERS'] = 'Content-Type'
 
 
 @app.route("/")
+@cross_origin()
 def hello():
     return "Hello, World!"
 
@@ -189,7 +190,7 @@ def unbook_event():
         return "Error occured when unbooking, please try again later", status.HTTP_400_BAD_REQUEST
 
 
-@app.route("/home", methods=['GET'])
+@app.route("/", methods=['GET'])
 def home_function():
     return True
 
