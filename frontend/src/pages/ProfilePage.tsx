@@ -29,7 +29,7 @@ function ProfilePage() {
                 <Text mx="20px" w="200px">
                   Email
                 </Text>
-                <Input placeholder="medium size" size="md" />
+                <Input placeholder={user?.email} size="md" />
               </Flex>
             </Flex>
             <Flex flexDirection="column">
@@ -41,7 +41,7 @@ function ProfilePage() {
                 <Text mx="20px" w="200px">
                   First Name
                 </Text>
-                <Input placeholder={user?.email} size="md" />
+                <Input placeholder={user?.fName} size="md" />
               </Flex>
             </Flex>
             <Flex flexDirection="column">
@@ -53,7 +53,7 @@ function ProfilePage() {
                 <Text mx="20px" w="200px">
                   Last Name
                 </Text>
-                <Input placeholder="medium size" size="md" />
+                <Input placeholder={user?.lName} size="md" />
               </Flex>
             </Flex>
             <Flex flexDirection="column">
@@ -65,7 +65,7 @@ function ProfilePage() {
                 <Text mx="20px" w="200px">
                   Department
                 </Text>
-                <Select placeholder="medium size" size="md" />
+                <Select placeholder="placeholder" size="md" />
               </Flex>
             </Flex>
             <Flex flexDirection="column">
@@ -77,7 +77,7 @@ function ProfilePage() {
                 <Text mx="20px" w="200px">
                   Dietary
                 </Text>
-                <Input placeholder="medium size" size="md" />
+                <Input placeholder="placeholder" size="md" />
               </Flex>
             </Flex>
             <Flex flexDirection="column">
@@ -89,7 +89,7 @@ function ProfilePage() {
                 <Text mx="20px" w="200px">
                   Accessibility
                 </Text>
-                <Input w="100%" placeholder="medium size" size="md" />
+                <Input w="100%" placeholder="placeholder" size="md" />
               </Flex>
             </Flex>
           </VStack>

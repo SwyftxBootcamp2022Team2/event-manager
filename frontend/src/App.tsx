@@ -16,23 +16,19 @@ import useAuth, { AuthProvider } from './useAuth';
 function Router() {
   const { user } = useAuth();
 
-  const authorisedRoutes = () => (
-    <>
-      <NavigationBar />
-      <Routes>
-        <Route path="/book-events" element={<BookingPage />} />
-        <Route path="/profile" element={<ProfilePage />} />
-        <Route path="/my-bookings" element={<MyBookingsPage />} />
-        <Route path="/calendar" element={<CalendarPage />} />
-        <Route path="/create-event" element={<CreateEventPage />} />
-      </Routes>
-    </>
-  );
-
   return (
     <>
-      {user === null ? (
-        authorisedRoutes
+      {user ? (
+        <>
+          <NavigationBar />
+          <Routes>
+            <Route path="/book-events" element={<BookingPage />} />
+            <Route path="/profile" element={<ProfilePage />} />
+            <Route path="/my-bookings" element={<MyBookingsPage />} />
+            <Route path="/calendar" element={<CalendarPage />} />
+            <Route path="/create-event" element={<CreateEventPage />} />
+          </Routes>
+        </>
       ) : (
         <Routes>
           <Route path="/login" element={<LoginPage />} />
@@ -46,16 +42,9 @@ function App() {
   return (
     <ChakraProvider theme={theme}>
       <BrowserRouter>
-        <NavigationBar />
-        <Routes>
-          <Route path="/" element={<LoginPage />} />
-          <Route path="/book-events" element={<BookingPage />} />
-          <Route path="/profile" element={<ProfilePage />} />
-          <Route path="/my-bookings" element={<MyBookingsPage />} />
-          <Route path="/calendar" element={<CalendarPage />} />
-          <Route path="/create-event" element={<CreateEventPage />} />
-          <Route path="/profile-page" element={<ProfilePage />} />
-        </Routes>
+        <AuthProvider>
+          <Router />
+        </AuthProvider>
       </BrowserRouter>
     </ChakraProvider>
   );

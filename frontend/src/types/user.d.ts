@@ -1,7 +1,7 @@
 export interface User {
   email: string;
-  fname: string;
-  lname: string;
+  fName: string;
+  lName: string;
   isAdmin: boolean;
 }
 
