@@ -1,7 +1,6 @@
-export interface User {
+interface User {
   email: string;
   fname: string;
   lname: string;
   isAdmin: boolean;
 }
-
