@@ -1,7 +1,6 @@
 import React, { ReactNode, useState, createContext, useEffect, useMemo, useContext } from "react";
-import { useNavigate } from "react-router-dom"
-import { User } from "./types/user"
-import * as sessionsApi from "./api/sessions";
+import { useNavigate } from 'react-router-dom';
+import * as sessionsApi from './api/sessions';
 
 interface AuthContextType {
   user?: User;
