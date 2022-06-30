@@ -1,4 +1,5 @@
 from sqlalchemy.orm import Session
+from sqlalchemy import select
 from flask import Flask, jsonify, request
 from flask_api import status
 import sqlite3 as sql
@@ -116,20 +117,22 @@ def book_event():
             session.add(newBooking)
             session.commit()
 
+        print_db(Bookings)
         return "Booking succesful!", status.HTTP_200_OK
     except:
         return "An error occured when booking, please try again later", status.HTTP_400_BAD_REQUEST
-    finally:
-        print("hit finally")
 
 @app.route("/event/unbook", methods=['DELETE']) 
 def unbook_event():
-    bookingInfo = request.json #eventID to delete
-    #something wrong here
+    bookingInfo = request.json 
+    eventID = bookingInfo["eventID"] #eventID to delete
+
     try:
-        user = db.session.query(Bookings).filter(Bookings.eventID == bookingInfo["eventID"]).one()
-        db.session.delete(user)
-        db.session.commit()
+        with Session(engine) as session:
+            booking = session.get(Bookings, eventID)
+            session.delete(booking)
+            session.commit()
+        
         return "Event successfully unbooked", status.HTTP_200_OK
     except:
         return "Error occured when unbooking, please try again later", status.HTTP_400_BAD_REQUEST 
@@ -137,3 +140,9 @@ def unbook_event():
 @app.route("/home", methods=['GET'])
 def home_function():
     return True
+
+def print_db(modelName):
+    with engine.connect() as conn:
+            stmt = select(modelName)    
+            for row in conn.execute(stmt):
+                print(row)
