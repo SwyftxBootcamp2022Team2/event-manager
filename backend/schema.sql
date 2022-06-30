@@ -16,20 +16,20 @@ CREATE TABLE IF NOT EXISTS `events` (
     eventID INTEGER PRIMARY KEY AUTOINCREMENT,
     title text NOT NULL,
     location text NOT NULL,
-    start text NOT NULL,
     startTime datetime NOT NULL,
     endTime datatime NOT NULL,
     participationLimit int,
     createdBy INTEGER,
+    publishTime datetime,
     FOREIGN KEY (eventID) REFERENCES users(userID)
 );
 
 CREATE TABLE IF NOT EXISTS `bookings` (
     bookingID INTEGER PRIMARY KEY AUTOINCREMENT,
     eventID INTEGER NOT NULL,
-    userID INTEGER NOT NULL, 
+    email TEXT NOT NULL, 
     FOREIGN KEY (eventID) REFERENCES events(eventID),
-    FOREIGN KEY (userID) REFERENCES users(userID)
+    FOREIGN KEY (email) REFERENCES users(email)
 );
 
 -- Insert test users
