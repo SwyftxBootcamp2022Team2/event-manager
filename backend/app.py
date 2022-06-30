@@ -4,17 +4,23 @@ from flask_api import status
 import sqlite3 as sql
 from models import db, User, Event
 from sqlalchemy import create_engine, true
+from flask_cors import CORS, cross_origin
 
 app = Flask(__name__)
 app.config["SQLALCHEMY_DATABASE_URI"] = 'sqlite:///testdata.db'
 db.init_app(app)
 conn = sql.connect('testdata.db')
 
+cors = CORS(app)
+app.config['CORS_HEADERS'] = 'Content-Type'
+
 @app.route("/")
+@cross_origin()
 def hello():
     return "Hello, World!"
 
-@app.route("/login", methods=['GET', 'POST'])
+@app.route("/login", methods=['POST'])
+@cross_origin()
 def login():
     #jsonify result from frontend
     #user = request.json['email', 'fname', 'lname']
