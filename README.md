@@ -20,6 +20,21 @@ cd frontend
 yarn start
 ```
 
+For the backend, the requirements are as follows:
+```
+pip install flask
+pip install flask_alchemy
+pip install flask_api 
+```
+
+Then, initialise the database and run it:
+```
+python3 init_db.py
+export FLASK_APP=myapp
+export FLASK_ENV=development // For reloading on save
+flask run
+```
+
 ## What's included
 - [React TypeScript](https://www.typescriptlang.org/docs/handbook/react.html)
 - [ESLint](https://eslint.org/docs/latest/)
