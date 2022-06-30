@@ -10,7 +10,6 @@ app = Flask(__name__)
 app.config["SQLALCHEMY_DATABASE_URI"] = 'sqlite:///testdata.db'
 db.init_app(app)
 conn = sql.connect('testdata.db')
-
 cors = CORS(app)
 app.config['CORS_HEADERS'] = 'Content-Type'
 
