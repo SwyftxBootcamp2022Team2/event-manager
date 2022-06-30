@@ -1,7 +1,17 @@
-import { Button, Input } from '@chakra-ui/react';
+import {
+  Button,
+  Input,
+  NumberDecrementStepper,
+  NumberIncrementStepper,
+  NumberInput,
+  NumberInputField,
+  NumberInputStepper,
+  Textarea,
+} from '@chakra-ui/react';
 import React from 'react';
 import { useFormik } from 'formik';
 import dayjs from 'dayjs';
+import { string } from 'yup/lib/locale';
 
 interface InputField {
   placeholder?: string;
@@ -10,11 +20,21 @@ interface InputField {
   value: string | number | readonly string[];
 }
 
+function formatCapcity(val: Number) {
+  return `${val} People`;
+}
+
+function parseCapacity(val: string) {
+  return val.replace(/[^0-9.]+/g, '');
+}
+
 function CreateEventPage() {
   const formik = useFormik({
     initialValues: {
       title: '',
       dateTime: dayjs(),
+      location: '',
+      maxCapacity: '',
     },
     onSubmit: (values) => {
       console.log(values);
@@ -33,6 +53,12 @@ function CreateEventPage() {
       type: 'text',
       value: formik.values.dateTime.format('dddd, MMMM D YYYY'),
     },
+    {
+      placeholder: 'Location',
+      id: 'location',
+      type: 'text',
+      value: formik.values.location,
+    },
   ];
 
   return (
@@ -48,6 +74,21 @@ function CreateEventPage() {
           value={field.value}
         />
       ))}
+      <NumberInput
+        placeholder="Max Capacity"
+        id="maxCapacity"
+        name="maxCapacity"
+        onChange={(c) => formik.setFieldValue('maxCapacity', c)}
+        value={formik.values.maxCapacity}
+      >
+        <NumberInputField />
+        <NumberInputStepper>
+          <NumberIncrementStepper />
+          <NumberDecrementStepper />
+        </NumberInputStepper>
+      </NumberInput>
+
+      <Textarea placeholder="Add description" />
 
       <Button type="submit" colorScheme="blue">
         Create Event
