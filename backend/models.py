@@ -15,6 +15,9 @@ class User(Base):
     email = Column(String,primary_key=True, nullable = False)
     lname = Column(String, nullable = False)
     fname = Column(String, nullable = False)
+    department = Column(String, nullable = False)
+    dietary = Column(String)
+    accessibility = Column(String)
     isAdmin = Column(Integer, nullable = False)
 
     #relationships
@@ -47,22 +50,26 @@ class Bookings(Base):
     #user = relationship("User")
     #event = relationship("Event")
 
-# pre-populate data
-with Session(engine) as session:
-    admin = User(
-        email = "admin@gmail.com",
-        fname = "Admin",
-        lname = "User",
-        isAdmin = 1
-    )
+# # pre-populate data
+# with Session(engine) as session:
+#     admin = User(
+#         email = "admin@gmail.com",
+#         fname = "Admin",
+#         lname = "User",
+#         isAdmin = 1,
+#         department = "P & C"
+#     )
 
-    user = User(
-        email = "user@gmail.com",
-        fname = "Average",
-        lname = "User",
-        isAdmin = 0
-    )
+#     user = User(
+#         email = "user@gmail.com",
+#         fname = "Average",
+#         lname = "User",
+#         isAdmin = 0,
+#         department = "R & D",
+#         dietary = "halal",
+#         accessibility = "wheelchair"
+#     )
 
-    session.add_all([admin, user])
+#     session.add_all([admin, user])
 
-    session.commit()
+#     session.commit()

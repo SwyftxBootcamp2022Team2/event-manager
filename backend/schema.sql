@@ -9,6 +9,9 @@ CREATE TABLE IF NOT EXISTS `users` (
     email text NOT NULL,
     fname text NOT NULL,
     lname text NOT NULL,
+    department text NOT NULL,
+    dietary text,
+    accessibility text,
     isAdmin INTEGER NOT NULL
 );
 
@@ -33,6 +36,6 @@ CREATE TABLE IF NOT EXISTS `bookings` (
 );
 
 -- Insert test users
-INSERT INTO `users` (`email`, `fname`, `lname`, `isAdmin`) VALUES ('admin@gmail.com', 'Admin', 'User', 1);
-INSERT INTO `users` (`email`, `fname`, `lname`, `isAdmin`) VALUES ('user@gmail.com', 'Normal', 'User', 0);
+INSERT INTO `users` (`email`, `fname`, `lname`, `department`, `dietary`, `accessibility`, `isAdmin`) VALUES ('admin@gmail.com', 'Admin', 'User', 'P & C', null, null, 1);
+INSERT INTO `users` (`email`, `fname`, `lname`, `department`, `dietary`, `accessibility`, `isAdmin`) VALUES ('user@gmail.com', 'Normal', 'User', 'R & D', 'halal', 'wheelchair', 0);
 
