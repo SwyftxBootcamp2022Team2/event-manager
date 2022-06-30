@@ -6,6 +6,7 @@ import {
   Button, Flex, Heading, VStack,
 } from '@chakra-ui/react';
 import TextField from '../components/TextField';
+import axios from 'axios';
 
 const loginSchema = Yup.object().shape({
   email: Yup.string().email().required('Required'),
@@ -23,7 +24,10 @@ function LoginPage() {
           initialValues={initialValues}
           validationSchema={loginSchema}
           // TODO: connect with backend route.
-          onSubmit={() => { }}
+          onSubmit={(values) => {
+            const res = axios.post("http://127.0.0.1:5000/login", values);
+            console.log(res);
+          }}
         >
           <VStack as={Form} align="start" spacing={5}>
             <Heading>Log in</Heading>
