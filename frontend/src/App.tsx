@@ -17,7 +17,7 @@ function Router() {
   const { user } = useAuth();
 
   return (
-    <BrowserRouter>
+    <>
       {user ? (
         <>
           <NavigationBar />
@@ -34,17 +34,19 @@ function Router() {
           <Route path="/login" element={<LoginPage />} />
         </Routes>
       )}
-    </BrowserRouter>
+    </>
   )
 }
 
 function App() {
   return (
-    <AuthProvider>
-      <ChakraProvider theme={theme}>
-        <Router />
-      </ChakraProvider>
-    </AuthProvider>
+    <ChakraProvider theme={theme}>
+      <BrowserRouter>
+        <AuthProvider>
+          <Router />
+        </AuthProvider>
+      </BrowserRouter>
+    </ChakraProvider>
   );
 }
 

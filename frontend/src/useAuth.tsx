@@ -1,5 +1,5 @@
 import React, { ReactNode, useState, createContext, useEffect, useMemo, useContext } from "react";
-import { useNavigate, useLocation } from "react-router-dom"
+import { useNavigate } from "react-router-dom"
 import { User } from "./types/user"
 import * as sessionsApi from "./api/sessions";
 
@@ -21,27 +21,21 @@ export function AuthProvider({
   const [user, setUser] = useState<User>();
   const [error, setError] = useState<any>();
   const [loading, setLoading] = useState<boolean>(false);
-  const [loadingInitial, setLoadingInitial] = useState<boolean>(false)
 
-  // const navigate = useNavigate();
-  // const location = useLocation();
-
-  // reset errors on page change
-  // useEffect(() => {
-  //   if (error) setError(null);
-  // }, [location.pathname]);
-
+  const navigate = useNavigate();
 
   // check current active session on first mount
   useEffect(() => {
-    // TODO: post to getUser
+    if (user)
+      navigate("/calendar")
+    else navigate("/login")
   }, []);
 
   async function login(email: string) {
     setLoading(true);
     sessionsApi.login(email).then((user) => {
       setUser(user);
-      // navigate("/calendar");
+      navigate("/calendar");
     })
       .catch((error) => setError(error))
       .finally(() => setLoading(false));
@@ -52,15 +46,13 @@ export function AuthProvider({
   }
 
   // provider should update only when required
-  const memoizedValue = {
+  const memoizedValue = useMemo(() => ({
     user,
     loading,
     error,
     login,
     logout,
-  }
-
-  sessionsApi.login("hello@test.com")
+  }), [user, loading, error, login, logout]);
 
   return (
     <AuthContext.Provider value={memoizedValue}>
