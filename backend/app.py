@@ -7,45 +7,76 @@ import sqlite3 as sql
 from models import Bookings, User, Event, engine
 from sqlalchemy.orm.exc import NoResultFound
 from sqlalchemy.orm.exc import MultipleResultsFound
-
-
+from flask_cors import CORS, cross_origin
 
 app = Flask(__name__)
-
+cors = CORS(app)
+app.config['CORS_HEADERS'] = 'Content-Type'
 # app.config["SQLALCHEMY_DATABASE_URI"] = 'sqlite:///testdata.db'
 # db.init_app(app)
 # conn = sql.connect('testdata.db')
+
 
 @app.route("/")
 def hello():
     return "Hello, World!"
 
-@app.route("/login", methods=['GET', 'POST'])
-def login():
-    #jsonify result from frontend
-    #user = request.json['email', 'fname', 'lname']
-    user = request.json
-    email = user["email"]
-    userinfo = db.session.query(User).filter_by(email=email).first()
-    # check if email exists - if no, return error. If yes, grab first name, lastname, is admin, email and send it back in json format
-    if userinfo is not None:     # check if user is in database
-        # get user info from database
-        return jsonify(email=userinfo.email, fName=userinfo.fname, lName=userinfo.lname,isAdmin=userinfo.isAdmin), status.HTTP_200_OK
-    else: # if not, create new user, send back a token, and add new user into the "user" db
-        db.session.add(User(email=email, fname=user["fname"], lname=user["lname"], isAdmin=user["isAdmin"]))
-        return "Couldn't find user!", status.HTTP_400_BAD_REQUEST
 
-@app.route("/user/get", methods=['GET']) 
+# login takes user email, check database
+@app.route("/login", methods=['POST'])
+@cross_origin()
+def login():
+    user = request.json
+    email = user["email"]  # always check email
+    with Session(engine) as session:
+        userinfo = session.query(User).filter_by(email=email).first()
+    if userinfo is not None:  # email exists in db, so send back user data
+        return jsonify(email=userinfo.email, fName=userinfo.fname, lName=userinfo.lname, isAdmin=userinfo.isAdmin), status.HTTP_200_OK
+    return jsonify(error="User not found"), status.HTTP_404_NOT_FOUND
+
+
+# login takes user email, check database
+@app.route("/signup", methods=['POST'])
+@cross_origin()
+def signup():
+    user = request.json
+    email = user["email"]  # always check email
+    fname = user["fname"]
+    lname = user["lname"]
+    isAdmin = user["isAdmin"]
+    # check if email exists - if not, create new user
+    with Session(engine) as session:
+        userinfo = session.query(User).filter_by(email=email).first()
+    if userinfo is not None:  # email exists in db, so send back user data
+        return jsonify(email=userinfo.email, fName=userinfo.fname, lName=userinfo.lname, isAdmin=userinfo.isAdmin), status.HTTP_200_OK
+    else:  # user doesn't exist, so add to db
+        with Session(engine) as session:
+            user = User(
+                email=email,
+                fname=fname,
+                lname=lname,
+                isAdmin=isAdmin
+            )
+            session.add(user)
+            session.commit()
+        return jsonify(error="User not found"), status.HTTP_404_NOT_FOUND
+
+
+@app.route("/user/get", methods=['GET'])
+@cross_origin()
 def get_user():
     user = request.json
     email = user["email"]
-    userinfo = db.session.query(User).filter_by(email=email).first()
+    with Session(engine) as session:
+        userinfo = session.query(User).filter_by(email=email).first()
     if userinfo is not None:     # check if user is in database, and give back their info
-        return jsonify(email=userinfo.email, fName=userinfo.fname, lName=userinfo.lname,isAdmin=userinfo.isAdmin), status.HTTP_200_OK
-    else: # if not, send back a token, (its a get so don't add this user into the "user" db)
-        return "Couldn't find user!", status.HTTP_400_BAD_REQUEST
+        return jsonify(email=userinfo.email, fName=userinfo.fname, lName=userinfo.lname, isAdmin=userinfo.isAdmin), status.HTTP_200_OK
+    # if not, send back a token, (its a get so don't add this user into the "user" db)
+    return "Couldn't find user!", status.HTTP_400_BAD_REQUEST
 
-@app.route("/event/create", methods=['GET','POST']) # admin is the one who creates
+
+@app.route("/event/create", methods=['GET', 'POST'])
+@cross_origin()
 def create_event():
     # get user data
     eventInfo = request.json
@@ -55,7 +86,7 @@ def create_event():
     startTime = eventInfo["startTime"]
     endTime = eventInfo["endTime"]
     partLimit = eventInfo["participationLimit"]
-    publishTime = eventInfo["publishTime"] 
+    publishTime = eventInfo["publishTime"]
 
     # check if the user is an admin
     if (not isAdmin(createdBy)):
@@ -73,7 +104,6 @@ def create_event():
                 participationLimit = partLimit,
                 publishTime = datetime.strptime(publishTime, "%d-%m-%Y %H:%M:%S")
             )
-
             session.add(event)
             session.commit()
         return "Event successfully created", status.HTTP_201_CREATED
@@ -84,36 +114,45 @@ def create_event():
 
 
 @app.route("/event/delete", methods=['DELETE'])
+@cross_origin()
 def delete_event():
+    # theres 2 jsons so two reads are happening, but depending on how the packet looks
+    # we can just do one read and split it into user and event
     user = request.json
-    email = user["email"]
-    userinfo = db.session.query(User).filter_by(email=email).first()
-    if userinfo.isAdmin == 0:
+
+    # check if the user is an admin
+    if (not isAdmin(user)):
         return "You are not an admin!", status.HTTP_400_BAD_REQUEST
 
-    # get data from frontend
-    event = request.json
-    # check if event exists
+    event = request.json  # check if event exists
     eventID = event["eventID"]
-    eventInfo = db.session.query(Event).filter_by(eventID=eventID).first()
-    if eventInfo is not None: # if exists, delete event
-        db.session.delete(eventInfo)
-    else:
-        return "Event Doesn't Exist!", status.HTTP_400_BAD_REQUEST
+    try:
+        with Session(engine) as session:
+            event = session.get(Event, eventID)
+            session.delete(event)
+            session.commit()
+            return "Event successfully deleted", status.HTTP_200_OK
+    except:
+        return "Error occured when deleting event, please try again later", status.HTTP_400_BAD_REQUEST
+
 
 @app.route("/event/view", methods=['GET', 'POST'])
+@cross_origin()
 def view_event():
     # get data from frontend
     event = request.json
     # check if event exists
     eventID = event["eventID"]
-    eventInfo = db.session.query(Event).filter_by(eventID=eventID).first()
-    if eventInfo is not None: # if it exists, send that mf back
+    with Session(engine) as session:
+        eventInfo = session.query(Event).filter_by(eventID=eventID).first()
+    if eventInfo is not None:  # if it exists, send that mf back
         return jsonify(eventID=eventInfo.eventID, title=eventInfo.title, location=eventInfo.location, start=eventInfo.start, startTime=eventInfo.startTime, endTime=eventInfo.endTime, participationLimit=eventInfo.participationLimit, createdBy=eventInfo.createdBy), status.HTTP_200_OK
-    else: # if not, send back a token
-        return "Event Doesn't Exist!", status.HTTP_400_BAD_REQUEST
+    # if not, send back a token
+    return "Event Doesn't Exist!", status.HTTP_400_BAD_REQUEST
 
-@app.route("/event/book", methods=['POST']) # user is the one who books
+
+@app.route("/event/book", methods=['POST'])  # user is the one who books
+@cross_origin()
 def book_event():
     bookingInfo = request.json
     eventID = bookingInfo["eventID"]
@@ -121,7 +160,7 @@ def book_event():
     try:
         with Session(engine) as session:
             newBooking = Bookings(
-                eventID=eventID, 
+                eventID=eventID,
                 email=email
             )
             session.add(newBooking)
@@ -132,20 +171,23 @@ def book_event():
     except:
         return "An error occured when booking, please try again later", status.HTTP_400_BAD_REQUEST
 
-@app.route("/event/unbook", methods=['DELETE']) 
+
+@app.route("/event/unbook", methods=['DELETE'])
+@cross_origin()
 def unbook_event():
-    bookingInfo = request.json 
-    eventID = bookingInfo["eventID"] #eventID to delete
+    bookingInfo = request.json
+    eventID = bookingInfo["eventID"]  # eventID to delete
 
     try:
         with Session(engine) as session:
             booking = session.get(Bookings, eventID)
             session.delete(booking)
             session.commit()
-        
+
         return "Event successfully unbooked", status.HTTP_200_OK
     except:
-        return "Error occured when unbooking, please try again later", status.HTTP_400_BAD_REQUEST 
+        return "Error occured when unbooking, please try again later", status.HTTP_400_BAD_REQUEST
+
 
 @app.route("/home", methods=['GET'])
 def home_function():
@@ -153,11 +195,13 @@ def home_function():
 
 #### HELPER FUNCTION ####
 
+
 def print_db(modelName):
     with engine.connect() as conn:
-            stmt = select(modelName)    
-            for row in conn.execute(stmt):
-                print(row)
+        stmt = select(modelName)
+        for row in conn.execute(stmt):
+            print(row)
+
 
 def isAdmin(email):
     try:
@@ -168,5 +212,5 @@ def isAdmin(email):
 
     except NoResultFound:
         return "No user with associated email found", status.HTTP_400_BAD_REQUEST
-        
+
     return user.isAdmin == 1
