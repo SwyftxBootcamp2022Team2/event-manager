@@ -35,6 +35,7 @@ function NavigationBar() {
         <HStack alignItems="center" spacing={2}>
           {NavLinks.map((link) => (
             <Button
+              key={link.name}
               variant="solid"
               colorScheme="teal"
               size="sm"
