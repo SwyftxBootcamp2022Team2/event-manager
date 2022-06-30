@@ -20,11 +20,11 @@ cd frontend
 yarn start
 ```
 
-For the backend, the requirements are as follows:
+For the backend, run the following
 ```
-pip install flask
-pip install flask_alchemy
-pip install flask_api 
+cd event-manager
+cd backend
+pip install requirements.txt
 ```
 
 Then, initialise the database and run it:
