@@ -26,13 +26,21 @@ function LoginPage() {
           initialValues={initialValues}
           validationSchema={loginSchema}
           onSubmit={(values) => {
-            login(values.email)
+            login(values.email);
           }}
         >
           <VStack as={Form} align="start" spacing={5}>
             <Heading>Log in</Heading>
             <TextField name="email" aria-label="email" />
-            <Button type="submit" colorScheme="teal">Submit</Button>
+            <Button
+              bg="#0072ed"
+              _hover={{ bg: '#005de2' }}
+              color="white"
+              type="submit"
+              colorScheme="teal"
+            >
+              Submit
+            </Button>
           </VStack>
         </Formik>
       </Box>
