@@ -31,7 +31,7 @@ Then, initialise the database and run it:
 ```
 python3 init_db.py
 export FLASK_APP=myapp
-export FLASK_ENV=development // For reloading on save
+export FLASK_ENV=development // [OPTIONAL] - For reloading on save
 flask run
 ```
 
