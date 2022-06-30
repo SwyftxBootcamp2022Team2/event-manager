@@ -9,8 +9,11 @@ import {
   Heading,
 } from '@chakra-ui/react';
 import React from 'react';
+import useAuth from '../useAuth';
 
 function ProfilePage() {
+  const { user } = useAuth();
+
   return (
     <Flex alignItems="center" justifyContent="center" h="100vh">
       <Box boxShadow="rgba(149, 157, 165, 0.2) 0px 8px 24px" py={10} px={20}>
@@ -38,7 +41,7 @@ function ProfilePage() {
                 <Text mx="20px" w="200px">
                   First Name
                 </Text>
-                <Input placeholder="medium size" size="md" />
+                <Input placeholder={user?.email} size="md" />
               </Flex>
             </Flex>
             <Flex flexDirection="column">
