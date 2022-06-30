@@ -16,11 +16,11 @@ CREATE TABLE IF NOT EXISTS `events` (
     eventID INTEGER PRIMARY KEY AUTOINCREMENT,
     title text NOT NULL,
     location text NOT NULL,
-    start text NOT NULL,
     startTime datetime NOT NULL,
     endTime datatime NOT NULL,
     participationLimit int,
     createdBy INTEGER,
+    publishTime datetime,
     FOREIGN KEY (eventID) REFERENCES users(userID)
 );
 

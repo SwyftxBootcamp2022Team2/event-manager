@@ -1,5 +1,6 @@
 from sqlalchemy.orm import Session
 from sqlalchemy import select
+from datetime import datetime
 from flask import Flask, jsonify, request
 from flask_api import status
 import sqlite3 as sql
@@ -67,17 +68,18 @@ def create_event():
                 createdBy = createdBy,
                 title = eventTitle,
                 location = location,
-                startTime = startTime,
-                endTime = endTime,
+                startTime = datetime.strptime(startTime, "%d-%m-%Y %H:%M:%S"),
+                endTime = datetime.strptime(endTime, "%d-%m-%Y %H:%M:%S"),
                 participationLimit = partLimit,
-                publishTime = publishTime
+                publishTime = datetime.strptime(publishTime, "%d-%m-%Y %H:%M:%S")
             )
 
             session.add(event)
             session.commit()
-            print_db(Event)
         return "Event successfully created", status.HTTP_201_CREATED
-    except:
+    except Exception as e:
+        print(e)
+
         return "Error occurred when creating an event", status.HTTP_400_BAD_REQUEST
 
 
