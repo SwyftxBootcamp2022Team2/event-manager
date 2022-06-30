@@ -24,6 +24,7 @@ function App() {
           <Route path="/my-bookings" element={<MyBookingsPage />} />
           <Route path="/calendar" element={<CalendarPage />} />
           <Route path="/create-event" element={<CreateEventPage />} />
+          <Route path="/profile-page" element={<ProfilePage />} />
         </Routes>
       </BrowserRouter>
     </ChakraProvider>
