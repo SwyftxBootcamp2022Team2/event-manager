@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React from 'react';
 import {
   ChakraProvider,
   theme,
@@ -11,20 +11,40 @@ import MyBookingsPage from './pages/MyBookingsPage';
 import CreateEventPage from './pages/CreateEventPage';
 import NavigationBar from './components/NavigationBar';
 import BookingPage from './pages/BookingPage';
+import useAuth, { AuthProvider } from './useAuth';
+
+function Router() {
+  const { user } = useAuth();
+
+  return (
+    <>
+      {user ? (
+        <>
+          <NavigationBar />
+          <Routes>
+            <Route path="/book-events" element={<BookingPage />} />
+            <Route path="/profile" element={<ProfilePage />} />
+            <Route path="/my-bookings" element={<MyBookingsPage />} />
+            <Route path="/calendar" element={<CalendarPage />} />
+            <Route path="/create-event" element={<CreateEventPage />} />
+          </Routes>
+        </>
+      ) : (
+        <Routes>
+          <Route path="/login" element={<LoginPage />} />
+        </Routes>
+      )}
+    </>
+  )
+}
 
 function App() {
   return (
     <ChakraProvider theme={theme}>
       <BrowserRouter>
-        <NavigationBar />
-        <Routes>
-          <Route path="/" element={<LoginPage />} />
-          <Route path="/book-events" element={<BookingPage />} />
-          <Route path="/profile" element={<ProfilePage />} />
-          <Route path="/my-bookings" element={<MyBookingsPage />} />
-          <Route path="/calendar" element={<CalendarPage />} />
-          <Route path="/create-event" element={<CreateEventPage />} />
-        </Routes>
+        <AuthProvider>
+          <Router />
+        </AuthProvider>
       </BrowserRouter>
     </ChakraProvider>
   );

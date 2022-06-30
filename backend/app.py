@@ -16,7 +16,6 @@ app.config['CORS_HEADERS'] = 'Content-Type'
 # db.init_app(app)
 # conn = sql.connect('testdata.db')
 
-
 @app.route("/")
 @cross_origin()
 def hello():
@@ -196,13 +195,11 @@ def home_function():
 
 #### HELPER FUNCTION ####
 
-
 def print_db(modelName):
     with engine.connect() as conn:
         stmt = select(modelName)
         for row in conn.execute(stmt):
             print(row)
-
 
 def isAdmin(email):
     try:
@@ -215,3 +212,4 @@ def isAdmin(email):
         return "No user with associated email found", status.HTTP_400_BAD_REQUEST
 
     return user.isAdmin == 1
+
