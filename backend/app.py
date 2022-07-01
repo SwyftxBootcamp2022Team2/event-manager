@@ -216,9 +216,9 @@ def all_bookings():
             events = []
             for q in query:
                 if q.Bookings.email == email:
-                    temp = json.dumps({'title': q.Event.title, 'location': q.Event.location, 'startTime': q.Event.startTime, 'endTime': q.Event.endTime, 'participationLimit': q.Event.participationLimit, 'email': email})
+                    temp = {'title': q.Event.title, 'location': q.Event.location, 'startTime': q.Event.startTime, 'endTime': q.Event.endTime, 'participationLimit': q.Event.participationLimit, 'email': email}
                     events.append(temp)
-            print(events)
+            # remove strings from each event in array
             return jsonify(events), status.HTTP_200_OK
 
     return "Booking", status.HTTP_200_OK
