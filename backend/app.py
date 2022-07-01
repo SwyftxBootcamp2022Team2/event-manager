@@ -8,6 +8,7 @@ from models import Bookings, User, Event, engine
 from sqlalchemy.orm.exc import NoResultFound
 from sqlalchemy.orm.exc import MultipleResultsFound
 from flask_cors import CORS, cross_origin
+from flask import g 
 
 app = Flask(__name__)
 cors = CORS(app)
@@ -209,16 +210,26 @@ def all_bookings():
     with Session(engine) as session:
             # find all events associated with email
             #events = session.query(Event)
+            
             query = session.query(Bookings, Event).join(Event, Event.eventID == Bookings.eventID).all()
             
+            # query2 = session.query(Event, User).join(User, email == Event.createdBy).all()
+            # for q in query2:
+            #     print(q)
+            
+            print("query", query)
+            for q in query:
+                print("query", q.Event.title)
+            # for each user, find all events associated with that user
+            # events = session.query(Event).filter_by(createdBy=email).all()
+            # print("events", events)
+            # for ev in events:
+            #     print(ev.eventID)
+            #     print(len(events))
 
-
-            query2 = session.query(Event, User).join(User, email == Event.createdBy).all()
-            for q in query2:
-                print(q)
             #events = session.query(Event).filter(email="user@gmail.com").all()
-            print("asdasd")
-            print(query)
+            # print("asdasd")
+            # print(query)
     
     return "Booking", status.HTTP_200_OK
 

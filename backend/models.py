@@ -17,9 +17,9 @@ class User(Base):
     email = Column(String,primary_key=True, nullable = False)
     lname = Column(String, nullable = False)
     fname = Column(String, nullable = False)
-    #department = Column(String)
-    #dietary = Column(String)
-    #accessibility = Column(String)
+    department = Column(String)
+    dietary = Column(String)
+    accessibility = Column(String)
     isAdmin = Column(Integer, nullable = False)
 
     # relationships
@@ -37,7 +37,7 @@ class Event(Base):
     participationLimit = Column(Integer)
     publishTime = Column(String)
 
-    createdBy = Column(String, ForeignKey("users.email"),)
+    email = Column(String, ForeignKey("users.email"),)
     #email = relationship("User")
     #booking = relationship("Bookings")
 
@@ -53,36 +53,36 @@ class Bookings(Base):
     #event = relationship("Event")
 
 
-# pre-populate data
-with Session(engine) as session:
-    admin = User(
-        email="admin@gmail.com",
-        fname="Admin",
-        lname="User",
-        isAdmin=1
-    )
+# # pre-populate data
+# with Session(engine) as session:
+#     admin = User(
+#         email="admin@gmail.com",
+#         fname="Admin",
+#         lname="User",
+#         isAdmin=1
+#     )
 
-    user = User(
-        email="user@gmail.com",
-        fname="Average",
-        lname="User",
-        isAdmin=0
-    )
+#     user = User(
+#         email="user@gmail.com",
+#         fname="Average",
+#         lname="User",
+#         isAdmin=0
+#     )
 
-    newEvent = Event(
-        createdBy = "admin@gmail.com",
-        title = "Event 1",
-        location = "Location 1",
-        startTime = "10:10",
-        endTime = "11"
-    )
+#     newEvent = Event(
+#         createdBy = "admin@gmail.com",
+#         title = "Event 1",
+#         location = "Location 1",
+#         startTime = "10:10",
+#         endTime = "11"
+#     )
 
-    newBooking = Bookings(
-        eventID = 1,
-        email="admin@gmail.com"
-    )
+#     newBooking = Bookings(
+#         eventID = 1,
+#         email="admin@gmail.com"
+#     )
 
 
-    session.add_all([admin, user, newEvent])
+#     session.add_all([admin, user, newEvent])
 
-    session.commit()
+#     session.commit()
