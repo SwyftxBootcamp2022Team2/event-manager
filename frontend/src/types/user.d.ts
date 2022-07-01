@@ -1,4 +1,4 @@
-export interface User {
+interface User {
   email: string;
   fName: string;
   lName: string;
@@ -7,4 +7,3 @@ export interface User {
   accessibility: string;
   isAdmin: boolean;
 }
-

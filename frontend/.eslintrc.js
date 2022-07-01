@@ -21,8 +21,9 @@ module.exports = {
   },
   plugins: ['react', '@typescript-eslint'],
   rules: {
-    allowExpressions: 0,
+    'react/jsx-props-no-spreading': 'off',
     'no-console': 'off',
+    'no-undef': 'off',
     'import/extensions': [
       'error',
       'ignorePackages',
@@ -31,11 +32,12 @@ module.exports = {
         jsx: 'never',
         ts: 'never',
         tsx: 'never',
+        d: 'never',
       },
     ],
     'react/jsx-filename-extension': [
       2,
-      { extensions: ['.js', '.jsx', '.ts', '.tsx'] },
+      { extensions: ['.js', '.jsx', '.ts', '.tsx', '.d.ts'] },
     ],
   },
 };

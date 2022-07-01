@@ -1,7 +1,13 @@
-import React, { ReactNode, useState, createContext, useEffect, useMemo, useContext } from "react";
-import { useNavigate } from "react-router-dom"
-import { User } from "./types/user"
-import * as sessionsApi from "./api/sessions";
+import React, {
+  ReactNode,
+  useState,
+  createContext,
+  useEffect,
+  useMemo,
+  useContext,
+} from 'react';
+import { useNavigate } from 'react-router-dom';
+import * as sessionsApi from './api/sessions';
 
 interface AuthContextType {
   user?: User;
@@ -26,41 +32,45 @@ export function AuthProvider({
 
   // check current active session on first mount
   useEffect(() => {
-    if (user)
-      navigate("/calendar")
-    else navigate("/login")
-  }, []);
+    if (user) navigate('/book-events');
+    else navigate('/login');
+  }, [user]);
 
   async function login(email: string) {
     setLoading(true);
-    sessionsApi.login(email).then((user) => {
-      setUser(user);
-      navigate("/calendar");
-    })
+    sessionsApi
+      .login(email)
+      .then((user) => {
+        setUser(user);
+        navigate('/calendar');
+      })
       .catch((error) => setError(error))
       .finally(() => setLoading(false));
   }
 
   function logout() {
-    // TODO: post to logout
+    setUser(undefined); // clear user
+    navigate('/login'); // redirect to login page
   }
 
   // provider should update only when required
-  const memoizedValue = useMemo(() => ({
-    user,
-    loading,
-    error,
-    login,
-    logout,
-  }), [user, loading, error, login, logout]);
+  const memoizedValue = useMemo(
+    () => ({
+      user,
+      loading,
+      error,
+      login,
+      logout,
+    }),
+    [user, loading, error, login, logout],
+  );
 
   return (
     <AuthContext.Provider value={memoizedValue}>
       {children}
     </AuthContext.Provider>
   );
-};
-
+}
 
 export default function useAuth() {
   return useContext(AuthContext);
