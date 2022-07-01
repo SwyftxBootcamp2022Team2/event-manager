@@ -205,14 +205,22 @@ def all_bookings():
     # give all the events that have my email
     userinfo = request.json
     email = userinfo["email"]
-    try:
-        with Session(engine) as session:
+    print("email", email)
+    with Session(engine) as session:
             # find all events associated with email
-            events = session.query(Event).filter_by(email=email).all()
-            return events, status.HTTP_200_OK
-    except:
-        return "", status.HTTP_400_BAD_REQUEST
+            #events = session.query(Event)
+            query = session.query(Bookings, Event).join(Event, Event.eventID == Bookings.eventID).all()
+            
 
+
+            query2 = session.query(Event, User).join(User, email == Event.createdBy).all()
+            for q in query2:
+                print(q)
+            #events = session.query(Event).filter(email="user@gmail.com").all()
+            print("asdasd")
+            print(query)
+    
+    return "Booking", status.HTTP_200_OK
 
 @app.route("/", methods=['GET'])
 def home_function():
