@@ -2,7 +2,6 @@ import {
   FormControl,
   Text,
   Select,
-  Input,
   VStack,
   Box,
   Flex,
@@ -10,7 +9,7 @@ import {
   Button,
 } from '@chakra-ui/react';
 import React from 'react';
-import ProfileInputRow from '../components/ProfileInputRow';
+import HorizontalTextField from '../components/HorizontalTextField';
 import useAuth from '../useAuth';
 
 function ProfilePage() {
@@ -18,6 +17,10 @@ function ProfilePage() {
 
   const [fName, setFName] = React.useState(user?.fName ?? '');
   const [lName, setLName] = React.useState(user?.lName ?? '');
+  const [dietary, setDietary] = React.useState(user?.dietary ?? '');
+  const [accessibility, setAccessiblity] = React.useState(
+    user?.accessibility ?? '',
+  );
 
   return (
     <Flex alignItems="center" justifyContent="center" h="100vh">
@@ -39,23 +42,12 @@ function ProfilePage() {
                 </Text>
               </Flex>
             </Flex>
-            <Flex flexDirection="column">
-              <Flex
-                flexDirection="row"
-                alignItems="center"
-                justifyContent="center"
-              >
-                <Text mx="20px" w="200px">
-                  First Name
-                </Text>
-                <Input
-                  value={fName}
-                  onChange={(event) => setFName(event.target.value)}
-                  size="md"
-                />
-              </Flex>
-            </Flex>
-            <ProfileInputRow
+            <HorizontalTextField
+              label={'First Name'}
+              value={fName}
+              onChange={(event) => setFName(event.target.value)}
+            />
+            <HorizontalTextField
               label={'Last Name'}
               value={lName}
               onChange={(event) => setLName(event.target.value)}
@@ -72,31 +64,19 @@ function ProfilePage() {
                 <Select placeholder="placeholder" size="md" />
               </Flex>
             </Flex>
-            <Flex flexDirection="column">
-              <Flex
-                flexDirection="row"
-                alignItems="center"
-                justifyContent="center"
-              >
-                <Text mx="20px" w="200px">
-                  Dietary
-                </Text>
-                <Input placeholder="placeholder" size="md" />
-              </Flex>
-            </Flex>
-            <Flex flexDirection="column">
-              <Flex
-                flexDirection="row"
-                alignItems="center"
-                justifyContent="center"
-              >
-                <Text mx="20px" w="200px">
-                  Accessibility
-                </Text>
-                <Input w="100%" placeholder="placeholder" size="md" />
-              </Flex>
-            </Flex>
-            <Button onClick={() => {}}></Button>
+            <HorizontalTextField
+              label={'Dietary'}
+              value={dietary}
+              onChange={(event) => setDietary(event.target.value)}
+            />
+            <HorizontalTextField
+              label={'Accessibility'}
+              value={accessibility}
+              onChange={(event) => setAccessiblity(event.target.value)}
+            />
+            <Button type="submit" colorScheme="teal">
+              SaveChanges
+            </Button>
           </VStack>
         </FormControl>
       </Box>
