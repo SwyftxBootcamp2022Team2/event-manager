@@ -14,7 +14,6 @@ app = Flask(__name__)
 cors = CORS(app)
 app.config['CORS_HEADERS'] = 'Content-Type'
 
-
 @app.route("/")
 @cross_origin()
 def hello():
@@ -231,13 +230,11 @@ def home_function():
 
 #### HELPER FUNCTION ####
 
-
 def print_db(modelName):
     with engine.connect() as conn:
         stmt = select(modelName)
         for row in conn.execute(stmt):
             print(row)
-
 
 def isAdmin(email):
     try:
@@ -250,3 +247,4 @@ def isAdmin(email):
         return "No user with associated email found", status.HTTP_400_BAD_REQUEST
 
     return user.isAdmin == 1
+
