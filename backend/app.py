@@ -207,7 +207,6 @@ def all_bookings():
     # give all the events that have my email
     userinfo = request.json
     email = userinfo["email"]
-    print("email", email)
     with Session(engine) as session:
             # find all events associated with email
             #events = session.query(Event)
@@ -219,8 +218,6 @@ def all_bookings():
                 events.append(temp)
             # remove strings from each event in array
             return jsonify(events), status.HTTP_200_OK
-
-    return "Booking", status.HTTP_200_OK
 
 @app.route("/", methods=['GET'])
 def home_function():
