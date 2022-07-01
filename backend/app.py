@@ -14,6 +14,7 @@ app = Flask(__name__)
 cors = CORS(app)
 app.config['CORS_HEADERS'] = 'Content-Type'
 
+
 @app.route("/")
 @cross_origin()
 def hello():
@@ -134,13 +135,13 @@ def create_event():
     try:
         with Session(engine) as session:
             event = Event(
-                createdBy = createdBy,
-                title = eventTitle,
-                location = location,
-                startTime = datetime.strptime(startTime, "%d-%m-%Y %H:%M:%S"),
-                endTime = datetime.strptime(endTime, "%d-%m-%Y %H:%M:%S"),
-                participationLimit = partLimit,
-                publishTime = datetime.strptime(publishTime, "%d-%m-%Y %H:%M:%S")
+                createdBy=createdBy,
+                title=eventTitle,
+                location=location,
+                startTime=datetime.strptime(startTime, "%d-%m-%Y %H:%M:%S"),
+                endTime=datetime.strptime(endTime, "%d-%m-%Y %H:%M:%S"),
+                participationLimit=partLimit,
+                publishTime=datetime.strptime(publishTime, "%d-%m-%Y %H:%M:%S")
             )
             session.add(event)
             session.commit()
@@ -189,18 +190,26 @@ def view_event():
     return "Event Doesn't Exist!", status.HTTP_400_BAD_REQUEST
 
 
-@app.route("/event/book", methods=['POST'])  # user is the one who books
+@app.route("/bookings/create", methods=['POST'])  # user is the one who books
 @cross_origin()
 def book_event():
     bookingInfo = request.json
     eventID = bookingInfo["eventID"]
     email = bookingInfo["email"]
+
     try:
         with Session(engine) as session:
             newBooking = Bookings(
                 eventID=eventID,
                 email=email
             )
+            # get number of bookings that are left to do
+            numBookings = session.query(
+                Bookings).filter_by(eventID=eventID).count()
+            # check if the participation limit has been exceed
+            event = session.query(Event).filter_by(email=email).first()
+            if numBookings + 1 >= event.participationLimit:
+                return "Participation limit exceeded", status.HTTP_400_BAD_REQUEST
             session.add(newBooking)
             session.commit()
 
@@ -209,7 +218,7 @@ def book_event():
         return "An error occured when booking, please try again later", status.HTTP_400_BAD_REQUEST
 
 
-@app.route("/event/unbook", methods=['DELETE'])
+@app.route("/bookings/delete", methods=['DELETE'])
 @cross_origin()
 def unbook_event():
     bookingInfo = request.json
@@ -226,17 +235,35 @@ def unbook_event():
         return "Error occured when unbooking, please try again later", status.HTTP_400_BAD_REQUEST
 
 
+@app.route("/bookings/mybookings", methods=['GET'])
+@cross_origin()
+def all_bookings():
+    # give email as the foreign key for the bookings
+    # give all the events that have my email
+    userinfo = request.json
+    email = userinfo["email"]
+    try:
+        with Session(engine) as session:
+            # find all events associated with email
+            events = session.query(Event).filter_by(email=email).all()
+            return events, status.HTTP_200_OK
+    except:
+        return "", status.HTTP_400_BAD_REQUEST
+
+
 @app.route("/", methods=['GET'])
 def home_function():
     return True
 
 #### HELPER FUNCTION ####
 
+
 def print_db(modelName):
     with engine.connect() as conn:
         stmt = select(modelName)
         for row in conn.execute(stmt):
             print(row)
+
 
 def isAdmin(email):
     try:
@@ -249,4 +276,3 @@ def isAdmin(email):
         return "No user with associated email found", status.HTTP_400_BAD_REQUEST
 
     return user.isAdmin == 1
-
