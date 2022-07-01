@@ -7,12 +7,17 @@ import {
   Box,
   Flex,
   Heading,
+  Button,
 } from '@chakra-ui/react';
 import React from 'react';
+import ProfileInputRow from '../components/ProfileInputRow';
 import useAuth from '../useAuth';
 
 function ProfilePage() {
   const { user } = useAuth();
+
+  const [fName, setFName] = React.useState(user?.fName ?? '');
+  const [lName, setLName] = React.useState(user?.lName ?? '');
 
   return (
     <Flex alignItems="center" justifyContent="center" h="100vh">
@@ -29,7 +34,9 @@ function ProfilePage() {
                 <Text mx="20px" w="200px">
                   Email
                 </Text>
-                <Input placeholder={user?.email} size="md" />
+                <Text mx="20px" w="200px" textAlign={'left'}>
+                  {user?.email}
+                </Text>
               </Flex>
             </Flex>
             <Flex flexDirection="column">
@@ -41,21 +48,18 @@ function ProfilePage() {
                 <Text mx="20px" w="200px">
                   First Name
                 </Text>
-                <Input placeholder={user?.fName} size="md" />
+                <Input
+                  value={fName}
+                  onChange={(event) => setFName(event.target.value)}
+                  size="md"
+                />
               </Flex>
             </Flex>
-            <Flex flexDirection="column">
-              <Flex
-                flexDirection="row"
-                alignItems="center"
-                justifyContent="center"
-              >
-                <Text mx="20px" w="200px">
-                  Last Name
-                </Text>
-                <Input placeholder={user?.lName} size="md" />
-              </Flex>
-            </Flex>
+            <ProfileInputRow
+              label={'Last Name'}
+              value={lName}
+              onChange={(event) => setLName(event.target.value)}
+            />
             <Flex flexDirection="column">
               <Flex
                 flexDirection="row"
@@ -92,6 +96,7 @@ function ProfilePage() {
                 <Input w="100%" placeholder="placeholder" size="md" />
               </Flex>
             </Flex>
+            <Button onClick={() => {}}></Button>
           </VStack>
         </FormControl>
       </Box>
