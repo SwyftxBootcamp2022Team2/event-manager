@@ -42,3 +42,4 @@ INSERT INTO `events` (`title`, `location`, `startTime`, `endTime`, `participatio
 -- Insert test bookings
 INSERT INTO `bookings` (`eventID`, `email`) VALUES (1, "admin@gmail.com");
 INSERT INTO `bookings` (`eventID`, `email`) VALUES (3, "admin@gmail.com");
+INSERT INTO `bookings` (`eventID`, `email`) VALUES (2, "user@gmail.com");

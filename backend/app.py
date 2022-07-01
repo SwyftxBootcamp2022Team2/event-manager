@@ -9,6 +9,7 @@ from sqlalchemy.orm.exc import NoResultFound
 from sqlalchemy.orm.exc import MultipleResultsFound
 from flask_cors import CORS, cross_origin
 from flask import g 
+import json 
 
 app = Flask(__name__)
 cors = CORS(app)
@@ -210,27 +211,16 @@ def all_bookings():
     with Session(engine) as session:
             # find all events associated with email
             #events = session.query(Event)
-            
-            query = session.query(Bookings, Event).join(Event, Event.eventID == Bookings.eventID).all()
-            
-            # query2 = session.query(Event, User).join(User, email == Event.createdBy).all()
-            # for q in query2:
-            #     print(q)
-            
-            print("query", query)
-            for q in query:
-                print("query", q.Event.title)
-            # for each user, find all events associated with that user
-            # events = session.query(Event).filter_by(createdBy=email).all()
-            # print("events", events)
-            # for ev in events:
-            #     print(ev.eventID)
-            #     print(len(events))
 
-            #events = session.query(Event).filter(email="user@gmail.com").all()
-            # print("asdasd")
-            # print(query)
-    
+            query = session.query(Bookings, Event).join(Event, Event.eventID == Bookings.eventID).all()
+            events = []
+            for q in query:
+                if q.Bookings.email == email:
+                    temp = json.dumps({'title': q.Event.title, 'location': q.Event.location, 'startTime': q.Event.startTime, 'endTime': q.Event.endTime, 'participationLimit': q.Event.participationLimit, 'email': email})
+                    events.append(temp)
+            print(events)
+            return jsonify(events), status.HTTP_200_OK
+
     return "Booking", status.HTTP_200_OK
 
 @app.route("/", methods=['GET'])

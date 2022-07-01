@@ -36,7 +36,6 @@ class Event(Base):
     endTime = Column(String)
     participationLimit = Column(Integer)
     publishTime = Column(String)
-
     email = Column(String, ForeignKey("users.email"),)
     #email = relationship("User")
     #booking = relationship("Bookings")
