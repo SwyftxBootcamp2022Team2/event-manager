@@ -212,12 +212,11 @@ def all_bookings():
             # find all events associated with email
             #events = session.query(Event)
 
-            query = session.query(Bookings, Event).join(Event, Event.eventID == Bookings.eventID).all()
+            query = session.query(Bookings, Event).join(Event, Event.eventID == Bookings.eventID).filter(Bookings.email == email).all()
             events = []
             for q in query:
-                if q.Bookings.email == email:
-                    temp = {'title': q.Event.title, 'location': q.Event.location, 'startTime': q.Event.startTime, 'endTime': q.Event.endTime, 'participationLimit': q.Event.participationLimit, 'email': email}
-                    events.append(temp)
+                temp = {'title': q.Event.title, 'location': q.Event.location, 'startTime': q.Event.startTime, 'endTime': q.Event.endTime, 'participationLimit': q.Event.participationLimit, 'email': email}
+                events.append(temp)
             # remove strings from each event in array
             return jsonify(events), status.HTTP_200_OK
 
