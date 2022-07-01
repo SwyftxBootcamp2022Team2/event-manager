@@ -27,7 +27,7 @@ const NavLinks: NavigationLink[] = [
 
 function NavigationBar() {
   return (
-    <Box bg={useColorModeValue('gray.100', 'gray.900')} px={4}>
+    <Box bg={useColorModeValue('#ffffff', '#0a0b0d')} px={4}>
       <Flex h={16} alignItems="center" justifyContent="space-between">
         <Box>
           <Avatar size="md" src={SwyftxLogo} />
@@ -37,7 +37,9 @@ function NavigationBar() {
             <Button
               key={link.name}
               variant="solid"
-              colorScheme="teal"
+              bg="#0072ed"
+              _hover={{ bg: '#005de2' }}
+              color="white"
               size="sm"
               leftIcon={link.leftIcon}
             >
