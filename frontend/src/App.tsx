@@ -30,7 +30,7 @@ function Router() {
     </>
   );
 
-  return user === null ? (
+  return user ? (
     authorisedRoutes
   ) : (
     <Routes>
