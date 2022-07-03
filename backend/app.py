@@ -10,9 +10,11 @@ from sqlalchemy.orm.exc import NoResultFound
 from sqlalchemy.orm.exc import MultipleResultsFound
 from flask_cors import CORS, cross_origin
 
+
 app = Flask(__name__)
 cors = CORS(app)
 app.config['CORS_HEADERS'] = 'Content-Type'
+
 
 
 @app.route("/")
@@ -242,14 +244,15 @@ def all_bookings():
     # give all the events that have my email
     userinfo = request.json
     email = userinfo["email"]
-    try:
-        with Session(engine) as session:
+    with Session(engine) as session:
             # find all events associated with email
-            events = session.query(Event).filter_by(email=email).all()
-            return events, status.HTTP_200_OK
-    except:
-        return "", status.HTTP_400_BAD_REQUEST
-
+            query = session.query(Bookings, Event).join(Event, Event.eventID == Bookings.eventID).filter(Bookings.email == email).all()
+            events = []
+            for q in query:
+                temp = {'title': q.Event.title, 'location': q.Event.location, 'startTime': q.Event.startTime, 'endTime': q.Event.endTime, 'participationLimit': q.Event.participationLimit, 'email': email}
+                events.append(temp)
+            # remove strings from each event in array
+            return jsonify(events), status.HTTP_200_OK
 
 @app.route("/", methods=['GET'])
 def home_function():
