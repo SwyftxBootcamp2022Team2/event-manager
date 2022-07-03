@@ -26,7 +26,7 @@
     "react": "^18.1.0",
     "react-dom": "^18.1.0",
     "react-icons": "^3.0.0",
-    "react-lorem-component": "^0.13.0",
+    "react-lorem-ipsum": "^1.4.10",
     "react-router-dom": "^6.3.0",
     "react-scripts": "5.0.1",
     "styled-components": "^5.3.5",

@@ -12,13 +12,20 @@ import {
   Text,
   Image,
   Heading,
-  HStack,
-  Center,
+  Box,
+  useToast,
+  Flex,
 } from '@chakra-ui/react';
+
 import { useNavigate, useParams } from 'react-router-dom';
+import dayjs from 'dayjs';
+import { Calendar, Group, Location } from 'grommet-icons';
+import LoremIpsum from 'react-lorem-ipsum';
+import Feature from './Feature';
 import PancakePhoto from '../assets/pancake.jpeg';
 
 function BookEventModal() {
+  // eslint-disable-next-line no-unused-vars
   const { id } = useParams();
   const navigate = useNavigate();
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -26,6 +33,7 @@ function BookEventModal() {
     title: 'Pancake Tuesday',
     image: PancakePhoto,
   };
+  const toast = useToast();
 
   useEffect(() => {
     onOpen();
@@ -38,10 +46,10 @@ function BookEventModal() {
         onClose();
         navigate(-1);
       }}
-      size="4xl"
+      size="5xl"
     >
       <ModalOverlay />
-      <ModalContent maxH="85%">
+      <ModalContent maxH="90%">
         <ModalHeader paddingBottom="25px" paddingTop="40px">
           <Heading>Pancake Tuesday</Heading>
         </ModalHeader>
@@ -49,19 +57,38 @@ function BookEventModal() {
         <ModalCloseButton size="lg" m="25px" />
 
         <ModalBody>
-          <HStack>
+          <Flex flexDirection="row" alignItems="center">
             <Image
               alignContent="center"
-              boxSize="sm"
+              boxSize="50%"
               src={data.image}
               alt="Dan Abramov"
-              fit="cover"
               borderRadius={5}
             />
-            <Center h="100%" w="100%">
-              <Text>Hello World {id}</Text>
-            </Center>
-          </HStack>
+            <Flex flexDirection="column">
+              <Feature
+                icon={<Calendar color="white" size="20px" />}
+                text={dayjs().format('dddd, MMMM D YYYY')}
+              />
+              <Feature
+                icon={<Location color="white" size="20px" />}
+                text="Kitchen"
+              />
+              <Feature
+                icon={<Group color="white" size="20px" />}
+                text="4 spots left"
+              />
+              <Box maxH="500px" overflow="scroll" p="3">
+                <Text fontSize="md">
+                  <LoremIpsum
+                    p={5}
+                    avgWordsPerSentence={7}
+                    avgSentencesPerParagraph={6}
+                  />
+                </Text>
+              </Box>
+            </Flex>
+          </Flex>
         </ModalBody>
 
         <ModalFooter>
@@ -70,9 +97,20 @@ function BookEventModal() {
             color="white"
             mr={3}
             onClick={() => {
-              // eslint-disable-next-line no-alert
-              window.alert('You have rsvpd');
+              toast({
+                title: `${data.title} booking confirmed`,
+                status: 'success',
+                isClosable: true,
+                position: 'top-right',
+                containerStyle: {
+                  maxWidth: '15%',
+                  marginRight: '10%',
+                  marginTop: '15%',
+                },
+              });
+
               onClose();
+              navigate(-1);
             }}
           >
             RSVP
