@@ -21,6 +21,7 @@ module.exports = {
   },
   plugins: ['react', '@typescript-eslint'],
   rules: {
+    'react/require-default-props': 'off', // Since we do not use prop-types
     'react/jsx-props-no-spreading': 'off',
     'no-console': 'off',
     'no-undef': 'off',
