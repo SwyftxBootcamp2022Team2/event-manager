@@ -62,22 +62,13 @@ function CreateEventPage() {
       <Heading size="2xl" paddingBottom="25px" paddingTop="40px">
         Create an Event
       </Heading>
-      <Box
-        padding={5}
-        borderRadius={5}
-        w="70%"
-        bg="#FFFEFE"
-        style={{
-          marginLeft: 75,
-          marginRight: '20%',
-          marginTop: '2%',
-        }}
-      >
+      <Box p={5} borderRadius={5} w="70%" bg="#FFFEFE">
         <form onSubmit={formik.handleSubmit}>
           {createEventFormFields.map((field) => (
-            <Flex flexDirection="column">
+            <Flex flexDirection="column" key={field.id}>
               <Feature icon={field.icon} pb={5}>
                 <Input
+                  variant="flushed"
                   key={field.id}
                   placeholder={field.placeholder}
                   id={field.id}
@@ -85,6 +76,7 @@ function CreateEventPage() {
                   type={field.type}
                   onChange={formik.handleChange}
                   value={field.value}
+                  pl={3}
                 />
               </Feature>
             </Flex>
