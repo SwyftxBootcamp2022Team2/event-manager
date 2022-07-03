@@ -1,16 +1,17 @@
-import React, { Flex, Stack, Text } from '@chakra-ui/react';
+import React, { Flex, Stack } from '@chakra-ui/react';
 import { ReactElement } from 'react';
 
 interface FeatureProps {
-  text: string;
   icon: ReactElement;
+  children: ReactElement;
+  pb?: number;
 }
 
 function Feature(props: FeatureProps) {
-  const { text, icon } = props;
+  const { icon, children, pb = 2 } = props;
 
   return (
-    <Stack direction="row" align="center" pb={2}>
+    <Stack direction="row" align="center" pb={pb}>
       <Flex
         w={10}
         h={10}
@@ -21,7 +22,7 @@ function Feature(props: FeatureProps) {
       >
         {icon}
       </Flex>
-      <Text fontSize="xl">{text}</Text>
+      {children}
     </Stack>
   );
 }

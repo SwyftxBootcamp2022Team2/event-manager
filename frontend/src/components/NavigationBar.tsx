@@ -43,6 +43,7 @@ function NavigationBar() {
         <HStack alignItems="center" spacing={2}>
           {NavLinks.map((link) => (
             <Button
+              key={link.name}
               variant="solid"
               bg="#0072ed"
               _hover={{ bg: '#005de2' }}

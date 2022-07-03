@@ -66,18 +66,15 @@ function BookEventModal() {
               borderRadius={5}
             />
             <Flex flexDirection="column">
-              <Feature
-                icon={<Calendar color="white" size="20px" />}
-                text={dayjs().format('dddd, MMMM D YYYY')}
-              />
-              <Feature
-                icon={<Location color="white" size="20px" />}
-                text="Kitchen"
-              />
-              <Feature
-                icon={<Group color="white" size="20px" />}
-                text="4 spots left"
-              />
+              <Feature icon={<Calendar color="white" size="20px" />}>
+                <Text fontSize="xl">{dayjs().format('dddd, MMMM D YYYY')}</Text>
+              </Feature>
+              <Feature icon={<Location color="white" size="20px" />}>
+                <Text fontSize="xl">Kitchen</Text>
+              </Feature>
+              <Feature icon={<Group color="white" size="20px" />}>
+                <Text fontSize="xl">4 spots left</Text>
+              </Feature>
               <Box maxH="500px" overflow="scroll" p="3">
                 <Text fontSize="md">
                   <LoremIpsum
