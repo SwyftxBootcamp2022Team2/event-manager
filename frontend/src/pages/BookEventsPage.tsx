@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Box, Heading, Link, Text } from '@chakra-ui/react';
 import { Link as ReactRouterLink, Outlet } from 'react-router-dom';
@@ -14,7 +14,7 @@ function BookEventsPage() {
 
   useEffect(() => {
     user
-      ? sessionsApi.getEvents(user.email).then((data) => {
+      ? sessionsApi.getAllEvents().then((data) => {
           setEvents(data);
         })
       : navigate('/login');

@@ -1,4 +1,7 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
+import useAuth from '../useAuth';
+import { MyEvent } from '../types/types';
+import * as sessionsApi from '../api/sessions';
 import {
   Modal,
   ModalOverlay,
@@ -11,15 +14,24 @@ import {
   useDisclosure,
 } from '@chakra-ui/react';
 import { useNavigate, useParams } from 'react-router-dom';
+import axios from 'axios';
 
 function BookEventModal() {
   const { id } = useParams();
   const navigate = useNavigate();
   const { isOpen, onOpen, onClose } = useDisclosure();
-  const data = { title: 'Pancake Tuesday' };
+  const [eventData, setEventData] = useState<MyEvent | undefined>();
+  const { user } = useAuth();
 
   useEffect(() => {
     onOpen();
+    console.log(id);
+    user
+      ? sessionsApi.getEventDetails(id).then((data) => {
+          console.log(data);
+          setEventData(data);
+        })
+      : navigate('/login');
   }, []);
 
   return (
@@ -32,9 +44,15 @@ function BookEventModal() {
     >
       <ModalOverlay />
       <ModalContent>
-        <ModalHeader>{data.title}</ModalHeader>
+        {/* <ModalHeader>{data.title}</ModalHeader> */}
         <ModalCloseButton />
-        <ModalBody>Hello World {id}</ModalBody>
+        <ModalBody>
+          {eventData?.title}
+          {eventData?.location}
+          {eventData?.startTime}
+          {eventData?.endTime}
+          {eventData?.participationLimit}
+        </ModalBody>
         <ModalFooter>
           <Button
             bg="#0072ed"
