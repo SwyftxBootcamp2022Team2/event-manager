@@ -8,8 +8,7 @@ from models import Bookings, User, Event, engine
 from sqlalchemy.orm.exc import NoResultFound
 from sqlalchemy.orm.exc import MultipleResultsFound
 from flask_cors import CORS, cross_origin
-from flask import g 
-import json 
+
 
 app = Flask(__name__)
 cors = CORS(app)
