@@ -137,7 +137,7 @@ def create_event():
     try:
         with Session(engine) as session:
             event = Event(
-                createdBy=createdBy,
+                email=createdBy,
                 title=eventTitle,
                 location=location,
                 startTime=datetime.strptime(startTime, "%d-%m-%Y %H:%M:%S"),
@@ -177,20 +177,31 @@ def delete_event():
         return "Error occured when deleting event, please try again later", status.HTTP_400_BAD_REQUEST
 
 
-@app.route("/event/view", methods=['GET', 'POST'])
+@app.route("/event/view", methods=['GET'])
 @cross_origin()
 def view_event():
     # get data from frontend
-    event = request.json
-    # check if event exists
-    eventID = event["eventID"]
+    eventID = request.args["eventID"]
+
     with Session(engine) as session:
         eventInfo = session.query(Event).filter_by(eventID=eventID).first()
+        print(eventInfo)
     if eventInfo is not None:  # if it exists, send that mf back
-        return jsonify(eventID=eventInfo.eventID, title=eventInfo.title, location=eventInfo.location, start=eventInfo.start, startTime=eventInfo.startTime, endTime=eventInfo.endTime, participationLimit=eventInfo.participationLimit, createdBy=eventInfo.createdBy), status.HTTP_200_OK
+        return jsonify(eventID=eventInfo.eventID, email=eventInfo.email, title=eventInfo.title, location=eventInfo.location, startTime=eventInfo.startTime, endTime=eventInfo.endTime, participationLimit=eventInfo.participationLimit, publishTime=eventInfo.publishTime), status.HTTP_200_OK
     # if not, send back a token
-    return "Event Doesn't Exist!", status.HTTP_400_BAD_REQUEST
+    return jsonify(error="Event Doesn't Exist!"), status.HTTP_400_BAD_REQUEST
 
+@app.route("/event/get", methods=['GET'])
+@cross_origin()
+def get_events():
+    with Session(engine) as session:
+        query = session.query(Event).all()
+        events = []
+        for q in query:
+            temp = {'eventID':q.eventID, 'title':q.title, 'location': q.location, 'startTime': q.startTime, 'endTime': q.endTime, 'participationLimit': q.participationLimit, 'email': q.email, 'publishTime': q.publishTime}
+            events.append(temp)
+        # remove strings from each event in array
+        return jsonify(eventData=events), status.HTTP_200_OK #jsonify(events=events), status.HTTP_200_OK
 
 @app.route("/bookings/create", methods=['POST'])  # user is the one who books
 @cross_origin()
