@@ -187,9 +187,19 @@ def view_event():
         eventInfo = session.query(Event).filter_by(eventID=eventID).first()
         print(eventInfo)
     if eventInfo is not None:  # if it exists, send that mf back
-        return jsonify(eventID=eventInfo.eventID, email=eventInfo.email, title=eventInfo.title, location=eventInfo.location, startTime=eventInfo.startTime, endTime=eventInfo.endTime, participationLimit=eventInfo.participationLimit, publishTime=eventInfo.publishTime), status.HTTP_200_OK
+        return jsonify(eventID=eventInfo.eventID, email=eventInfo.email, title=eventInfo.title, description=eventInfo.description, location=eventInfo.location, startTime=eventInfo.startTime, endTime=eventInfo.endTime, participationLimit=eventInfo.participationLimit, publishTime=eventInfo.publishTime), status.HTTP_200_OK
     # if not, send back a token
     return jsonify(error="Event Doesn't Exist!"), status.HTTP_400_BAD_REQUEST
+
+@app.route("/event/bookings/count", methods=['GET'])
+@cross_origin()
+def get_bookings_count():
+    # get data from frontend
+    eventID = request.args["eventID"]
+
+    with Session(engine) as session:
+        eventInfo = session.query(Bookings).filter_by(eventID=eventID).count()
+        return jsonify(count=eventInfo), status.HTTP_200_OK
 
 @app.route("/event/get", methods=['GET'])
 @cross_origin()
@@ -198,7 +208,7 @@ def get_events():
         query = session.query(Event).all()
         events = []
         for q in query:
-            temp = {'eventID':q.eventID, 'title':q.title, 'location': q.location, 'startTime': q.startTime, 'endTime': q.endTime, 'participationLimit': q.participationLimit, 'email': q.email, 'publishTime': q.publishTime}
+            temp = {'eventID':q.eventID, 'title':q.title, 'description':q.description, 'location': q.location, 'startTime': q.startTime, 'endTime': q.endTime, 'participationLimit': q.participationLimit, 'email': q.email, 'publishTime': q.publishTime}
             events.append(temp)
         # remove strings from each event in array
         return jsonify(eventData=events), status.HTTP_200_OK #jsonify(events=events), status.HTTP_200_OK

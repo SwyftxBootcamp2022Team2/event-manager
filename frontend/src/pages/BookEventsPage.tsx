@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate , Link as ReactRouterLink, Outlet } from 'react-router-dom';
 import { Box, Heading, Link, Text } from '@chakra-ui/react';
-import { Link as ReactRouterLink, Outlet } from 'react-router-dom';
 import { MyEvent } from '../types/types';
 import useAuth from '../useAuth';
 import * as sessionsApi from '../api/sessions';
@@ -27,13 +26,8 @@ function BookEventsPage() {
           Our Events
         </Heading>
         <Box pl={5} borderRadius={5} w="70%" bg="#FFFEFE">
-<<<<<<< HEAD
           {eventsData?.map((e) => (
-            <Box p={4}>
-=======
-          {eventsData.map((e) => (
-            <Box p={4} key={`${e.id}`}>
->>>>>>> main
+            <Box p={4} key={`${e.eventID}`}>
               <Text fontSize="3xl" paddingBottom={2}>
                 <Link as={ReactRouterLink} to={`/book-events/${e.eventID}`}>
                   {e.title}

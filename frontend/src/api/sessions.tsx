@@ -18,10 +18,23 @@ export async function getAllEvents(): Promise<MyEvent[]> {
   return res.data.eventData;
 }
 
+export async function getTotalBookings(
+  eventID: string | undefined,
+): Promise<number | undefined> {
+  if (eventID) {
+    const res = await axios.get(`${API_ENDPOINT}/event/bookings/count`, {
+      params: {
+        eventID,
+      },
+    });
+    return res.data.count;
+  }
+  return undefined; // TODO: change
+}
+
 export async function getEventDetails(
   id: string | undefined,
 ): Promise<MyEvent | undefined> {
-  console.log(`id = ${id}`);
   if (id) {
     const res = await axios.get(`${API_ENDPOINT}/event/view`, {
       params: {
@@ -30,7 +43,7 @@ export async function getEventDetails(
     });
     return res.data;
   }
-  return undefined;
+  return undefined; // TODO: change
 }
 
 export async function getEvents(email: string): Promise<MyEvent[]> {
@@ -48,6 +61,8 @@ export async function getEvents(email: string): Promise<MyEvent[]> {
             eventID: 1,
             email: 'user@gmail.com',
             title: 'Pancakes!',
+            description:
+              'this is a test description. blah blah blah. more things to say.',
             location: 'ur mum',
             startTime: '2022-07-01T10:09:50Z',
             endTime: '2022-07-03T18:09:50Z',
@@ -58,6 +73,8 @@ export async function getEvents(email: string): Promise<MyEvent[]> {
             eventID: 2,
             email: 'user@gmail.com',
             title: 'Massage',
+            description:
+              'this is a test description. blah blah blah. more things to say.',
             location: 'ur mum',
             startTime: '2022-07-02T10:09:50Z',
             endTime: '2022-07-03T18:09:50Z',
@@ -68,6 +85,8 @@ export async function getEvents(email: string): Promise<MyEvent[]> {
             eventID: 3,
             email: 'user@gmail.com',
             title: 'Tiedye!',
+            description:
+              'this is a test description. blah blah blah. more things to say.',
             location: 'ur mum',
             startTime: '2022-07-03T10:09:50Z',
             endTime: '2022-07-03T18:09:50Z',

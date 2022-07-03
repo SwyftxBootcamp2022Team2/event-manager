@@ -40,7 +40,7 @@ function MyBookingsPage() {
   return (
     <>
       {events ? (
-        <Box></Box>
+        <Box />
       ) : (
         <Flex h="100%" w="100%" justifyContent="center" alignItems="center">
           <Spinner />

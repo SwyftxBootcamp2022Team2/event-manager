@@ -9,6 +9,7 @@ export interface MyEvent {
   eventID: number;
   email: string;
   title: string;
+  description: string;
   location: string;
   startTime: string;
   endTime: string;
