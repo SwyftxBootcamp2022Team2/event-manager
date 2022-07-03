@@ -1,5 +1,6 @@
+import http
 from sqlalchemy.orm import Session
-from sqlalchemy import select
+from sqlalchemy import select, update
 from datetime import datetime
 from flask import Flask, jsonify, request
 from flask_api import status
@@ -13,9 +14,7 @@ from flask_cors import CORS, cross_origin
 app = Flask(__name__)
 cors = CORS(app)
 app.config['CORS_HEADERS'] = 'Content-Type'
-# app.config["SQLALCHEMY_DATABASE_URI"] = 'sqlite:///testdata.db'
-# db.init_app(app)
-# conn = sql.connect('testdata.db')
+
 
 
 @app.route("/")
@@ -71,10 +70,50 @@ def get_user():
     email = user["email"]
     with Session(engine) as session:
         userinfo = session.query(User).filter_by(email=email).first()
-    if userinfo is not None:     # check if user is in database, and give back their info
-        return jsonify(email=userinfo.email, fName=userinfo.fname, lName=userinfo.lname, isAdmin=userinfo.isAdmin), status.HTTP_200_OK
+        if userinfo is not None:     # check if user is in database, and give back their info
+            return jsonify(
+                email=userinfo.email, 
+                fname=userinfo.fname, 
+                lname=userinfo.lname, 
+                isAdmin=userinfo.isAdmin,
+                department=userinfo.department,
+                dietary=userinfo.dietary,
+                accessibility=userinfo.accessibility), status.HTTP_200_OK
     # if not, send back a token, (its a get so don't add this user into the "user" db)
-    return "Couldn't find user!", status.HTTP_400_BAD_REQUEST
+    return "Couldn't find user!", status.HTTP_404_NOT_FOUND
+
+@app.route("/user/update", methods=['PATCH'])
+@cross_origin()
+def update_user():
+    print_db(User)
+    user = request.json
+    email = user["email"]
+    fName = user["fName"]
+    lName = user["lName"]
+    department = user["department"]
+    dietary = user["dietary"]
+    accessibility = user["accessibility"]
+    with Session(engine) as session:
+        try:
+            
+            session.execute(
+                update(User)
+                .where(User.email==email)
+                .values(
+                    fname = fName,
+                    lname = lName,
+                    department = department,
+                    dietary = dietary,
+                    accessibility = accessibility)
+            ) 
+            session.commit()
+
+        except Exception as e:
+            print(e)
+            return "Error updating user information", status.HTTP_400_BAD_REQUEST
+
+    print_db(User)
+    return "User information successfully updated", status.HTTP_200_OK
 
 
 @app.route("/event/create", methods=['GET', 'POST'])
@@ -176,7 +215,6 @@ def book_event():
             session.add(newBooking)
             session.commit()
 
-        print_db(Bookings)
         return "Booking succesful!", status.HTTP_200_OK
     except:
         return "An error occured when booking, please try again later", status.HTTP_400_BAD_REQUEST
