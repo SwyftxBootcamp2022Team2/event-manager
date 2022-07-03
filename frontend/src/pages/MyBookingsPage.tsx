@@ -1,4 +1,4 @@
-import { Flex, Spinner } from '@chakra-ui/react';
+import { Box, Flex, Spinner } from '@chakra-ui/react';
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { getEvents } from '../api/sessions';
@@ -15,9 +15,11 @@ function MyBookingsPage() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    user ? getEvents(user.email).then((data) => {
-      setEvents(data);
-    }) : navigate("/login")
+    user
+      ? getEvents(user.email).then((data) => {
+          setEvents(data);
+        })
+      : navigate('/login');
   }, []);
 
   useEffect(() => {
@@ -27,23 +29,23 @@ function MyBookingsPage() {
     events.map((event) => {
       const eventDate = new Date(event.startTime);
 
-      if (eventDate.getDate() === todayDate.getDate()) setToday([...today || [], event]);
-      else if (eventDate.getDate() === todayDate.getDate() + 1) setTomorrow([...tomorrow || [], event]);
-      else setUpcoming([...upcoming || [], event]);
-    })
+      if (eventDate.getDate() === todayDate.getDate())
+        setToday([...(today || []), event]);
+      else if (eventDate.getDate() === todayDate.getDate() + 1)
+        setTomorrow([...(tomorrow || []), event]);
+      else setUpcoming([...(upcoming || []), event]);
+    });
   }, [events]);
 
   return (
     <>
-      {
-        events ? (
-          <Box></Box>
-        ) : (
-          <Flex h="100%" w="100%" justifyContent="center" alignItems="center">
-            <Spinner />
-          </Flex>
-        )
-      }
+      {events ? (
+        <Box></Box>
+      ) : (
+        <Flex h="100%" w="100%" justifyContent="center" alignItems="center">
+          <Spinner />
+        </Flex>
+      )}
     </>
   );
 }
