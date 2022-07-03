@@ -87,8 +87,8 @@ def update_user():
     print_db(User)
     user = request.json
     email = user["email"]
-    fName = user["fName"]
-    lName = user["lName"]
+    fName = user["fname"]
+    lName = user["lname"]
     department = user["department"]
     dietary = user["dietary"]
     accessibility = user["accessibility"]
