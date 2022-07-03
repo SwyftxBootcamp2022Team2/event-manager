@@ -209,10 +209,11 @@ def all_bookings():
     email = userinfo["email"]
     with Session(engine) as session:
             # find all events associated with email
-            #events = session.query(Event)
-
             query = session.query(Bookings, Event).join(Event, Event.eventID == Bookings.eventID).filter(Bookings.email == email).all()
             events = []
+            # convert Event's startTime into datetime in isoformat
+            #Event.startTime = datetime.strptime(Event.startTime, "%d-%m-%Y %H:%M:%S")
+            #Event.endTime = datetime.strptime(Event.endTime, "%d-%m-%Y %H:%M:%S")
             for q in query:
                 temp = {'title': q.Event.title, 'location': q.Event.location, 'startTime': q.Event.startTime, 'endTime': q.Event.endTime, 'participationLimit': q.Event.participationLimit, 'email': email}
                 events.append(temp)
