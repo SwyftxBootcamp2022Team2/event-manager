@@ -9,19 +9,18 @@ from models import Bookings, User, Event, engine
 from sqlalchemy.orm.exc import NoResultFound
 from sqlalchemy.orm.exc import MultipleResultsFound
 from flask_cors import CORS, cross_origin
-
+import requests
+import json
 
 app = Flask(__name__)
 cors = CORS(app)
 app.config['CORS_HEADERS'] = 'Content-Type'
-
-
+webhook = "https://hooks.slack.com/services/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"
 
 @app.route("/")
 @cross_origin()
 def hello():
     return "Hello, World!"
-
 
 # login takes user email, check database
 @app.route("/login", methods=['POST'])
@@ -121,32 +120,37 @@ def update_user():
 def create_event():
     # get user data
     eventInfo = request.json
-    createdBy = eventInfo["createdBy"]
-    eventTitle = eventInfo["eventTitle"]
+    email = eventInfo["email"]
+    eventTitle = eventInfo["title"]
     location = eventInfo["location"]
     startTime = eventInfo["startTime"]
     endTime = eventInfo["endTime"]
     partLimit = eventInfo["participationLimit"]
-    publishTime = eventInfo["publishTime"]
+    #convert string to datetime for startTime
+    startTime = datetime.strptime(startTime, '%Y-%m-%d %H:%M')
+    month = startTime.strftime("%B")
+    day = startTime.strftime("%d")
+    hour = startTime.strftime("%H")
 
     # check if the user is an admin
-    if (not isAdmin(createdBy)):
+    if (not isAdmin(email)):
         return "You are not an admin!", status.HTTP_400_BAD_REQUEST
 
     # otherwise, allow event creation
     try:
         with Session(engine) as session:
             event = Event(
-                createdBy=createdBy,
+                email=email,
                 title=eventTitle,
                 location=location,
-                startTime=datetime.strptime(startTime, "%d-%m-%Y %H:%M:%S"),
-                endTime=datetime.strptime(endTime, "%d-%m-%Y %H:%M:%S"),
+                startTime=startTime,
+                endTime=endTime,
                 participationLimit=partLimit,
-                publishTime=datetime.strptime(publishTime, "%d-%m-%Y %H:%M:%S")
             )
             session.add(event)
             session.commit()
+            payload = {"text": eventTitle + " is on at " + location +  "! :tada: RSVP on SwyftSocial if you can make it :heart: It starts on " + str(month) + " " + str(day) + " at " + str(hour) + ":00!"}
+            send_slack_message(payload)
         return "Event successfully created", status.HTTP_201_CREATED
     except Exception as e:
         print(e)
@@ -160,7 +164,6 @@ def delete_event():
     # theres 2 jsons so two reads are happening, but depending on how the packet looks
     # we can just do one read and split it into user and event
     user = request.json
-
     # check if the user is an admin
     if (not isAdmin(user)):
         return "You are not an admin!", status.HTTP_400_BAD_REQUEST
@@ -172,6 +175,8 @@ def delete_event():
             event = session.get(Event, eventID)
             session.delete(event)
             session.commit()
+            payload = {"text": event["title"] + " has been deleted :pensive:"}
+            send_slack_message(payload)
             return "Event successfully deleted", status.HTTP_200_OK
     except:
         return "Error occured when deleting event, please try again later", status.HTTP_400_BAD_REQUEST
@@ -279,3 +284,7 @@ def isAdmin(email):
         return "No user with associated email found", status.HTTP_400_BAD_REQUEST
 
     return user.isAdmin == 1
+
+
+def send_slack_message(payload):
+    return requests.post(webhook, json.dumps(payload))
