@@ -12,10 +12,12 @@ from flask_cors import CORS, cross_origin
 import requests
 import json
 
+
 app = Flask(__name__)
 cors = CORS(app)
 app.config['CORS_HEADERS'] = 'Content-Type'
 webhook = "https://hooks.slack.com/services/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"
+
 
 @app.route("/")
 @cross_origin()
