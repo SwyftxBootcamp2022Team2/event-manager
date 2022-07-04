@@ -1,18 +1,19 @@
-import http
 from sqlalchemy.orm import Session
 from sqlalchemy import select, update
 from datetime import datetime
-from flask import Flask, jsonify, request, Response, render_template
+from flask import Flask, jsonify, request, Response
 from flask_api import status
 import sqlite3 as sql
 from models import Bookings, User, Event, engine
 from sqlalchemy.orm.exc import NoResultFound
 from sqlalchemy.orm.exc import MultipleResultsFound
 from flask_cors import CORS, cross_origin
+from icalendar import Calendar, Event, vCalAddress, vText
 import requests
 import json
 import io
 import csv
+import pytz 
 
 app = Flask(__name__)
 cors = CORS(app)
@@ -263,7 +264,7 @@ def all_bookings():
             return jsonify(events), status.HTTP_200_OK
 
 
-@app.route('/export/events/')
+@app.route('/export/events')
 def export_events():
 	try:
 		# connect to testdata.db
@@ -289,7 +290,7 @@ def export_events():
 		cursor.close() 
 		conn.close()
 
-@app.route('/export/users/')
+@app.route('/export/users')
 def export_users():
 	try:
 		# connect to testdata.db
@@ -314,6 +315,36 @@ def export_users():
 	finally:
 		cursor.close() 
 		conn.close()
+
+@app.route('/export/calendar', methods=['GET'])
+def create_calendar():
+    eventInfo = request.json
+
+    cal = Calendar()
+    event = Event()
+    event.add('title', eventInfo["title"])
+    event.add('name', eventInfo["title"])
+    event.add('description', eventInfo["description"])
+
+    # convert eventInfo[startTime] to datetime object
+    startTime = datetime.strptime(eventInfo["startTime"], '%Y-%m-%d %H:%M')
+    endTime = datetime.strptime(eventInfo["endTime"], '%Y-%m-%d %H:%M')
+    event.add('dtstart', startTime)
+    event.add('dtend', endTime)
+    
+    event['location'] = vText(eventInfo["location"])
+    attendee = vCalAddress('MAILTO:{email}'.format(email=eventInfo["email"]))
+    event.add('attendee', attendee, encode=0)
+        
+    cal.add_component(event)
+
+    # write cal to file (just for testing)
+    f = open('test.ics', 'wb')
+    f.write(cal.to_ical())
+    f.close()
+    # send cal back to frontend to download 
+    return Response(cal.to_ical(), mimetype="text/calendar", headers={"Content-Disposition":"attachment;filename=calendar.ics"})
+
 
 #### HELPER FUNCTION ####
 
