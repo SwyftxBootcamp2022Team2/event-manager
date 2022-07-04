@@ -1,5 +1,4 @@
 /* eslint-disable import/prefer-default-export */
-import { DragHandleIcon } from '@chakra-ui/icons';
 import axios from 'axios';
 import { User, MyEvent } from '../types/types';
 
@@ -60,7 +59,6 @@ export async function getEventDetails(
 //   }
 //   return undefined; // TODO: change
 // }
-
 
 export async function getEvents(email: string): Promise<MyEvent[]> {
   // const res = await axios.get(`${API_ENDPOINT}/bookings/mybookings`, {
