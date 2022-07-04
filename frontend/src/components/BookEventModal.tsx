@@ -16,11 +16,14 @@ import {
   useToast,
   Flex,
 } from '@chakra-ui/react';
-
 import { useNavigate, useParams } from 'react-router-dom';
 import dayjs from 'dayjs';
 import { Calendar, Group, Location } from 'grommet-icons';
-import { getEventDetails, getTotalBookings } from '../api/sessions';
+import {
+  getEventDetails,
+  getTotalBookings,
+  makeBooking,
+} from '../api/sessions';
 import { MyEvent } from '../types/types';
 import useAuth from '../useAuth';
 import Feature from './Feature';
@@ -37,14 +40,42 @@ function BookEventModal() {
   const { user } = useAuth();
   const toast = useToast();
 
+  function createBooking() {
+    // make booking
+    user
+      ? makeBooking(id, user.email).then((data) => {
+          if (typeof data !== 'string') {
+            toast({
+              title: `${eventData?.title} booking confirmed`,
+              status: 'success',
+              isClosable: true,
+              position: 'top-right',
+            });
+          } else {
+            toast({
+              title: `error: ${data}`,
+              status: 'error',
+              isClosable: true,
+              position: 'top-right',
+            });
+          }
+        })
+      : navigate('/login');
+    // show  booking confirmed toast
+
+    //close modal window
+    onClose();
+    navigate(-1);
+  }
+
   useEffect(() => {
     onOpen();
     if (user) {
       getEventDetails(id).then((data) => {
-        setEventData(data);
+        typeof data === 'string' ? alert(data) : setEventData(data);
       });
       getTotalBookings(id).then((data) => {
-        setBookingCount(data);
+        typeof data === 'string' ? alert(data) : setBookingCount(data);
       });
     } else {
       navigate('/login');
@@ -100,27 +131,7 @@ function BookEventModal() {
         </ModalBody>
 
         <ModalFooter>
-          <Button
-            bg="#0072ed"
-            color="white"
-            mr={3}
-            onClick={() => {
-              toast({
-                title: `${eventData?.title} booking confirmed`,
-                status: 'success',
-                isClosable: true,
-                position: 'top-right',
-                containerStyle: {
-                  maxWidth: '15%',
-                  marginRight: '10%',
-                  marginTop: '15%',
-                },
-              });
-
-              onClose();
-              navigate(-1);
-            }}
-          >
+          <Button bg="#0072ed" color="white" mr={3} onClick={createBooking}>
             RSVP
           </Button>
         </ModalFooter>

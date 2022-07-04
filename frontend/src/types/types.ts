@@ -16,3 +16,9 @@ export interface MyEvent {
   participationLimit: number;
   publishTime: string;
 }
+
+export interface Booking {
+  bookingID: number;
+  email: string;
+  eventID: number;
+}

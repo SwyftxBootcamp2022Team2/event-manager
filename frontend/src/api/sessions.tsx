@@ -1,6 +1,6 @@
 /* eslint-disable import/prefer-default-export */
 import axios from 'axios';
-import { User, MyEvent } from '../types/types';
+import { User, MyEvent, Booking } from '../types/types';
 
 const API_ENDPOINT = process.env.REACT_APP_API_ENDPOINT;
 
@@ -19,7 +19,7 @@ export async function getAllEvents(): Promise<MyEvent[]> {
 
 export async function getTotalBookings(
   eventID: string | undefined,
-): Promise<number | undefined> {
+): Promise<number | string> {
   if (eventID) {
     const res = await axios.get(`${API_ENDPOINT}/event/bookings/count`, {
       params: {
@@ -28,12 +28,29 @@ export async function getTotalBookings(
     });
     return res.data.count;
   }
-  return undefined; // TODO: change
+  return 'Invalid event ID';
+}
+
+export async function makeBooking(
+  eventID: string | undefined,
+  email: string,
+): Promise<Booking | string> {
+  // check if email and eventID aren't undefined
+  if (eventID && email) {
+    const res = await axios.get(`${API_ENDPOINT}/event/view`, {
+      params: {
+        eventID,
+        email,
+      },
+    });
+    return res.data;
+  }
+  return 'Invalid eventID and/or user';
 }
 
 export async function getEventDetails(
   id: string | undefined,
-): Promise<MyEvent | undefined> {
+): Promise<MyEvent | string> {
   if (id) {
     const res = await axios.get(`${API_ENDPOINT}/event/view`, {
       params: {
@@ -42,7 +59,7 @@ export async function getEventDetails(
     });
     return res.data;
   }
-  return undefined; // TODO: change
+  return 'Invalid event ID';
 }
 
 // export async function bookEvent(
