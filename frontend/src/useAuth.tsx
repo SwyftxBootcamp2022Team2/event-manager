@@ -50,7 +50,8 @@ export function AuthProvider({
   }
 
   function logout() {
-    // TODO: post to logout
+    setUser(undefined); // clear user
+    navigate('/login'); // redirect to login page
   }
 
   // provider should update only when required

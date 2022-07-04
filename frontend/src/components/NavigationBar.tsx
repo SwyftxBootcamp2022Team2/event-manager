@@ -7,10 +7,12 @@ import {
   Button,
   useColorModeValue,
   Link,
+  Divider,
+  Text,
 } from '@chakra-ui/react';
 import { AddIcon } from '@chakra-ui/icons';
 import { NavLink, To } from 'react-router-dom';
-import SwyftxLogo from '../assets/swyftx_bird.jpeg';
+import SwyftxLogo from '../assets/swyftx_bird.webp';
 
 interface NavigationLink {
   name: string;
@@ -29,12 +31,19 @@ function NavigationBar() {
   return (
     <Box bg={useColorModeValue('#ffffff', '#0a0b0d')} px={4}>
       <Flex h={16} alignItems="center" justifyContent="space-between">
-        <Box>
-          <Avatar size="md" src={SwyftxLogo} />
-        </Box>
+        <HStack height="60%">
+          <Avatar size="md" src={SwyftxLogo} bg="transparent" />
+          <Divider
+            orientation="vertical"
+            borderColor="#ecf0f7"
+            borderWidth={1}
+          />
+          <Text fontSize="xl">SwyftSocial</Text>
+        </HStack>
         <HStack alignItems="center" spacing={2}>
           {NavLinks.map((link) => (
             <Button
+              key={link.name}
               variant="solid"
               bg="#0072ed"
               _hover={{ bg: '#005de2' }}
