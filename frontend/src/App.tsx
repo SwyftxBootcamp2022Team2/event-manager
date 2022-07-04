@@ -1,6 +1,12 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { ChakraProvider } from '@chakra-ui/react';
-import { BrowserRouter, Route, Routes } from 'react-router-dom';
+import {
+  BrowserRouter,
+  Navigate,
+  Route,
+  Routes,
+  useNavigate,
+} from 'react-router-dom';
 import LoginPage from './pages/LoginPage';
 import CalendarPage from './pages/CalendarPage';
 import ProfilePage from './pages/ProfilePage';
@@ -14,11 +20,22 @@ import BookEventModal from './components/BookEventModal';
 
 function Router() {
   const { user } = useAuth();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (!user) {
+      navigate('/login');
+    } else {
+      navigate(-2);
+    }
+    console.log('hello');
+  }, [user]);
 
   const authorisedRoutes = (
     <>
       <NavigationBar />
       <Routes>
+        <Route path="*" element={<Navigate to="/book-events" replace />} />
         <Route path="/book-events" element={<BookEventsPage />}>
           <Route path=":id" element={<BookEventModal />} />
         </Route>
@@ -30,13 +47,15 @@ function Router() {
     </>
   );
 
-  return user === null ? (
-    authorisedRoutes
-  ) : (
-    <Routes>
-      <Route path="/login" element={<LoginPage />} />
-    </Routes>
-  );
+  if (user === undefined) {
+    return (
+      <Routes>
+        <Route path="/login" element={<LoginPage />} />
+      </Routes>
+    );
+  }
+
+  return authorisedRoutes;
 }
 
 function App() {
