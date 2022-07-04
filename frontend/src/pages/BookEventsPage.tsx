@@ -20,7 +20,7 @@ function BookEventsPage() {
         </Heading>
         <Box pl={5} borderRadius={5} w="70%" bg="#FFFEFE">
           {eventsData.map((e) => (
-            <Box p={4}>
+            <Box p={4} key={`${e.id}`}>
               <Text fontSize="3xl" paddingBottom={2}>
                 <Link as={ReactRouterLink} to={`/book-events/${e.id}`}>
                   {e.title}
