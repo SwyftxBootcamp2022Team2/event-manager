@@ -28,7 +28,6 @@ function Router() {
     } else {
       navigate(-2);
     }
-    console.log('hello');
   }, [user]);
 
   const authorisedRoutes = (
