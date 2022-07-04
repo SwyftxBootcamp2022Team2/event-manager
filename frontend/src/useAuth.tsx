@@ -14,6 +14,8 @@ interface AuthContextType {
   user?: User;
   loading: boolean;
   error?: any;
+  // this is a function type, not definition
+  // eslint-disable-next-line
   login: (email: string) => void;
   logout: () => void;
 }
@@ -41,11 +43,11 @@ export function AuthProvider({
     setLoading(true);
     sessionsApi
       .login(email)
-      .then((user) => {
-        setUser(user);
+      .then((u) => {
+        setUser(u);
         navigate('/calendar');
       })
-      .catch((error) => setError(error))
+      .catch((err) => setError(err))
       .finally(() => setLoading(false));
   }
 
