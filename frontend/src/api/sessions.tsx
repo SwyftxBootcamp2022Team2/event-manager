@@ -28,7 +28,7 @@ export async function getEvents(email: string): Promise<MyEvent[]> {
             email: "user@gmail.com",
             title: "Pancakes!",
             location: "ur mum",
-            startTime: "2022-07-01T10:09:50Z",
+            startTime: "2022-07-04T10:09:50Z",
             endTime: "2022-07-03T18:09:50Z",
             participationLimit: 10,
             publishTime: "2022-07-01T18:00:50Z"
@@ -38,7 +38,7 @@ export async function getEvents(email: string): Promise<MyEvent[]> {
             email: "user@gmail.com",
             title: "Massage",
             location: "ur mum",
-            startTime: "2022-07-02T10:09:50Z",
+            startTime: "2022-07-04T10:09:50Z",
             endTime: "2022-07-03T18:09:50Z",
             participationLimit: 10,
             publishTime: "2022-07-01T18:00:50Z"
