@@ -46,6 +46,22 @@ export async function getEventDetails(
   return undefined; // TODO: change
 }
 
+// export async function bookEvent(
+//   eventID: string | undefined,
+//   email: string
+// ): Promise<string> {
+//   if (eventID && email) {
+//     const res = await axios.get(`${API_ENDPOINT}/bookings/create`, {
+//       params: {
+//         eventID: id,
+//       },
+//     });
+//     return res.data;
+//   }
+//   return undefined; // TODO: change
+// }
+
+
 export async function getEvents(email: string): Promise<MyEvent[]> {
   // const res = await axios.get(`${API_ENDPOINT}/bookings/mybookings`, {
   //   params: {
