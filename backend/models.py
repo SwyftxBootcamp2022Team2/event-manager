@@ -26,6 +26,9 @@ class User(Base):
     event = relationship('Event')
     booking = relationship("Bookings")
 
+    def as_dict(self):
+       return {c.name: getattr(self, c.name) for c in self.__table__.columns}
+
 
 class Event(Base):
     __tablename__ = 'events'
@@ -41,12 +44,18 @@ class Event(Base):
     #email = relationship("User")
     #booking = relationship("Bookings")
 
+    def as_dict(self):
+       return {c.name: getattr(self, c.name) for c in self.__table__.columns}
+
 
 class Bookings(Base):
     __tablename__ = 'bookings'
     bookingID = Column(Integer, primary_key=True)
     eventID = Column(Integer, ForeignKey("events.eventID"), nullable=False)
     email = Column(String, ForeignKey("users.email"),)
+
+    def as_dict(self):
+       return {c.name: getattr(self, c.name) for c in self.__table__.columns}
 
     # relationships
     #user = relationship("User")

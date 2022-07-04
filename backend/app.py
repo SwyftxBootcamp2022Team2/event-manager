@@ -1,3 +1,5 @@
+from email.policy import HTTP
+from genericpath import exists
 import http
 from sqlalchemy.orm import Session
 from sqlalchemy import select, update
@@ -86,7 +88,6 @@ def get_user():
 @app.route("/user/update", methods=['PATCH'])
 @cross_origin()
 def update_user():
-    print_db(User)
     user = request.json
     email = user["email"]
     fName = user["fname"]
@@ -110,10 +111,8 @@ def update_user():
             session.commit()
 
         except Exception as e:
-            print(e)
             return "Error updating user information", status.HTTP_400_BAD_REQUEST
 
-    print_db(User)
     return "User information successfully updated", status.HTTP_200_OK
 
 
@@ -155,8 +154,6 @@ def create_event():
             send_slack_message(payload)
         return "Event successfully created", status.HTTP_201_CREATED
     except Exception as e:
-        print(e)
-
         return "Error occurred when creating an event", status.HTTP_400_BAD_REQUEST
 
 
@@ -192,7 +189,6 @@ def view_event():
 
     with Session(engine) as session:
         eventInfo = session.query(Event).filter_by(eventID=eventID).first()
-        print(eventInfo)
     if eventInfo is not None:  # if it exists, send that mf back
         return jsonify(eventID=eventInfo.eventID, email=eventInfo.email, title=eventInfo.title, description=eventInfo.description, location=eventInfo.location, startTime=eventInfo.startTime, endTime=eventInfo.endTime, participationLimit=eventInfo.participationLimit, publishTime=eventInfo.publishTime), status.HTTP_200_OK
     # if not, send back a token
@@ -227,25 +223,38 @@ def book_event():
     eventID = bookingInfo["eventID"]
     email = bookingInfo["email"]
 
+    # check if user exists 
+    if (not isUser(email)):
+        return jsonify(error="User does not exist"), status.HTTP_404_NOT_FOUND
+    
+
+    # check if event exists
+    if (not isEvent(eventID)):
+        return jsonify(error="Event does not exist:"), status.HTTP_404_NOT_FOUND
+
     try:
         with Session(engine) as session:
             newBooking = Bookings(
                 eventID=eventID,
                 email=email
             )
+
             # get number of bookings that are left to do
             numBookings = session.query(
                 Bookings).filter_by(eventID=eventID).count()
+
             # check if the participation limit has been exceed
             event = session.query(Event).filter_by(email=email).first()
             if numBookings + 1 >= event.participationLimit:
-                return "Participation limit exceeded", status.HTTP_400_BAD_REQUEST
+                return jsonify(error="Participation limit exceeded"), status.HTTP_400_BAD_REQUEST
+            
             session.add(newBooking)
             session.commit()
-
-        return "Booking succesful!", status.HTTP_200_OK
-    except:
-        return "An error occured when booking, please try again later", status.HTTP_400_BAD_REQUEST
+            print_db(Bookings)
+            return newBooking.as_dict(), status.HTTP_200_OK
+    except Exception as e:
+        print(e)
+        return jsonify(error="An error occured when booking, please try again later"), status.HTTP_400_BAD_REQUEST
 
 
 @app.route("/bookings/delete", methods=['DELETE'])
@@ -307,6 +316,17 @@ def isAdmin(email):
         return "No user with associated email found", status.HTTP_400_BAD_REQUEST
 
     return user.isAdmin == 1
+
+def isUser(email):
+    with Session(engine) as session:
+        count = session.query(User).filter_by(email=email).count()
+        return count == 1
+
+def isEvent(eventID):
+    with Session(engine) as session:
+        count = session.query(Event).filter_by(eventID=eventID).count()
+        return count == 1
+
 
 
 def send_slack_message(payload):
