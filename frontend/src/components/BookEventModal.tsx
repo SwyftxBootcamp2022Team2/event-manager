@@ -43,23 +43,24 @@ function BookEventModal() {
   function createBooking() {
     // make booking
     user
-      ? makeBooking(id, user.email).then((data) => {
-          if (typeof data !== 'string') {
+      ? makeBooking(id, user.email) //user.email
+          .then((data) => {
             toast({
               title: `${eventData?.title} booking confirmed`,
               status: 'success',
               isClosable: true,
               position: 'top-right',
             });
-          } else {
+          })
+          .catch((error) => {
+            console.log(error);
             toast({
-              title: `error: ${data}`,
+              title: `error: ${error.response.data}`,
               status: 'error',
               isClosable: true,
               position: 'top-right',
             });
-          }
-        })
+          })
       : navigate('/login');
     // show  booking confirmed toast
 

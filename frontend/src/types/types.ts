@@ -6,10 +6,11 @@ export interface User {
 }
 
 export interface MyEvent {
+  description: string;
+  bookingID: number;
   eventID: number;
   email: string;
   title: string;
-  description: string;
   location: string;
   startTime: string;
   endTime: string;

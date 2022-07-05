@@ -34,18 +34,15 @@ export async function getTotalBookings(
 export async function makeBooking(
   eventID: string | undefined,
   email: string,
-): Promise<Booking | string> {
-  // check if email and eventID aren't undefined
-  if (eventID && email) {
-    const res = await axios.get(`${API_ENDPOINT}/event/view`, {
-      params: {
-        eventID,
-        email,
-      },
+): Promise<Booking> {
+    console.log(`email that I got: ${email}`)
+    const res = axios.post(`${API_ENDPOINT}/bookings/create`, {
+      eventID,
+      email,
+    }).then(data => data.data).catch((error) => {
+      return Promise.reject(error);
     });
-    return res.data;
-  }
-  return 'Invalid eventID and/or user';
+    return res;
 }
 
 export async function getEventDetails(
@@ -62,75 +59,12 @@ export async function getEventDetails(
   return 'Invalid event ID';
 }
 
-// export async function bookEvent(
-//   eventID: string | undefined,
-//   email: string
-// ): Promise<string> {
-//   if (eventID && email) {
-//     const res = await axios.get(`${API_ENDPOINT}/bookings/create`, {
-//       params: {
-//         eventID: id,
-//       },
-//     });
-//     return res.data;
-//   }
-//   return undefined; // TODO: change
-// }
-
 export async function getEvents(email: string): Promise<MyEvent[]> {
-  // const res = await axios.get(`${API_ENDPOINT}/bookings/mybookings`, {
-  //   params: {
-  //     email,
-  //   }
-  // });
+  const res = await axios.get(`${API_ENDPOINT}/bookings/mybookings`, {
+    params: {
+      email,
+    }
+  });
 
-  function delayedGet(): Promise<MyEvent[]> {
-    return new Promise((resolve) => {
-      setTimeout(() => {
-        const data: MyEvent[] = [
-          {
-            eventID: 1,
-            email: 'user@gmail.com',
-            title: 'Pancakes!',
-            description:
-              'this is a test description. blah blah blah. more things to say.',
-            location: 'ur mum',
-            startTime: '2022-07-01T10:09:50Z',
-            endTime: '2022-07-03T18:09:50Z',
-            participationLimit: 10,
-            publishTime: '2022-07-01T18:00:50Z',
-          },
-          {
-            eventID: 2,
-            email: 'user@gmail.com',
-            title: 'Massage',
-            description:
-              'this is a test description. blah blah blah. more things to say.',
-            location: 'ur mum',
-            startTime: '2022-07-02T10:09:50Z',
-            endTime: '2022-07-03T18:09:50Z',
-            participationLimit: 10,
-            publishTime: '2022-07-01T18:00:50Z',
-          },
-          {
-            eventID: 3,
-            email: 'user@gmail.com',
-            title: 'Tiedye!',
-            description:
-              'this is a test description. blah blah blah. more things to say.',
-            location: 'ur mum',
-            startTime: '2022-07-03T10:09:50Z',
-            endTime: '2022-07-03T18:09:50Z',
-            participationLimit: 10,
-            publishTime: '2022-07-01T18:00:50Z',
-          },
-        ];
-
-        resolve(data);
-      }, 1000);
-    });
-  }
-
-  const res: MyEvent[] = await delayedGet();
-  return res;
+  return res.data;
 }

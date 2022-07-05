@@ -1,10 +1,9 @@
 from email.policy import HTTP
-from genericpath import exists
-import http
+from genericpath import exists  
 from sqlalchemy.orm import Session
 from sqlalchemy import select, update
 from datetime import datetime
-from flask import Flask, jsonify, request
+from flask import Flask, jsonify, request, Response, render_template
 from flask_api import status
 import sqlite3 as sql
 from models import Bookings, User, Event, engine
@@ -13,7 +12,8 @@ from sqlalchemy.orm.exc import MultipleResultsFound
 from flask_cors import CORS, cross_origin
 import requests
 import json
-
+import io
+import csv
 
 app = Flask(__name__)
 cors = CORS(app)
@@ -223,15 +223,10 @@ def book_event():
     eventID = bookingInfo["eventID"]
     email = bookingInfo["email"]
 
-    # check if user exists 
-    if (not isUser(email)):
-        return jsonify(error="User does not exist"), status.HTTP_404_NOT_FOUND
+    # check if user and event exists 
+    if (not isUser(email) or not isEvent(eventID)):
+        return "Invalid data for booking", status.HTTP_404_NOT_FOUND
     
-
-    # check if event exists
-    if (not isEvent(eventID)):
-        return jsonify(error="Event does not exist:"), status.HTTP_404_NOT_FOUND
-
     try:
         with Session(engine) as session:
             newBooking = Bookings(
@@ -252,6 +247,7 @@ def book_event():
             session.commit()
             print_db(Bookings)
             return newBooking.as_dict(), status.HTTP_200_OK
+            
     except Exception as e:
         print(e)
         return jsonify(error="An error occured when booking, please try again later"), status.HTTP_400_BAD_REQUEST
@@ -279,24 +275,72 @@ def unbook_event():
 def all_bookings():
     # give email as the foreign key for the bookings
     # give all the events that have my email
-    userinfo = request.json
+    userinfo = request.args
     email = userinfo["email"]
     with Session(engine) as session:
             # find all events associated with email
             query = session.query(Bookings, Event).join(Event, Event.eventID == Bookings.eventID).filter(Bookings.email == email).all()
             events = []
             for q in query:
-                temp = {'title': q.Event.title, 'location': q.Event.location, 'startTime': q.Event.startTime, 'endTime': q.Event.endTime, 'participationLimit': q.Event.participationLimit, 'email': email}
+                temp = {'bookingID': q.Bookings.bookingID, 'title': q.Event.title, 'location': q.Event.location, 'startTime': q.Event.startTime, 'endTime': q.Event.endTime, 'participationLimit': q.Event.participationLimit, 'email': email}
                 events.append(temp)
             # remove strings from each event in array
             return jsonify(events), status.HTTP_200_OK
 
-@app.route("/", methods=['GET'])
-def home_function():
-    return True
+
+@app.route('/export/events/')
+def export_events():
+	try:
+		# connect to testdata.db
+		conn = sql.connect('testdata.db')
+		cursor = conn.cursor()
+		# select all values from users table
+		cursor.execute("SELECT * FROM events")
+		result = cursor.fetchall()
+		output = io.StringIO()
+		writer = csv.writer(output)
+		field_names = [i[0] for i in cursor.description]
+		writer.writerow(field_names)
+
+		for row in result:
+			writer.writerow(row)
+
+		output.seek(0)
+		
+		return Response(output, mimetype="text/csv", headers={"Content-Disposition":"attachment;filename=event_report.csv"})
+	except Exception as e:
+		print(e)
+	finally:
+		cursor.close() 
+		conn.close()
+
+@app.route('/export/users/')
+def export_users():
+	try:
+		# connect to testdata.db
+		conn = sql.connect('testdata.db')
+		cursor = conn.cursor()
+		# select all values from users table
+		cursor.execute("SELECT * FROM users")
+		result = cursor.fetchall()
+		output = io.StringIO()
+		writer = csv.writer(output)
+		field_names = [i[0] for i in cursor.description]
+		writer.writerow(field_names)
+
+		for row in result:
+			writer.writerow(row)
+
+		output.seek(0)
+		
+		return Response(output, mimetype="text/csv", headers={"Content-Disposition":"attachment;filename=user_report.csv"})
+	except Exception as e:
+		print(e)
+	finally:
+		cursor.close() 
+		conn.close()
 
 #### HELPER FUNCTION ####
-
 
 def print_db(modelName):
     with engine.connect() as conn:
@@ -331,3 +375,23 @@ def isEvent(eventID):
 
 def send_slack_message(payload):
     return requests.post(webhook, json.dumps(payload))
+
+from werkzeug.exceptions import HTTPException
+
+# # source : 
+# # https://stackoverflow.com/questions/63539750/cant-seems-to-read-the-error-message-in-react-jsaxios-from-flask-api-using-j
+
+# @app.errorhandler(HTTPException)
+# def handle_exception(e):
+#     """Return JSON instead of HTML for HTTP errors."""
+#     print(e)
+#     # start with the correct headers and status code from the error
+#     response = e.get_response()
+#     # replace the body with JSON
+#     response.data = json.dumps({
+#         "code": e.code,
+#         "name": e.name,
+#         "description": e.description,
+#     })
+#     response.content_type = "application/json"
+#     return response
