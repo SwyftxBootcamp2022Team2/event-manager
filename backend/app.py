@@ -250,14 +250,14 @@ def unbook_event():
 def all_bookings():
     # give email as the foreign key for the bookings
     # give all the events that have my email
-    userinfo = request.json
+    userinfo = request.args
     email = userinfo["email"]
     with Session(engine) as session:
             # find all events associated with email
             query = session.query(Bookings, Event).join(Event, Event.eventID == Bookings.eventID).filter(Bookings.email == email).all()
             events = []
             for q in query:
-                temp = {'title': q.Event.title, 'location': q.Event.location, 'startTime': q.Event.startTime, 'endTime': q.Event.endTime, 'participationLimit': q.Event.participationLimit, 'email': email}
+                temp = {'bookingID': q.Bookings.bookingID, 'title': q.Event.title, 'location': q.Event.location, 'startTime': q.Event.startTime, 'endTime': q.Event.endTime, 'participationLimit': q.Event.participationLimit, 'email': email}
                 events.append(temp)
             # remove strings from each event in array
             return jsonify(events), status.HTTP_200_OK
@@ -339,29 +339,3 @@ def isAdmin(email):
 
 def send_slack_message(payload):
     return requests.post(webhook, json.dumps(payload))
-
-
-def download_report(tablename):
-	try:
-		# connect to testdata.db
-		conn = sql.connect('testdata.db')
-		cursor = conn.cursor()
-		# select all values from users table
-		cursor.execute("SELECT * FROM " + tablename)
-		result = cursor.fetchall()
-		output = io.StringIO()
-		writer = csv.writer(output)
-		field_names = [i[0] for i in cursor.description]
-		writer.writerow(field_names)
-
-		for row in result:
-			writer.writerow(row)
-
-		output.seek(0)
-		
-		return Response(output, mimetype="text/csv", headers={"Content-Disposition":"attachment;filename=user_report.csv"})
-	except Exception as e:
-		print(e)
-	finally:
-		cursor.close() 
-		conn.close()
