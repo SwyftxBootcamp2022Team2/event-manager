@@ -16,17 +16,17 @@ user = Blueprint(
 def get_user():
     user = request.json
     email = user["email"]
-    with db.session as session:
-        userinfo = session.query(User).filter_by(email=email).first()
-        if userinfo is not None:     # check if user is in database, and give back their info
-            return jsonify(
-                email=userinfo.email, 
-                fname=userinfo.fname, 
-                lname=userinfo.lname, 
-                isAdmin=userinfo.isAdmin,
-                department=userinfo.department,
-                dietary=userinfo.dietary,
-                accessibility=userinfo.accessibility), status.HTTP_200_OK
+
+    userinfo = db.session.query(User).filter_by(email=email).first()
+    if userinfo is not None:     # check if user is in database, and give back their info
+        return jsonify(
+            email=userinfo.email, 
+            fname=userinfo.fname, 
+            lname=userinfo.lname, 
+            isAdmin=userinfo.isAdmin,
+            department=userinfo.department,
+            dietary=userinfo.dietary,
+            accessibility=userinfo.accessibility), status.HTTP_200_OK
     # if not, send back a token, (its a get so don't add this user into the "user" db)
     return "Couldn't find user!", status.HTTP_404_NOT_FOUND
 
@@ -40,22 +40,21 @@ def update_user():
     department = user["department"]
     dietary = user["dietary"]
     accessibility = user["accessibility"]
-    with db.session as session:
-        try:
-            session.execute(
-                update(User)
-                .where(User.email==email)
-                .values(
-                    fname = fName,
-                    lname = lName,
-                    department = department,
-                    dietary = dietary,
-                    accessibility = accessibility)
-            ) 
-            session.commit()
+    try:
+        db.session.execute(
+            update(User)
+            .where(User.email==email)
+            .values(
+                fname = fName,
+                lname = lName,
+                department = department,
+                dietary = dietary,
+                accessibility = accessibility)
+        ) 
+        db.session.commit()
 
-        except Exception as e:
-            print(e)
-            return "Error updating user information", status.HTTP_400_BAD_REQUEST
+    except Exception as e:
+        print(e)
+        return "Error updating user information", status.HTTP_400_BAD_REQUEST
 
     return "User information successfully updated", status.HTTP_200_OK

@@ -69,13 +69,12 @@ def delete_event():
     event = request.json  # check if event exists
     eventID = event["eventID"]
     try:
-        with db.session as session:
-            event = session.get(Event, eventID)
-            session.delete(event)
-            session.commit()
-            payload = {"text": event["title"] + " has been deleted :pensive:"}
-            send_slack_message(payload)
-            return "Event successfully deleted", status.HTTP_200_OK
+        event = db.session.get(Event, eventID)
+        db.session.delete(event)
+        db.session.commit()
+        payload = {"text": event["title"] + " has been deleted :pensive:"}
+        send_slack_message(payload)
+        return "Event successfully deleted", status.HTTP_200_OK
     except:
         return "Error occured when deleting event, please try again later", status.HTTP_400_BAD_REQUEST
 
@@ -87,8 +86,8 @@ def view_event():
     event = request.json
     # check if event exists
     eventID = event["eventID"]
-    with db.session as session:
-        eventInfo = session.query(Event).filter_by(eventID=eventID).first()
+    
+    eventInfo = db.session.query(Event).filter_by(eventID=eventID).first()
     if eventInfo is not None:  # if it exists, send that mf back
         return jsonify(eventID=eventInfo.eventID, title=eventInfo.title, location=eventInfo.location, start=eventInfo.start, startTime=eventInfo.startTime, endTime=eventInfo.endTime, participationLimit=eventInfo.participationLimit, createdBy=eventInfo.createdBy), status.HTTP_200_OK
     # if not, send back a token

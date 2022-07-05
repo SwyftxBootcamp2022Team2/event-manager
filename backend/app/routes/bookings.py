@@ -62,12 +62,12 @@ def all_bookings():
     # give all the events that have my email
     userinfo = request.args
     email = userinfo["email"]
-    with db.session as session:
-            # find all events associated with email
-            query = session.query(Bookings, Event).join(Event, Event.eventID == Bookings.eventID).filter(Bookings.email == email).all()
-            events = []
-            for q in query:
-                temp = {'bookingID': q.Bookings.bookingID, 'title': q.Event.title, 'location': q.Event.location, 'startTime': q.Event.startTime, 'endTime': q.Event.endTime, 'participationLimit': q.Event.participationLimit, 'email': email}
-                events.append(temp)
-            # remove strings from each event in array
-            return jsonify(events), status.HTTP_200_OK
+
+    # find all events associated with email
+    query = db.session.query(Bookings, Event).join(Event, Event.eventID == Bookings.eventID).filter(Bookings.email == email).all()
+    events = []
+    for q in query:
+        temp = {'bookingID': q.Bookings.bookingID, 'title': q.Event.title, 'location': q.Event.location, 'startTime': q.Event.startTime, 'endTime': q.Event.endTime, 'participationLimit': q.Event.participationLimit, 'email': email}
+        events.append(temp)
+    # remove strings from each event in array
+    return jsonify(events), status.HTTP_200_OK
