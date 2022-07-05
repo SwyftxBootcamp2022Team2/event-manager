@@ -8,17 +8,17 @@ from models import Bookings, User, Event, engine
 from sqlalchemy.orm.exc import NoResultFound
 from sqlalchemy.orm.exc import MultipleResultsFound
 from flask_cors import CORS, cross_origin
-from icalendar import Calendar, Event, vCalAddress, vText
+from icalendar import Calendar, vCalAddress, vText
+from icalendar import Event as icalEvent
 import requests
 import json
 import io
 import csv
-import pytz 
 
 app = Flask(__name__)
 cors = CORS(app)
 app.config['CORS_HEADERS'] = 'Content-Type'
-webhook = "https://hooks.slack.com/services/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"
+webhook = "https://hooks.slack.com/services/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" # for slackbot
 
 
 @app.route("/")
@@ -196,7 +196,7 @@ def view_event():
     with Session(engine) as session:
         eventInfo = session.query(Event).filter_by(eventID=eventID).first()
     if eventInfo is not None:  # if it exists, send that mf back
-        return jsonify(eventID=eventInfo.eventID, title=eventInfo.title, location=eventInfo.location, start=eventInfo.start, startTime=eventInfo.startTime, endTime=eventInfo.endTime, participationLimit=eventInfo.participationLimit, createdBy=eventInfo.createdBy), status.HTTP_200_OK
+        return jsonify(eventID=eventInfo.eventID, title=eventInfo.title, location=eventInfo.location, startTime=eventInfo.startTime, endTime=eventInfo.endTime, participationLimit=eventInfo.participationLimit, createdBy=eventInfo.createdBy), status.HTTP_200_OK
     # if not, send back a token
     return "Event Doesn't Exist!", status.HTTP_400_BAD_REQUEST
 
@@ -281,8 +281,6 @@ def export_events():
 		for row in result:
 			writer.writerow(row)
 
-		output.seek(0)
-		
 		return Response(output, mimetype="text/csv", headers={"Content-Disposition":"attachment;filename=event_report.csv"})
 	except Exception as e:
 		print(e)
@@ -306,8 +304,6 @@ def export_users():
 
 		for row in result:
 			writer.writerow(row)
-
-		output.seek(0)
 		
 		return Response(output, mimetype="text/csv", headers={"Content-Disposition":"attachment;filename=user_report.csv"})
 	except Exception as e:
@@ -318,15 +314,20 @@ def export_users():
 
 @app.route('/export/calendar', methods=['GET'])
 def create_calendar():
-    eventInfo = request.json
-
+    newRequest = request.args # get the EventID from the frontend
+    # query event info based on eventID from the DB
+    eventID = newRequest["eventID"]
+    with Session(engine) as session:
+        eventInfo = session.get(Event, eventID)
+    if eventInfo is None:  # email exists in db, so send back user data
+        return "Event doesn't exist", status.HTTP_400_BAD_REQUEST
     cal = Calendar()
-    event = Event()
+    event = icalEvent()
     event.add('title', eventInfo["title"])
     event.add('name', eventInfo["title"])
     event.add('description', eventInfo["description"])
 
-    # convert eventInfo[startTime] to datetime object
+    # convert eventInfo times to datetime object
     startTime = datetime.strptime(eventInfo["startTime"], '%Y-%m-%d %H:%M')
     endTime = datetime.strptime(eventInfo["endTime"], '%Y-%m-%d %H:%M')
     event.add('dtstart', startTime)
@@ -338,10 +339,11 @@ def create_calendar():
         
     cal.add_component(event)
 
-    # write cal to file (just for testing)
+    # write cal to file (**just for testing**)
     f = open('test.ics', 'wb')
     f.write(cal.to_ical())
     f.close()
+
     # send cal back to frontend to download 
     return Response(cal.to_ical(), mimetype="text/calendar", headers={"Content-Disposition":"attachment;filename=calendar.ics"})
 
@@ -353,7 +355,6 @@ def print_db(modelName):
         stmt = select(modelName)
         for row in conn.execute(stmt):
             print(row)
-
 
 def isAdmin(email):
     try:
@@ -367,32 +368,5 @@ def isAdmin(email):
 
     return user.isAdmin == 1
 
-
 def send_slack_message(payload):
     return requests.post(webhook, json.dumps(payload))
-
-
-def download_report(tablename):
-	try:
-		# connect to testdata.db
-		conn = sql.connect('testdata.db')
-		cursor = conn.cursor()
-		# select all values from users table
-		cursor.execute("SELECT * FROM " + tablename)
-		result = cursor.fetchall()
-		output = io.StringIO()
-		writer = csv.writer(output)
-		field_names = [i[0] for i in cursor.description]
-		writer.writerow(field_names)
-
-		for row in result:
-			writer.writerow(row)
-
-		output.seek(0)
-		
-		return Response(output, mimetype="text/csv", headers={"Content-Disposition":"attachment;filename=user_report.csv"})
-	except Exception as e:
-		print(e)
-	finally:
-		cursor.close() 
-		conn.close()

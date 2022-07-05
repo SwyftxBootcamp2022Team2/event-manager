@@ -19,6 +19,7 @@ CREATE TABLE IF NOT EXISTS `events` (
     location text NOT NULL,
     startTime text NOT NULL,
     endTime text NOT NULL,
+    description text NOT NULL,
     participationLimit int,
     email text,
     publishTime text,
@@ -36,9 +37,9 @@ INSERT INTO `users` (`email`, `fname`, `lname`, `department`, `dietary`, `access
 INSERT INTO `users` (`email`, `fname`, `lname`, `department`, `dietary`, `accessibility`, `isAdmin`) VALUES ('user@gmail.com', 'Normal', 'User', 'R & D', 'halal', 'wheelchair', 0);
 INSERT INTO `users` (`email`, `fname`, `lname`, `department`, `dietary`, `accessibility`, `isAdmin`) VALUES ('test@gmail.com', 'Test', 'User', 'R & D', 'vegetarian', null, 1);
 -- Insert test events
-INSERT INTO `events` (`title`, `location`, `startTime`, `endTime`, `participationLimit`, `email`, `publishTime`) VALUES ('Sunday Funday', 'Himath''s room', '2020-01-02 00:00:00', '2020-01-02 00:00:00', 7, 'admin@gmail.com', '2020-01-02 00:00:00');
-INSERT INTO `events` (`title`, `location`, `startTime`, `endTime`, `participationLimit`, `email`, `publishTime`) VALUES ('Pancake Wednesday', 'Swytfx HQ', '2020-01-02 00:00:00', '2020-01-02 00:00:00', 7, 'admin@gmail.com', '2020-01-02 00:00:00');
-INSERT INTO `events` (`title`, `location`, `startTime`, `endTime`, `participationLimit`, `email`, `publishTime`) VALUES ('Saturday VR', 'VR Place', '2020-01-02 00:00:00', '2020-01-02 00:00:00', 5, 'user@gmail.com', '2020-01-02 00:00:00');
+INSERT INTO `events` (`title`, `location`, `startTime`, `endTime`, `participationLimit`, `email`, `publishTime`, `description`) VALUES ('Sunday Funday', 'Himath''s room', '2020-01-02 00:00:00', '2020-01-02 00:00:00', 7, 'admin@gmail.com', '2020-01-02 00:00:00', 'A fun event for everyone!');
+INSERT INTO `events` (`title`, `location`, `startTime`, `endTime`, `participationLimit`, `email`, `publishTime`, `description`) VALUES ('Pancake Wednesday', 'Swytfx HQ', '2020-01-02 00:00:00', '2020-01-02 00:00:00', 7, 'admin@gmail.com', '2020-01-02 00:00:00', 'We love pancakes');
+INSERT INTO `events` (`title`, `location`, `startTime`, `endTime`, `participationLimit`, `email`, `publishTime`, `description`) VALUES ('Saturday VR', 'VR Place', '2020-01-02 00:00:00', '2020-01-02 00:00:00', 5, 'user@gmail.com', '2020-01-02 00:00:00', 'VR is fun!');
 -- Insert test bookings
 INSERT INTO `bookings` (`eventID`, `email`) VALUES (1, "admin@gmail.com");
 INSERT INTO `bookings` (`eventID`, `email`) VALUES (3, "admin@gmail.com");
