@@ -2,7 +2,6 @@ import React, {
   ReactNode,
   useState,
   createContext,
-  useEffect,
   useMemo,
   useContext,
 } from 'react';
@@ -14,6 +13,7 @@ interface AuthContextType {
   user?: User;
   loading: boolean;
   error?: any;
+
   // unused-var: this is a function type, not definition
   // eslint-disable-next-line
   login: (email: string) => void;
@@ -33,19 +33,12 @@ export function AuthProvider({
 
   const navigate = useNavigate();
 
-  // check current active session on first mount
-  useEffect(() => {
-    if (user) navigate('/book-events');
-    else navigate('/login');
-  }, [user]);
-
   async function login(email: string) {
     setLoading(true);
     sessionsApi
       .login(email)
-      .then((u) => {
-        setUser(u);
-        navigate('/calendar');
+      .then((currentUser) => {
+        setUser(currentUser);
       })
       .catch((err) => setError(err))
       .finally(() => setLoading(false));
