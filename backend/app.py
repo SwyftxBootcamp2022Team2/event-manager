@@ -192,7 +192,7 @@ def view_event():
     if eventInfo is not None:  # if it exists, send that mf back
         return jsonify(eventID=eventInfo.eventID, email=eventInfo.email, title=eventInfo.title, description=eventInfo.description, location=eventInfo.location, startTime=eventInfo.startTime, endTime=eventInfo.endTime, participationLimit=eventInfo.participationLimit, publishTime=eventInfo.publishTime), status.HTTP_200_OK
     # if not, send back a token
-    return jsonify(error="Event Doesn't Exist!"), status.HTTP_400_BAD_REQUEST
+    return "Event Doesn't Exist!", status.HTTP_400_BAD_REQUEST
 
 @app.route("/event/bookings/count", methods=['GET'])
 @cross_origin()
@@ -241,7 +241,7 @@ def book_event():
             # check if the participation limit has been exceed
             event = session.query(Event).filter_by(email=email).first()
             if numBookings + 1 >= event.participationLimit:
-                return jsonify(error="Participation limit exceeded"), status.HTTP_400_BAD_REQUEST
+                return "Participation limit exceeded", status.HTTP_400_BAD_REQUEST
             
             session.add(newBooking)
             session.commit()
@@ -249,15 +249,15 @@ def book_event():
             return newBooking.as_dict(), status.HTTP_200_OK
             
     except Exception as e:
-        print(e)
-        return jsonify(error="An error occured when booking, please try again later"), status.HTTP_400_BAD_REQUEST
+        return "An error occured when booking, please try again later", status.HTTP_400_BAD_REQUEST
 
 
 @app.route("/bookings/delete", methods=['DELETE'])
 @cross_origin()
 def unbook_event():
-    bookingInfo = request.json
+    bookingInfo = request.args
     eventID = bookingInfo["eventID"]  # eventID to delete
+    email = bookingInfo["email"] #email to delete
 
     try:
         with Session(engine) as session:
@@ -286,6 +286,23 @@ def all_bookings():
                 events.append(temp)
             # remove strings from each event in array
             return jsonify(events), status.HTTP_200_OK
+
+@app.route("/bookings/event", methods=['GET'])
+@cross_origin()
+def is_booked():
+
+    userinfo = request.args
+    email = userinfo["email"]
+    eventID = userinfo["eventID"]
+
+    # check if user and event exists 
+    if (not isUser(email) or not isEvent(eventID)):
+        return "Invalid Data Passed", status.HTTP_404_NOT_FOUND
+
+    with Session(engine) as session:
+            # find whether user has booked event
+            count = session.query(Bookings).filter(Bookings.email == email, Bookings.eventID == eventID).count()
+            return jsonify(booked=count==1), status.HTTP_200_OK
 
 
 @app.route('/export/events/')
@@ -372,26 +389,5 @@ def isEvent(eventID):
         return count == 1
 
 
-
 def send_slack_message(payload):
     return requests.post(webhook, json.dumps(payload))
-
-from werkzeug.exceptions import HTTPException
-
-# # source : 
-# # https://stackoverflow.com/questions/63539750/cant-seems-to-read-the-error-message-in-react-jsaxios-from-flask-api-using-j
-
-# @app.errorhandler(HTTPException)
-# def handle_exception(e):
-#     """Return JSON instead of HTML for HTTP errors."""
-#     print(e)
-#     # start with the correct headers and status code from the error
-#     response = e.get_response()
-#     # replace the body with JSON
-#     response.data = json.dumps({
-#         "code": e.code,
-#         "name": e.name,
-#         "description": e.description,
-#     })
-#     response.content_type = "application/json"
-#     return response

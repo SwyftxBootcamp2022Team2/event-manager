@@ -20,6 +20,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import dayjs from 'dayjs';
 import { Calendar, Group, Location } from 'grommet-icons';
 import {
+  getBookingStatus,
   getEventDetails,
   getTotalBookings,
   makeBooking,
@@ -36,6 +37,7 @@ function BookEventModal() {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [eventData, setEventData] = useState<MyEvent | undefined>();
   const [bookingCount, setBookingCount] = useState<number | undefined>();
+  const [isBooked, setBookingStatus] = useState<boolean>(false);
 
   const { user } = useAuth();
   const toast = useToast();
@@ -53,7 +55,6 @@ function BookEventModal() {
             });
           })
           .catch((error) => {
-            console.log(error);
             toast({
               title: `error: ${error.response.data}`,
               status: 'error',
@@ -72,12 +73,47 @@ function BookEventModal() {
   useEffect(() => {
     onOpen();
     if (user) {
-      getEventDetails(id).then((data) => {
-        typeof data === 'string' ? alert(data) : setEventData(data);
-      });
-      getTotalBookings(id).then((data) => {
-        typeof data === 'string' ? alert(data) : setBookingCount(data);
-      });
+      // get details for the current event
+      getEventDetails(id)
+        .then((data) => {
+          setEventData(data);
+        })
+        .catch((error) => {
+          toast({
+            title: `error: ${error.response.data}`,
+            status: 'error',
+            isClosable: true,
+            position: 'top-right',
+          });
+        });
+
+      // get number of bookings made for the current event
+      getTotalBookings(id)
+        .then((data) => {
+          setBookingCount(data);
+        })
+        .catch((error) => {
+          toast({
+            title: `error: ${error.response.data}`,
+            status: 'error',
+            isClosable: true,
+            position: 'top-right',
+          });
+        });
+
+      // get whether user has booked this event
+      getBookingStatus(id, user.email)
+        .then((data) => {
+          setBookingStatus(data);
+        })
+        .catch((error) => {
+          toast({
+            title: `error: ${error.response.data}`,
+            status: 'error',
+            isClosable: true,
+            position: 'top-right',
+          });
+        });
     } else {
       navigate('/login');
     }
@@ -121,7 +157,9 @@ function BookEventModal() {
                 <Text fontSize="xl">
                   {eventData &&
                     bookingCount &&
-                    `${eventData.participationLimit - bookingCount} spots left`}
+                    `${eventData.participationLimit - bookingCount} / ${
+                      eventData.participationLimit
+                    } spots left`}
                 </Text>
               </Feature>
               <Box maxH="500px" overflow="scroll" p="3">
@@ -132,9 +170,16 @@ function BookEventModal() {
         </ModalBody>
 
         <ModalFooter>
-          <Button bg="#0072ed" color="white" mr={3} onClick={createBooking}>
-            RSVP
-          </Button>
+          {isBooked && (
+            <Button bg="#edbd64" color="white" mr={3} onClick={createBooking}>
+              UN-RSVP
+            </Button>
+          )}
+          {!isBooked && (
+            <Button bg="#0072ed" color="white" mr={3} onClick={createBooking}>
+              RSVP
+            </Button>
+          )}
         </ModalFooter>
       </ModalContent>
     </Modal>
