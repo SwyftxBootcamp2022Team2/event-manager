@@ -7,12 +7,15 @@ import React, {
   useContext,
 } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { User } from './types/types'
 import * as sessionsApi from './api/sessions';
 
 interface AuthContextType {
   user?: User;
   loading: boolean;
   error?: any;
+  // unused-var: this is a function type, not definition
+  // eslint-disable-next-line
   login: (email: string) => void;
   logout: () => void;
 }
@@ -40,11 +43,11 @@ export function AuthProvider({
     setLoading(true);
     sessionsApi
       .login(email)
-      .then((user) => {
-        setUser(user);
+      .then((u) => {
+        setUser(u);
         navigate('/calendar');
       })
-      .catch((error) => setError(error))
+      .catch((err) => setError(err))
       .finally(() => setLoading(false));
   }
 
