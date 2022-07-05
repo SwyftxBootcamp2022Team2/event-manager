@@ -16,6 +16,7 @@ import {
   useToast,
   Flex,
 } from '@chakra-ui/react';
+import { EditIcon, DeleteIcon } from '@chakra-ui/icons';
 
 import { useNavigate, useParams } from 'react-router-dom';
 import dayjs from 'dayjs';
@@ -90,9 +91,50 @@ function BookEventModal() {
 
         <ModalFooter>
           <Button
+            leftIcon={<EditIcon />}
             bg="#0072ed"
             color="white"
             mr={3}
+            _hover={{ bg: '#005de2' }}
+            onClick={() => {
+              onClose();
+              navigate(-1);
+            }}
+          >
+            Edit event
+          </Button>
+
+          <Button
+            leftIcon={<DeleteIcon />}
+            bg="#0072ed"
+            color="white"
+            mr={3}
+            _hover={{ bg: '#005de2' }}
+            onClick={() => {
+              toast({
+                title: `${data.title} event cancelled`,
+                status: 'success',
+                isClosable: true,
+                position: 'top-right',
+                containerStyle: {
+                  maxWidth: '15%',
+                  marginRight: '10%',
+                  marginTop: '15%',
+                },
+              });
+
+              onClose();
+              navigate(-1);
+            }}
+          >
+            Cancel event
+          </Button>
+
+          <Button
+            bg="#0072ed"
+            color="white"
+            mr={3}
+            _hover={{ bg: '#005de2' }}
             onClick={() => {
               toast({
                 title: `${data.title} booking confirmed`,
@@ -105,7 +147,6 @@ function BookEventModal() {
                   marginTop: '15%',
                 },
               });
-
               onClose();
               navigate(-1);
             }}
