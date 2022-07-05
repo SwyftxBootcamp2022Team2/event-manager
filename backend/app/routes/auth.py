@@ -1,6 +1,6 @@
 from flask import Blueprint, jsonify, request
 from app.models import User
-from app import db
+from database import db
 from flask_api import status
 from flask_cors import cross_origin
 
@@ -16,11 +16,11 @@ auth = Blueprint(
 def login():
     user = request.json
     email = user["email"]
-    
+
     userInDB = db.session.query(User).filter_by(email=email).first()
-    
+
     # return user
-    return jsonify(userInDB), status.HTTP_200_OK
+    return jsonify(email=userInDB.email, fName=userInDB.fname, lName=userInDB.lname, isAdmin=userInDB.isAdmin), status.HTTP_200_OK
 
 # User not found
 @auth.errorhandler(404)
