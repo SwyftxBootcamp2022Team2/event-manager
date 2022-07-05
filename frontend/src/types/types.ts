@@ -23,3 +23,7 @@ export interface Booking {
   email: string;
   eventID: number;
 }
+
+export type EventBooking = {
+  eventbooking: [number, boolean, MyEvent];
+};

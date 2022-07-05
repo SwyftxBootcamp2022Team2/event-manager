@@ -1,6 +1,6 @@
 /* eslint-disable import/prefer-default-export */
 import axios from 'axios';
-import { User, MyEvent, Booking } from '../types/types';
+import { User, MyEvent, Booking, EventBooking } from '../types/types';
 
 const API_ENDPOINT = process.env.REACT_APP_API_ENDPOINT;
 
@@ -15,6 +15,43 @@ export async function login(email: string): Promise<User> {
 export async function getAllEvents(): Promise<MyEvent[]> {
   const res = await axios.get(`${API_ENDPOINT}/event/get`);
   return res.data.eventData;
+}
+
+export async function getEventBookings(
+  eventID: string | undefined,
+  email: string,
+): Promise<EventBooking> {
+  const totalBookingCount = axios.get(`${API_ENDPOINT}/event/bookings/count`, {
+    params: {
+      eventID,
+    },
+  });
+
+  const bookingStatus = axios.get(`${API_ENDPOINT}/bookings/event`, {
+    params: {
+      eventID,
+      email,
+    },
+  });
+
+  const eventDetails = axios.get(`${API_ENDPOINT}/event/view`, {
+    params: {
+      eventID,
+    },
+  });
+
+  let bookingCountTemp: number;
+  let bookingStatusTemp: boolean;
+  let eventDetailsTemp: MyEvent;
+  return Promise.all([totalBookingCount, bookingStatus, eventDetails]).then(
+    (data) => {
+      bookingCountTemp = data[0].data.count;
+      bookingStatusTemp = data[1].data.booked;
+      eventDetailsTemp = data[2].data;
+
+      return [bookingCountTemp, bookingStatusTemp, eventDetailsTemp];
+    },
+  );
 }
 
 export async function getTotalBookings(
