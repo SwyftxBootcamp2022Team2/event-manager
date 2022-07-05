@@ -31,6 +31,7 @@ class Event(Base):
     __tablename__ = 'events'
     eventID = Column(Integer, primary_key=True)
     title = Column(String, nullable=False)
+    description = Column(String)
     location = Column(String, nullable=False)
     startTime = Column(String)
     endTime = Column(String)

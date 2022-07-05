@@ -6,13 +6,16 @@ import React, {
   useContext,
 } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { User } from './types/types'
 import * as sessionsApi from './api/sessions';
 
 interface AuthContextType {
   user?: User;
   loading: boolean;
   error?: any;
-  // eslint-disable-next-line no-unused-vars
+
+  // unused-var: this is a function type, not definition
+  // eslint-disable-next-line
   login: (email: string) => void;
   logout: () => void;
 }

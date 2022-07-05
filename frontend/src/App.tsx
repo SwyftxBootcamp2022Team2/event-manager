@@ -46,15 +46,13 @@ function Router() {
     </>
   );
 
-  if (user === undefined) {
-    return (
-      <Routes>
-        <Route path="/login" element={<LoginPage />} />
-      </Routes>
-    );
-  }
-
-  return authorisedRoutes;
+  return user ? (
+    authorisedRoutes
+  ) : (
+    <Routes>
+      <Route path="/login" element={<LoginPage />} />
+    </Routes>
+  );
 }
 
 function App() {
