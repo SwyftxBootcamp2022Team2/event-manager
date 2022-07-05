@@ -170,14 +170,21 @@ function BookEventModal() {
         </ModalBody>
 
         <ModalFooter>
-          {isBooked && (
-            <Button bg="#edbd64" color="white" mr={3} onClick={createBooking}>
-              UN-RSVP
-            </Button>
-          )}
           {!isBooked && (
             <Button bg="#0072ed" color="white" mr={3} onClick={createBooking}>
               RSVP
+            </Button>
+          )}
+          {isBooked && (
+            <Button
+              bg="#edbd64"
+              color="white"
+              mr={3}
+              onClick={(e) => {
+                alert('unrsvpd');
+              }}
+            >
+              UN-RSVP
             </Button>
           )}
         </ModalFooter>
