@@ -1,7 +1,11 @@
-from flask import Blueprint, current_app, render_template
-from flask import current_app as app
+from asyncio import Event
+import datetime
+from flask import Blueprint, jsonify, request
+from flask_api import status
 from flask_cors import cross_origin
-from app.models import User, db
+from app.utils.authUtils import isAdmin
+from app.utils.slackUtils import send_slack_message
+from database import db
 
 # Blueprint configuration
 event = Blueprint(
@@ -32,7 +36,7 @@ def create_event():
 
     # otherwise, allow event creation
     try:
-        with Session(engine) as session:
+        with db.session as session:
             event = Event(
                 email=email,
                 title=eventTitle,
@@ -65,7 +69,7 @@ def delete_event():
     event = request.json  # check if event exists
     eventID = event["eventID"]
     try:
-        with Session(engine) as session:
+        with db.session as session:
             event = session.get(Event, eventID)
             session.delete(event)
             session.commit()
@@ -83,7 +87,7 @@ def view_event():
     event = request.json
     # check if event exists
     eventID = event["eventID"]
-    with Session(engine) as session:
+    with db.session as session:
         eventInfo = session.query(Event).filter_by(eventID=eventID).first()
     if eventInfo is not None:  # if it exists, send that mf back
         return jsonify(eventID=eventInfo.eventID, title=eventInfo.title, location=eventInfo.location, start=eventInfo.start, startTime=eventInfo.startTime, endTime=eventInfo.endTime, participationLimit=eventInfo.participationLimit, createdBy=eventInfo.createdBy), status.HTTP_200_OK

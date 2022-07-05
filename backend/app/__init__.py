@@ -17,7 +17,7 @@ def create_app():
 
     with app.app_context():
         # Import parts of our application
-        from .routes import auth
+        from .routes import auth, bookings, event, user, export
 
         # Create database if not already made
         if not path.exists(DB_NAME):
@@ -26,7 +26,11 @@ def create_app():
 
         # Register Blueprints
         app.register_blueprint(auth.auth)
-        
+        app.register_blueprint(bookings.bookings)
+        app.register_blueprint(event.event)
+        app.register_blueprint(user.user)
+        app.register_blueprint(export.export)
+
         # Hello world endpoint
         @app.route("/")
         @cross_origin()

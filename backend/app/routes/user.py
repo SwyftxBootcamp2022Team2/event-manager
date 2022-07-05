@@ -1,6 +1,9 @@
-from flask import Blueprint, current_app, render_template
-from flask import current_app as app
+from flask import Blueprint, jsonify,request
 from flask_cors import cross_origin
+from flask_api import status
+from sqlalchemy import update
+from app.models import User
+from database import db
 
 # Blueprint configuration
 user = Blueprint(
@@ -13,7 +16,7 @@ user = Blueprint(
 def get_user():
     user = request.json
     email = user["email"]
-    with Session(engine) as session:
+    with db.session as session:
         userinfo = session.query(User).filter_by(email=email).first()
         if userinfo is not None:     # check if user is in database, and give back their info
             return jsonify(
@@ -37,9 +40,8 @@ def update_user():
     department = user["department"]
     dietary = user["dietary"]
     accessibility = user["accessibility"]
-    with Session(engine) as session:
+    with db.session as session:
         try:
-            
             session.execute(
                 update(User)
                 .where(User.email==email)

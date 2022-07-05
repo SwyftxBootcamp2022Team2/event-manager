@@ -1,7 +1,8 @@
-from flask import Blueprint, current_app, render_template
-from flask import current_app as app
+from flask import Blueprint, jsonify, request
+from flask_api import status
 from flask_cors import cross_origin
-from app.models import User, db
+from app.models import Event, Bookings
+from database import db
 
 # Blueprint configuration
 bookings = Blueprint(
@@ -17,7 +18,7 @@ def book_event():
     email = bookingInfo["email"]
 
     try:
-        with Session(engine) as session:
+        with db.session as session:
             newBooking = Bookings(
                 eventID=eventID,
                 email=email
@@ -44,7 +45,7 @@ def unbook_event():
     eventID = bookingInfo["eventID"]  # eventID to delete
 
     try:
-        with Session(engine) as session:
+        with db.session as session:
             booking = session.get(Bookings, eventID)
             session.delete(booking)
             session.commit()
@@ -61,7 +62,7 @@ def all_bookings():
     # give all the events that have my email
     userinfo = request.args
     email = userinfo["email"]
-    with Session(engine) as session:
+    with db.session as session:
             # find all events associated with email
             query = session.query(Bookings, Event).join(Event, Event.eventID == Bookings.eventID).filter(Bookings.email == email).all()
             events = []
