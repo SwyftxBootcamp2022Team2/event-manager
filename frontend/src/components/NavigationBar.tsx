@@ -42,19 +42,19 @@ function NavigationBar() {
         </HStack>
         <HStack alignItems="center" spacing={2}>
           {NavLinks.map((link) => (
-            <Button
-              key={link.name}
-              variant="solid"
-              bg="#0072ed"
-              _hover={{ bg: '#005de2' }}
-              color="white"
-              size="sm"
-              leftIcon={link.leftIcon}
-            >
-              <Link as={NavLink} to={link.to}>
+            <Link as={NavLink} to={link.to} style={{ textDecoration: 'none' }}>
+              <Button
+                key={link.name}
+                variant="solid"
+                bg="#0072ed"
+                _hover={{ bg: '#005de2' }}
+                color="white"
+                size="sm"
+                leftIcon={link.leftIcon}
+              >
                 {link.name}
-              </Link>
-            </Button>
+              </Button>
+            </Link>
           ))}
         </HStack>
       </Flex>
