@@ -19,10 +19,10 @@ CREATE TABLE IF NOT EXISTS `events` (
     location text NOT NULL,
     startTime text NOT NULL,
     endTime text NOT NULL,
-    description text NOT NULL,
     participationLimit int,
     email text,
     publishTime text,
+    description text,
     FOREIGN KEY (eventID) REFERENCES users(userID)
 );
 CREATE TABLE IF NOT EXISTS `bookings` (

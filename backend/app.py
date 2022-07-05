@@ -14,12 +14,13 @@ import requests
 import json
 import io
 import csv
+import os
 
 app = Flask(__name__)
 cors = CORS(app)
 app.config['CORS_HEADERS'] = 'Content-Type'
-webhook = "https://hooks.slack.com/services/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" # for slackbot
-
+webhook = "https://hooks.slack.com/services/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" 
+#slack_webhook = os.environ.get('SLACK_WEBHOOK_URL')
 
 @app.route("/")
 @cross_origin()
@@ -88,7 +89,6 @@ def get_user():
 @app.route("/user/update", methods=['PATCH'])
 @cross_origin()
 def update_user():
-    print_db(User)
     user = request.json
     email = user["email"]
     fName = user["fname"]
@@ -115,7 +115,6 @@ def update_user():
             print(e)
             return "Error updating user information", status.HTTP_400_BAD_REQUEST
 
-    print_db(User)
     return "User information successfully updated", status.HTTP_200_OK
 
 
@@ -130,6 +129,7 @@ def create_event():
     startTime = eventInfo["startTime"]
     endTime = eventInfo["endTime"]
     partLimit = eventInfo["participationLimit"]
+    description = eventInfo["description"]
     #convert string to datetime for startTime
     startTime = datetime.strptime(startTime, '%Y-%m-%d %H:%M')
     month = startTime.strftime("%B")
@@ -150,6 +150,7 @@ def create_event():
                 startTime=startTime,
                 endTime=endTime,
                 participationLimit=partLimit,
+                description=description
             )
             session.add(event)
             session.commit()
@@ -349,12 +350,6 @@ def create_calendar():
 
 
 #### HELPER FUNCTION ####
-
-def print_db(modelName):
-    with engine.connect() as conn:
-        stmt = select(modelName)
-        for row in conn.execute(stmt):
-            print(row)
 
 def isAdmin(email):
     try:
