@@ -16,3 +16,14 @@ export interface MyEvent {
   participationLimit: number;
   publishTime: string;
 }
+
+export interface EventEntity {
+  eventID?: number;
+  email: string;
+  title: string;
+  location: string;
+  startTime: string;
+  endTime: string;
+  participationLimit: number;
+  publishTime?: string;
+}

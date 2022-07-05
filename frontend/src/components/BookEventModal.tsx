@@ -25,7 +25,7 @@ import Feature from './Feature';
 import PancakePhoto from '../assets/pancake.jpeg';
 
 function BookEventModal() {
-  // eslint-disable-next-line no-unused-vars
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const { id } = useParams();
   const navigate = useNavigate();
   const { isOpen, onOpen, onClose } = useDisclosure();
