@@ -2,7 +2,7 @@ import http
 from sqlalchemy.orm import Session
 from sqlalchemy import select, update
 from datetime import datetime
-from flask import Flask, jsonify, request
+from flask import Flask, jsonify, request, Response, render_template
 from flask_api import status
 import sqlite3 as sql
 from models import Bookings, User, Event, engine
@@ -11,7 +11,8 @@ from sqlalchemy.orm.exc import MultipleResultsFound
 from flask_cors import CORS, cross_origin
 import requests
 import json
-
+import io
+import csv
 
 app = Flask(__name__)
 cors = CORS(app)
@@ -261,12 +262,60 @@ def all_bookings():
             # remove strings from each event in array
             return jsonify(events), status.HTTP_200_OK
 
-@app.route("/", methods=['GET'])
-def home_function():
-    return True
+
+@app.route('/export/events/')
+def export_events():
+	try:
+		# connect to testdata.db
+		conn = sql.connect('testdata.db')
+		cursor = conn.cursor()
+		# select all values from users table
+		cursor.execute("SELECT * FROM events")
+		result = cursor.fetchall()
+		output = io.StringIO()
+		writer = csv.writer(output)
+		field_names = [i[0] for i in cursor.description]
+		writer.writerow(field_names)
+
+		for row in result:
+			writer.writerow(row)
+
+		output.seek(0)
+		
+		return Response(output, mimetype="text/csv", headers={"Content-Disposition":"attachment;filename=event_report.csv"})
+	except Exception as e:
+		print(e)
+	finally:
+		cursor.close() 
+		conn.close()
+
+@app.route('/export/users/')
+def export_users():
+	try:
+		# connect to testdata.db
+		conn = sql.connect('testdata.db')
+		cursor = conn.cursor()
+		# select all values from users table
+		cursor.execute("SELECT * FROM users")
+		result = cursor.fetchall()
+		output = io.StringIO()
+		writer = csv.writer(output)
+		field_names = [i[0] for i in cursor.description]
+		writer.writerow(field_names)
+
+		for row in result:
+			writer.writerow(row)
+
+		output.seek(0)
+		
+		return Response(output, mimetype="text/csv", headers={"Content-Disposition":"attachment;filename=user_report.csv"})
+	except Exception as e:
+		print(e)
+	finally:
+		cursor.close() 
+		conn.close()
 
 #### HELPER FUNCTION ####
-
 
 def print_db(modelName):
     with engine.connect() as conn:
