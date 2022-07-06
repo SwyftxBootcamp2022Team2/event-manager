@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Accordion, Flex, Heading, Spinner } from '@chakra-ui/react';
+import { Accordion, Box, Flex, Heading, Spinner } from '@chakra-ui/react';
 import { getEvents } from '../api/sessions';
 import AccordionEventList from '../components/AccordionEventList';
 import { EventEntity } from '../types/types';
@@ -42,14 +42,20 @@ function MyBookingsPage() {
   }, [events]);
 
   return events ? (
-    <Flex flexDir="column" p={10}>
-      <Heading mb={2}>My Bookings</Heading>
-      <Accordion allowToggle defaultIndex={[0]}>
-        <AccordionEventList title="Today" events={today} />
-        <AccordionEventList title="Tomorrow" events={tomorrow} />
-        <AccordionEventList title="Upcoming" events={upcoming} />
-      </Accordion>
-    </Flex>
+    <div style={{ marginLeft: 75 }}>
+      <Heading size="2xl" paddingBottom="25px" paddingTop="40px">
+        My Bookings
+      </Heading>
+      <Box pl={5} borderRadius={5} w="70%" bg="#FFFEFE">
+        <Flex flexDir="column" p={5}>
+          <Accordion allowToggle defaultIndex={[0]}>
+            <AccordionEventList title="Today" events={today} />
+            <AccordionEventList title="Tomorrow" events={tomorrow} />
+            <AccordionEventList title="Upcoming" events={upcoming} />
+          </Accordion>
+        </Flex>
+      </Box>
+    </div>
   ) : (
     <Flex h="100%" w="100%" justifyContent="center" alignItems="center">
       <Spinner />
