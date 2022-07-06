@@ -1,17 +1,21 @@
-import React from 'react';
-import { Box, Heading, Link, Text } from '@chakra-ui/react';
+import React, { useEffect, useState } from 'react';
 import { Link as ReactRouterLink, Outlet } from 'react-router-dom';
-
-type Event = { id: Number; title: string };
-
-const eventsData: Event[] = [
-  { title: 'Pancake Tuesday', id: 1 },
-  { title: 'Rock Climbing', id: 2 },
-  { title: 'Beats and Beers', id: 3 },
-  { title: 'Massages', id: 4 },
-];
+import { Box, Heading, Link, Text } from '@chakra-ui/react';
+import { EventEntity } from '../types/types';
+import useAuth from '../useAuth';
+import { getAllEvents } from '../api/sessions';
 
 function BookEventsPage() {
+  const [eventsData, setEvents] = useState<EventEntity[] | undefined>();
+
+  const { user } = useAuth();
+
+  useEffect(() => {
+    if (user) {
+      getAllEvents().then((data) => setEvents(data));
+    }
+  }, []);
+
   return (
     <>
       <div style={{ marginLeft: 75 }}>
@@ -19,10 +23,10 @@ function BookEventsPage() {
           Our Events
         </Heading>
         <Box pl={5} borderRadius={5} w="70%" bg="#FFFEFE">
-          {eventsData.map((e) => (
-            <Box p={4} key={`${e.id}`}>
+          {eventsData?.map((e) => (
+            <Box p={4} key={e.eventID}>
               <Text fontSize="3xl" paddingBottom={2}>
-                <Link as={ReactRouterLink} to={`/book-events/${e.id}`}>
+                <Link as={ReactRouterLink} to={`/book-events/${e.eventID}`}>
                   {e.title}
                 </Link>
               </Text>
