@@ -97,11 +97,20 @@ def all_bookings():
 @cross_origin()
 def get_bookings_count():
     # get data from frontend
-    eventID = request.args["eventID"]
+    if ("eventID" in request.args):
+        eventID = request.args["eventID"]
+        eventInfo = db.session.query(Bookings).filter_by(eventID=eventID).count()
+    else:
+         eventInfo = db.session.query(Bookings).count()
 
-    eventInfo = db.session.query(Bookings).filter_by(eventID=eventID).count()
-    return jsonify(count=eventInfo), status.HTTP_200_OK
+    return jsonify(eventInfo), status.HTTP_200_OK
 
+
+# # User not found
+@bookings.errorhandler(400)
+def user_not_found(e):
+    print(e)
+    return jsonify(error="User not found"), status.HTTP_400_BAD_REQUEST
 
 @bookings.route("/event", methods=["GET"])
 @cross_origin()
