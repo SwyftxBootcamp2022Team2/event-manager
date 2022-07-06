@@ -121,6 +121,7 @@ function CreateEventPage() {
         title: `Created ${values.title} event!`,
         status: 'success',
         position: 'top-right',
+        isClosable: true,
       });
     },
   });

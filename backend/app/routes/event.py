@@ -5,6 +5,7 @@ from flask_cors import cross_origin
 from app.utils.authUtils import isAdmin
 from app.utils.slackUtils import send_slack_message
 from app.utils.dateTimeUtils import convertUTCtoBrisbaneTime
+from app.utils.authUtils import isEvent
 from database import db
 from app.models import Event
 
@@ -28,6 +29,7 @@ def create_event():
     
     # get rest of form body
     title=requestBody["title"]
+    description=requestBody["description"]
     location=requestBody["location"]
     participationLimit=requestBody["participationLimit"]
     
@@ -38,6 +40,7 @@ def create_event():
         event = Event(
             email=email,
             title=title,
+            description=description,
             location=location,
             startTime=startTime,
             endTime=endTime,
@@ -107,6 +110,7 @@ def view_event():
                 eventID=eventInfo.eventID,
                 title=eventInfo.title,
                 location=eventInfo.location,
+                description=eventInfo.description,
                 startTime=eventInfo.startTime,
                 endTime=eventInfo.endTime,
                 participationLimit=eventInfo.participationLimit,
