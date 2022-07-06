@@ -14,8 +14,7 @@ interface AuthContextType {
   loading: boolean;
   error?: any;
 
-  // unused-var: this is a function type, not definition
-  // eslint-disable-next-line
+  // eslint-disable-next-line no-unused-vars
   login: (email: string) => void;
   logout: () => void;
 }
