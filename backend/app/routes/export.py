@@ -90,3 +90,42 @@ def create_calendar():
     except Exception as e:
         print(e)
         return "failed", status.HTTP_400_BAD_REQUEST
+
+
+import boto3
+from botocore.exceptions import ClientError
+from config import create_s3_client
+import os
+from flask import Flask, request, redirect, send_file
+from werkzeug.utils import secure_filename
+
+
+BUCKET = "swyftsocial"
+# s3 client instance to perform the s3 related operations
+s3_client = create_s3_client()
+S3 = "s3"
+
+
+@export.route("/upload", methods=["POST"])
+def upload():
+    f = request.files["file"]
+    if f.filename:
+        print("Uploading file = {}".format(f.filename))
+        # secure_filename function will replace any whitespace provided filename with an underscore
+        # saving the file in the local folder
+        f.save(os.path.join("upload", secure_filename(f.filename)))
+        upload_file(f"upload/{secure_filename(f.filename)}")
+    else:
+        print("Skipping file upload op")
+
+    return redirect("/")
+
+
+# upload a file to s3 bucket
+def upload_file(file_location):
+    try:
+        path, name = file_location.split("/")
+        response = s3_client.upload_file(file_location, BUCKET, name)
+        print("File uploaded successfully")
+    except ClientError as e:
+        print(e)
