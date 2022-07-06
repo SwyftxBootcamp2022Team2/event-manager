@@ -21,6 +21,7 @@
     "formik": "^2.2.9",
     "framer-motion": "^6.2.9",
     "react": "^18.1.0",
+    "react-datepicker": "^4.8.0",
     "react-dom": "^18.1.0",
     "react-icons": "^3.0.0",
     "react-router-dom": "^6.3.0",
@@ -53,6 +54,7 @@
     ]
   },
   "devDependencies": {
+    "@types/react-datepicker": "^4.4.2",
     "@typescript-eslint/eslint-plugin": "^5.30.0",
     "@typescript-eslint/parser": "^5.30.0",
     "eslint": "^7.32.0 || ^8.2.0",

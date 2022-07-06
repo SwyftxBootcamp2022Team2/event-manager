@@ -51,8 +51,6 @@ def unbook_event():
     email = bookingInfo["email"]
 
     try:
-        #booking = db.session.query.fil(Bookings, eventID)
-        #db.session.delete(booking)
         Bookings.query.filter(Bookings.eventID == eventID, Bookings.email == email).delete()
         db.session.commit()
 

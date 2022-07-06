@@ -21,6 +21,8 @@ module.exports = {
   },
   plugins: ['react', '@typescript-eslint'],
   rules: {
+    'no-unused-vars': 'off',
+    '@typescript-eslint/no-unused-vars': ['error'],
     'react/require-default-props': 'off', // Since we do not use prop-types
     'react/jsx-props-no-spreading': 'off',
     'no-console': 'off',
