@@ -19,17 +19,14 @@ import {
 import { useNavigate, useParams } from 'react-router-dom';
 import dayjs from 'dayjs';
 import { Calendar, Group, Location } from 'grommet-icons';
-import {
-  getEventBookings,
-  makeBooking,
-} from '../api/sessions';
+import { getEventBookings, makeBooking, removeBooking } from '../api/sessions';
 import { EventBooking, ToastStatus } from '../types/types';
 import useAuth from '../useAuth';
 import Feature from './Feature';
 import DummyPhoto from '../assets/swyftx_bird.webp';
 
 function BookEventModal() {
-  // eslint-disable-next-line no-unused-vars
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const { id } = useParams();
   const navigate = useNavigate();
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -39,12 +36,18 @@ function BookEventModal() {
   const { user } = useAuth();
   const toast = useToast();
 
-  const showToast = (title: string, status: ToastStatus) => toast({
-    title,
-    status,
-    isClosable: true,
-    position: 'top-right'
-  });
+  const showToast = (title: string, status: ToastStatus) =>
+    toast({
+      title,
+      status,
+      isClosable: true,
+      position: 'top-right',
+    });
+
+  const computeDate = (dateStr: string) => {
+    let parsedDate = dayjs(dateStr);
+    return parsedDate.format('dddd, MMMM D YYYY');
+  };
 
   function createBooking() {
     if (user)
@@ -55,7 +58,19 @@ function BookEventModal() {
             'success',
           ),
         )
-        .catch((error) => showToast(error.respose.data, 'error'));
+        .catch((error) => showToast(error.response.data, 'error'));
+
+    onClose();
+    navigate(-1);
+  }
+
+  function deleteBooking() {
+    if (user)
+      removeBooking(id, user.email)
+        .then(() =>
+          showToast(`${eventBooking?.event.title} booking removed`, 'success'),
+        )
+        .catch((error) => showToast(error.response.data, 'error'));
 
     onClose();
     navigate(-1);
@@ -96,7 +111,9 @@ function BookEventModal() {
             </Box>
             <Flex flexDirection="column" flex={2} px={10} py={5}>
               <Feature icon={<Calendar color="white" />}>
-                <Text fontSize="xl">{dayjs().format('dddd, MMMM D YYYY')}</Text>
+                <Text fontSize="xl">
+                  {eventBooking && computeDate(eventBooking.event.startTime)}
+                </Text>
               </Feature>
               <Feature icon={<Location color="white" />}>
                 <Text fontSize="xl">{eventBooking?.event.location}</Text>
@@ -120,18 +137,12 @@ function BookEventModal() {
 
         <ModalFooter>
           <Button
-            bg={eventBooking?.status ? '#0072ed' : '#edbd64'}
+            bg={eventBooking?.status ? '#edbd64' : '#0072ed'}
             color="white"
             mr={3}
-            // TODO: un-rsvp backend integration
-            onClick={
-              eventBooking?.status
-                ? createBooking
-                : // eslint-disable-next-line no-alert
-                  () => alert("TODO: unrsvp'd")
-            }
+            onClick={eventBooking?.status ? deleteBooking : createBooking}
           >
-            {eventBooking?.status ? 'RSVP' : 'UN-RSVP'}
+            {eventBooking?.status ? 'UN-RSVP' : 'RSVP'}
           </Button>
         </ModalFooter>
       </ModalContent>

@@ -4,6 +4,8 @@ from flask_api import status
 from flask_cors import cross_origin
 from app.utils.authUtils import isAdmin, isEvent
 from app.utils.slackUtils import send_slack_message
+from app.utils.dateTimeUtils import convertUTCtoBrisbaneTime
+from app.utils.authUtils import isEvent
 from database import db
 from app.models import Event
 
@@ -14,60 +16,57 @@ event = Blueprint("event", __name__, url_prefix="/event")
 @event.route("/create", methods=["POST"])
 @cross_origin()
 def create_event():
-    # get user data
-    eventInfo = request.json
-    email = eventInfo["email"]
-    eventTitle = eventInfo["title"]
-    location = eventInfo["location"]
-    startTime = eventInfo["startTime"]
-    endTime = eventInfo["endTime"]
-    partLimit = eventInfo["participationLimit"]
-    # convert string to datetime for startTime
-    startTime = datetime.strptime(startTime, "%Y-%m-%d %H:%M")
-    month = startTime.strftime("%B")
-    day = startTime.strftime("%d")
-    hour = startTime.strftime("%H")
+    requestBody = request.json
 
-    # check if the user is an admin
-    # if not isAdmin(email):
-    #     return "You are not an admin!", status.HTTP_400_BAD_REQUEST
+    # check auth
+    email = requestBody["email"]
+    if not isAdmin(email):
+        return "You are not an admin!", status.HTTP_400_BAD_REQUEST
 
-    # otherwise, allow event creation
+    # calculate startTime as date + startTime
+    startTime = requestBody["date"][0:10] + requestBody["startTime"][10:24]
+    endTime = requestBody["date"][0:10] + requestBody["endTime"][10:24]
+    
+    # get rest of form body
+    title=requestBody["title"]
+    description=requestBody["description"]
+    location=requestBody["location"]
+    participationLimit=requestBody["participationLimit"]
+    
+    dateObj = datetime.strptime(startTime, "%Y-%m-%dT%H:%M:%S.%fZ")
+
+    # create event
     try:
         event = Event(
             email=email,
-            title=eventTitle,
+            title=title,
+            description=description,
             location=location,
             startTime=startTime,
             endTime=endTime,
-            participationLimit=partLimit,
+            participationLimit=participationLimit,
         )
+        
         db.session.add(event)
         db.session.commit()
+
         payload = {
-            "text": eventTitle
+            "text": title
             + " is on at "
             + location
-            + "! :tada: RSVP on SwyftSocial if you can make it :heart: It starts on "
-            + str(month)
-            + " "
-            + str(day)
-            + " at "
-            + str(hour)
-            + ":00!"
+            + "! :tada: RSVP on SwyftSocial if you can make it :heart: Starts on "
+            + convertUTCtoBrisbaneTime(dateObj).strftime('%A, %d %B %Y %I:%M%p')
+            + ""
         }
         send_slack_message(payload)
         return "Event successfully created", status.HTTP_201_CREATED
     except Exception as e:
-        print(e)
-
         return "Error occurred when creating an event", status.HTTP_400_BAD_REQUEST
 
 
 @event.route("/delete", methods=["DELETE"])
 @cross_origin()
 def delete_event():
-    
     req = request.json
     email = req["email"]
     eventID = req["eventID"]
@@ -105,12 +104,12 @@ def view_event():
 
     eventInfo = db.session.query(Event).filter_by(eventID=eventID).first()
     if eventInfo is not None:  # if it exists, send that mf back
-        print(eventInfo.participationLimit)
         return (
             jsonify(
                 eventID=eventInfo.eventID,
                 title=eventInfo.title,
                 location=eventInfo.location,
+                description=eventInfo.description,
                 startTime=eventInfo.startTime,
                 endTime=eventInfo.endTime,
                 participationLimit=eventInfo.participationLimit,
