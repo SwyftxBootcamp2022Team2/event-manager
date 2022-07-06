@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import {
   VStack,
   Box,
@@ -14,7 +14,7 @@ function ProfilePage() {
 
   return (
     <Flex alignItems="center" justifyContent="center" w="100%">
-      <Box boxShadow="rgba(149, 157, 165, 0.2) 0px 8px 24px" py={10} px={20} my={20} w="50%">
+      <Box boxShadow="rgba(149, 157, 165, 0.2) 0px 8px 24px" py={10} px={20} my={20} mx={10}>
         <Heading size="lg">Your Details</Heading>
         <VStack spacing={4} mt={5}>
           <UserDetail label="Email" value={user?.email} />
