@@ -1,4 +1,3 @@
-from asyncio import Event
 from datetime import datetime
 from flask import Blueprint, jsonify, request
 from flask_api import status
@@ -6,7 +5,7 @@ from flask_cors import cross_origin
 from app.utils.authUtils import isAdmin
 from app.utils.slackUtils import send_slack_message
 from database import db
-from sqlalchemy.orm import Session
+from app.models import Event
 
 # Blueprint configuration
 event = Blueprint("event", __name__, url_prefix="/event")
@@ -30,35 +29,34 @@ def create_event():
     hour = startTime.strftime("%H")
 
     # check if the user is an admin
-    if not isAdmin(email):
-        return "You are not an admin!", status.HTTP_400_BAD_REQUEST
+    # if not isAdmin(email):
+    #     return "You are not an admin!", status.HTTP_400_BAD_REQUEST
 
     # otherwise, allow event creation
     try:
-        with db.session as session:
-            event = Event(
-                email=email,
-                title=eventTitle,
-                location=location,
-                startTime=startTime,
-                endTime=endTime,
-                participationLimit=partLimit,
-            )
-            session.add(event)
-            session.commit()
-            payload = {
-                "text": eventTitle
-                + " is on at "
-                + location
-                + "! :tada: RSVP on SwyftSocial if you can make it :heart: It starts on "
-                + str(month)
-                + " "
-                + str(day)
-                + " at "
-                + str(hour)
-                + ":00!"
-            }
-            send_slack_message(payload)
+        event = Event(
+            email=email,
+            title=eventTitle,
+            location=location,
+            startTime=startTime,
+            endTime=endTime,
+            participationLimit=partLimit,
+        )
+        db.session.add(event)
+        db.session.commit()
+        payload = {
+            "text": eventTitle
+            + " is on at "
+            + location
+            + "! :tada: RSVP on SwyftSocial if you can make it :heart: It starts on "
+            + str(month)
+            + " "
+            + str(day)
+            + " at "
+            + str(hour)
+            + ":00!"
+        }
+        send_slack_message(payload)
         return "Event successfully created", status.HTTP_201_CREATED
     except Exception as e:
         print(e)
@@ -107,13 +105,37 @@ def view_event():
                 eventID=eventInfo.eventID,
                 title=eventInfo.title,
                 location=eventInfo.location,
-                start=eventInfo.start,
                 startTime=eventInfo.startTime,
                 endTime=eventInfo.endTime,
                 participationLimit=eventInfo.participationLimit,
-                createdBy=eventInfo.createdBy,
+                email=eventInfo.email,
             ),
             status.HTTP_200_OK,
         )
     # if not, send back a token
     return "Event Doesn't Exist!", status.HTTP_400_BAD_REQUEST
+
+
+@event.route("/event/get", methods=["GET"])
+@cross_origin()
+def get_events():
+    query = db.session.query(Event).all()
+    events = []
+    for q in query:
+        temp = {
+            "eventID": q.eventID,
+            "title": q.title,
+            "description": q.description,
+            "location": q.location,
+            "startTime": q.startTime,
+            "endTime": q.endTime,
+            "participationLimit": q.participationLimit,
+            "email": q.email,
+            "publishTime": q.publishTime,
+        }
+        events.append(temp)
+    # remove strings from each event in array
+    return (
+        jsonify(eventData=events),
+        status.HTTP_200_OK,
+    )  # jsonify(events=events), status.HTTP_200_OK
