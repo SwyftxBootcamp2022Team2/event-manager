@@ -61,7 +61,6 @@ def create_event():
         send_slack_message(payload)
         return "Event successfully created", status.HTTP_201_CREATED
     except Exception as e:
-        print(e)
         return "Error occurred when creating an event", status.HTTP_400_BAD_REQUEST
 
 

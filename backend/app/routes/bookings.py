@@ -38,7 +38,6 @@ def book_event():
         return "Booking succesful!", status.HTTP_200_OK
 
     except Exception as e:
-        print(e)
         return (
             "An error occured when booking, please try again later",
             status.HTTP_400_BAD_REQUEST,
@@ -58,7 +57,6 @@ def unbook_event():
 
         return "Event successfully unbooked", status.HTTP_200_OK
     except Exception as e:
-        print(e)
         return (
             "Error occured when unbooking, please try again later",
             status.HTTP_400_BAD_REQUEST,
