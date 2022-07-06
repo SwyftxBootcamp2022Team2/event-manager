@@ -102,8 +102,8 @@ function BookEventModal() {
               <Feature icon={<Group color="white" />}>
                 <Text fontSize="xl">
                   {eventBooking &&
-                    `${eventBooking.event.participationLimit - eventBooking.count
-                    } / ${eventBooking.event.participationLimit} spots left`}
+                    `${eventBooking.event.participationLimit - eventBooking.count} spots left`
+                  }
                 </Text>
               </Feature>
               <Box mt={2} >
