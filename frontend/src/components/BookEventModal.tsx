@@ -29,7 +29,7 @@ import Feature from './Feature';
 import DummyPhoto from '../assets/swyftx_bird.webp';
 
 function BookEventModal() {
-  // eslint-disable-next-line no-unused-vars
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const { id } = useParams();
   const navigate = useNavigate();
   const { isOpen, onOpen, onClose } = useDisclosure();
