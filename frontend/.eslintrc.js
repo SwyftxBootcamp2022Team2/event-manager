@@ -21,8 +21,11 @@ module.exports = {
   },
   plugins: ['react', '@typescript-eslint'],
   rules: {
+<<<<<<< HEAD
+=======
     'react/require-default-props': 'off', // Since we do not use prop-types
     'react/jsx-props-no-spreading': 'off',
+>>>>>>> 825dcb604f126fc0be94938a7288d0ca96676b05
     'no-console': 'off',
     'no-undef': 'off',
     'import/extensions': [
