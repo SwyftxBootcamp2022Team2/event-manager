@@ -5,7 +5,7 @@ from flask_api import status
 from flask_cors import cross_origin
 from app.utils.authUtils import isAdmin
 from app.utils.slackUtils import send_slack_message
-from database import db, engine
+from database import db
 from sqlalchemy.orm import Session
 
 # Blueprint configuration
@@ -35,7 +35,7 @@ def create_event():
 
     # otherwise, allow event creation
     try:
-        with Session(engine) as session:
+        with db.session as session:
             event = Event(
                 email=email,
                 title=eventTitle,
