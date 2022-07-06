@@ -26,7 +26,7 @@ import {
 import { EventBooking, ToastStatus } from '../types/types';
 import useAuth from '../useAuth';
 import Feature from './Feature';
-import DummyPhoto from '../assets/swyftx_bird.jpeg';
+import DummyPhoto from '../assets/swyftx_bird.webp';
 
 function BookEventModal() {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
