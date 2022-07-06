@@ -45,7 +45,7 @@ function LoginPage() {
         h="75vh"
         flexDirection="column"
       >
-        <Box bg="#FFFEFE" p={10} borderRadius={5} width="30%">
+        <Box bg="#FFFEFE" p={10} borderRadius={5}>
           <Heading size="2xl" paddingBottom="25px" textAlign="center">
             Sign In
           </Heading>
