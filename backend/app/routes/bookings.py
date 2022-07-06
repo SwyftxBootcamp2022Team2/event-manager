@@ -99,11 +99,11 @@ def get_bookings_count():
     # get data from frontend
     if ("eventID" in request.args):
         eventID = request.args["eventID"]
-        eventInfo = db.session.query(Bookings).filter_by(eventID=eventID).count()
+        count = db.session.query(Bookings).filter_by(eventID=eventID).count()
     else:
-         eventInfo = db.session.query(Bookings).count()
+         count = db.session.query(Bookings).count()
 
-    return jsonify(eventInfo), status.HTTP_200_OK
+    return jsonify(count), status.HTTP_200_OK
 
 
 # # User not found
