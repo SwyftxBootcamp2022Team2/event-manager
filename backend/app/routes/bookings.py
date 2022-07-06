@@ -27,6 +27,7 @@ def book_event():
         # check if the participation limit has been exceed
         event = db.session.get(Event, eventID)
 
+        print(type(event.participationLimit))
         # check if there is a participant limit
         if event.participationLimit is not None and numBookings + 1 >= event.participationLimit:
             return "Participation limit exceeded", status.HTTP_400_BAD_REQUEST
@@ -37,6 +38,7 @@ def book_event():
         return "Booking succesful!", status.HTTP_200_OK
 
     except Exception as e:
+        print(e)
         return (
             "An error occured when booking, please try again later",
             status.HTTP_400_BAD_REQUEST,
