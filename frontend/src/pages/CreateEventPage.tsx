@@ -1,4 +1,12 @@
-import { Box, Button, Heading, Input, Textarea, Flex } from '@chakra-ui/react';
+import {
+  Box,
+  Button,
+  Heading,
+  Input,
+  Textarea,
+  Flex,
+  useToast,
+} from '@chakra-ui/react';
 import React from 'react';
 import { useFormik } from 'formik';
 import { Add, Calendar, Group, Location, TextAlignFull } from 'grommet-icons';
@@ -76,6 +84,7 @@ function DateTimeInput(props: DateTimeInputField) {
 
 function CreateEventPage() {
   const { user } = useAuth();
+  const toast = useToast();
 
   const initialFormValues = {
     title: '',
@@ -87,10 +96,9 @@ function CreateEventPage() {
     participationLimit: 0,
   };
 
-  function onSubmit(values: EventEntity) {
+  async function submitForm(values: EventEntity) {
     if (user) {
-      console.log(values);
-      Events.createEvent({
+      await Events.createEvent({
         title: values.title,
         email: user.email,
         location: values.location,
@@ -106,7 +114,15 @@ function CreateEventPage() {
   const formik = useFormik({
     initialValues: initialFormValues,
 
-    onSubmit: (values) => onSubmit(values),
+    onSubmit: (values) => {
+      submitForm(values);
+      formik.resetForm();
+      toast({
+        title: `Created ${values.title} event!`,
+        status: 'success',
+        position: 'top-right',
+      });
+    },
   });
 
   return (
