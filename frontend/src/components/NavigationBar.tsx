@@ -41,8 +41,8 @@ function NavigationBar() {
           <Text fontSize="xl">SwyftSocial</Text>
         </HStack>
         <HStack alignItems="center" spacing={2}>
-          {NavLinks.map((link, i) => (
-            <Link key={i} as={NavLink} to={link.to} style={{ textDecoration: 'none' }}>
+          {NavLinks.map((link) => (
+            <Link key={link.name} as={NavLink} to={link.to} style={{ textDecoration: 'none' }}>
               <Button
                 key={link.name}
                 variant="solid"

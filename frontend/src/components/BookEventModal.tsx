@@ -23,7 +23,7 @@ import {
   getEventBookings,
   makeBooking,
 } from '../api/sessions';
-import { EventBooking } from '../types/types';
+import { EventBooking, ToastStatus } from '../types/types';
 import useAuth from '../useAuth';
 import Feature from './Feature';
 import DummyPhoto from '../assets/swyftx_bird.jpeg';
@@ -35,13 +35,11 @@ function BookEventModal() {
   const { isOpen, onOpen, onClose } = useDisclosure();
 
   const [eventBooking, setEventBooking] = useState<EventBooking>();
-  const [isLoading, setIsLoading] = useState(false);
 
   const { user } = useAuth();
   const toast = useToast();
 
-  type status = "success" | "loading" | "error";
-  const showToast = (title: string, status: status) => toast({
+  const showToast = (title: string, status: ToastStatus) => toast({
     title,
     status,
     isClosable: true,
@@ -49,11 +47,11 @@ function BookEventModal() {
   });
 
   function createBooking() {
-    user
-      ? makeBooking(id, user.email)
+    if (user)
+      makeBooking(id, user.email)
         .then(() => showToast(`${eventBooking?.event.title} booking confirmed`, "success"))
         .catch((error) => showToast(error.respose.data, "error"))
-      : navigate('/login');
+    else navigate('/login');
 
     onClose();
     navigate(-1);
@@ -104,8 +102,8 @@ function BookEventModal() {
               <Feature icon={<Group color="white" />}>
                 <Text fontSize="xl">
                   {eventBooking &&
-                    `${eventBooking?.event.participationLimit - eventBooking.count
-                    } / ${eventBooking?.event.participationLimit} spots left`}
+                    `${eventBooking.event.participationLimit - eventBooking.count
+                    } / ${eventBooking.event.participationLimit} spots left`}
                 </Text>
               </Feature>
               <Box mt={2} >
@@ -120,7 +118,8 @@ function BookEventModal() {
             bg={eventBooking?.status ? '#0072ed' : '#edbd64'}
             color="white"
             mr={3}
-            onClick={eventBooking?.status ? createBooking : () => alert("unrsvp'd")}
+            // TODO: un-rsvp backend integration
+            onClick={eventBooking?.status ? createBooking : () => console.log("unrsvp'd")}
           >
             {eventBooking?.status ? 'RSVP' : 'UN-RSVP'}
           </Button>

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { getEvents } from '../api/sessions';
 import { Accordion, Flex, Heading, Spinner } from '@chakra-ui/react';
+import { getEvents } from '../api/sessions';
 import AccordionEventList from '../components/AccordionEventList';
 import { MyEvent } from '../types/types';
 import useAuth from '../useAuth';

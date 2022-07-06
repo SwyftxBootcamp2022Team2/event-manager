@@ -29,3 +29,5 @@ export interface EventBooking {
   status: boolean;
   event: MyEvent;
 }
+
+export type ToastStatus = "success" | "loading" | "error";

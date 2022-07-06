@@ -77,9 +77,7 @@ export async function getBookingStatus(
       },
     })
     .then((data) => data.data.booked)
-    .catch((error) => {
-      return Promise.reject(error);
-    });
+    .catch((error) => Promise.reject(error));
   return res;
 }
 
@@ -93,9 +91,7 @@ export async function makeBooking(
       email,
     })
     .then((data) => data.data)
-    .catch((error) => {
-      return Promise.reject(error);
-    });
+    .catch((error) => Promise.reject(error));
   return res;
 }
 

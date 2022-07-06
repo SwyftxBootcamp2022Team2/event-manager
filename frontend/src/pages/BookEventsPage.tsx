@@ -3,7 +3,7 @@ import { useNavigate, Link as ReactRouterLink, Outlet } from 'react-router-dom';
 import { Box, Heading, Link, Text } from '@chakra-ui/react';
 import { MyEvent } from '../types/types';
 import useAuth from '../useAuth';
-import * as sessionsApi from '../api/sessions';
+import { getAllEvents } from '../api/sessions';
 
 function BookEventsPage() {
   const [eventsData, setEvents] = useState<MyEvent[] | undefined>();
@@ -12,11 +12,10 @@ function BookEventsPage() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    user
-      ? sessionsApi.getAllEvents().then((data) => {
-        setEvents(data);
-      })
-      : navigate('/login');
+    if (user) {
+      getAllEvents().then((data) => setEvents(data));
+    }
+    else navigate('/login');
   }, []);
 
   return (
