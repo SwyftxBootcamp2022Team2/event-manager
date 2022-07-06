@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useNavigate , Link as ReactRouterLink, Outlet } from 'react-router-dom';
+import { useNavigate, Link as ReactRouterLink, Outlet } from 'react-router-dom';
 import { Box, Heading, Link, Text } from '@chakra-ui/react';
 import { MyEvent } from '../types/types';
 import useAuth from '../useAuth';
@@ -14,8 +14,8 @@ function BookEventsPage() {
   useEffect(() => {
     user
       ? sessionsApi.getAllEvents().then((data) => {
-          setEvents(data);
-        })
+        setEvents(data);
+      })
       : navigate('/login');
   }, []);
 
@@ -27,7 +27,7 @@ function BookEventsPage() {
         </Heading>
         <Box pl={5} borderRadius={5} w="70%" bg="#FFFEFE">
           {eventsData?.map((e) => (
-            <Box p={4} key={`${e.eventID}`}>
+            <Box p={4} key={e.eventID}>
               <Text fontSize="3xl" paddingBottom={2}>
                 <Link as={ReactRouterLink} to={`/book-events/${e.eventID}`}>
                   {e.title}

@@ -43,7 +43,7 @@ export async function getEventBookings(
 
   return Promise.all([totalBookingCount, bookingStatus, eventDetails]).then(
     (data) => {
-      let e: EventBooking = {
+      const e: EventBooking = {
         count: data[0].data.count,
         status: data[1].data.booked,
         event: data[2].data

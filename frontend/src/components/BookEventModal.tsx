@@ -76,7 +76,6 @@ function BookEventModal() {
         navigate(-1);
       }}
       size="5xl"
-      isCentered
     >
       <ModalOverlay />
       <ModalContent>
@@ -88,15 +87,14 @@ function BookEventModal() {
 
         <ModalBody>
           <Flex flexDirection="row" alignItems="start">
-            <Box flex={2}>
+            <Box flex={1}>
               <Image
-                alignContent="center"
                 src={DummyPhoto}
                 alt="Dummy photo of swyftx bird"
                 borderRadius={5}
               />
             </Box>
-            <Flex flexDirection="column" flex={3} px={10} py={5}>
+            <Flex flexDirection="column" flex={2} px={10} py={5}>
               <Feature icon={<Calendar color="white" />}>
                 <Text fontSize="xl">{dayjs().format('dddd, MMMM D YYYY')}</Text>
               </Feature>
@@ -110,7 +108,7 @@ function BookEventModal() {
                     } / ${eventBooking?.event.participationLimit} spots left`}
                 </Text>
               </Feature>
-              <Box mt={2}>
+              <Box mt={2} >
                 <Text fontSize="md">{eventBooking?.event.description}</Text>
               </Box>
             </Flex>
