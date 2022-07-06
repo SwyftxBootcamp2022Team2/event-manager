@@ -29,7 +29,7 @@ class Event(db.Model):
     location = db.Column(db.Text, nullable=False)
     startTime = db.Column(db.Text)
     endTime = db.Column(db.Text)
-    participationLimit = db.Column(db.Text)
+    participationLimit = db.Column(db.Integer)
     publishTime = db.Column(db.Text)
     email = db.Column(db.Text, db.ForeignKey("users.email"))
 
