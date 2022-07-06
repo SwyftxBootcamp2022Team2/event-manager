@@ -6,16 +6,17 @@ export interface User {
 }
 
 export interface EventEntity {
-  description: string;
-  bookingID: number;
-  eventID: number;
-  email: string;
   title: string;
+  description: string;
   location: string;
+  date: string;
   startTime: string;
   endTime: string;
   participationLimit: number;
-  publishTime: string;
+  bookingID?: number;
+  eventID?: number;
+  email?: string;
+  publishTime?: string;
 }
 
 export interface Booking {

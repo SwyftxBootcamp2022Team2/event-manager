@@ -3,9 +3,11 @@ import React from 'react';
 import { useFormik } from 'formik';
 import { Add, Calendar, Group, Location, TextAlignFull } from 'grommet-icons';
 import DatePicker from 'react-datepicker';
+import Events from '../api/EventsEntity';
 import Feature from '../components/Feature';
 import useAuth from '../useAuth';
 import 'react-datepicker/dist/react-datepicker.css';
+import { EventEntity } from '../types/types';
 
 interface DateTimeInputField {
   dateFieldId: string;
@@ -75,28 +77,36 @@ function DateTimeInput(props: DateTimeInputField) {
 function CreateEventPage() {
   const { user } = useAuth();
 
+  const initialFormValues = {
+    title: '',
+    description: '',
+    location: '',
+    date: new Date().toISOString(),
+    startTime: new Date().toISOString(),
+    endTime: new Date().toISOString(),
+    participationLimit: 0,
+  };
+
+  function onSubmit(values: EventEntity) {
+    if (user) {
+      console.log(values);
+      Events.createEvent({
+        title: values.title,
+        email: user.email,
+        location: values.location,
+        date: values.date,
+        startTime: values.startTime,
+        endTime: values.endTime,
+        description: values.description,
+        participationLimit: values.participationLimit,
+      });
+    }
+  }
+
   const formik = useFormik({
-    initialValues: {
-      title: '',
-      date: new Date().toISOString(),
-      startTime: new Date().toISOString(),
-      endTime: new Date().toISOString(),
-      location: '',
-      maxCapacity: '',
-      description: '',
-    },
-    onSubmit: (values) => {
-      console.log(values.date);
-      console.log(values.startTime);
-    },
-    // Events.createEvent({
-    //   title: values.title,
-    //   email: 'admin.com',
-    //   location: values.location,
-    //   startTime: values.dateTime.format('YYYY-MM-DD HH:MM'),
-    //   endTime: values.dateTime.format('YYYY-MM-DD HH:MM'),
-    //   participationLimit: parseInt(values.maxCapacity, 10),
-    // });
+    initialValues: initialFormValues,
+
+    onSubmit: (values) => onSubmit(values),
   });
 
   return (
@@ -115,6 +125,7 @@ function CreateEventPage() {
               onChange={formik.handleChange}
               variant="flushed"
               pl={3}
+              isRequired
             />
           </Feature>
 
@@ -147,18 +158,24 @@ function CreateEventPage() {
               onChange={formik.handleChange}
               variant="flushed"
               pl={3}
+              isRequired
             />
           </Feature>
 
           <Feature icon={<Group color="white" size="20px" />} pb={5}>
             <Input
-              id="maxCapacity"
+              id="participationLimit"
               placeholder="Max Capacity"
-              type="text"
-              value={formik.values.maxCapacity}
+              type="number"
+              value={
+                formik.values.participationLimit === 0
+                  ? ''
+                  : formik.values.participationLimit
+              }
               onChange={formik.handleChange}
               variant="flushed"
               pl={3}
+              isRequired
             />
           </Feature>
 
@@ -171,6 +188,7 @@ function CreateEventPage() {
               name="description"
               onChange={formik.handleChange}
               value={formik.values.description}
+              isRequired
             />
           </Feature>
 
