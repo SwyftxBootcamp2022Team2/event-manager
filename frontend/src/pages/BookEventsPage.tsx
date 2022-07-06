@@ -3,7 +3,7 @@ import { Link as ReactRouterLink, Outlet } from 'react-router-dom';
 import { Box, Heading, Link, Text } from '@chakra-ui/react';
 import { EventEntity } from '../types/types';
 import useAuth from '../useAuth';
-import { getAllEvents } from '../api/sessions';
+import Events from '../api/EventsEntity';
 
 function BookEventsPage() {
   const [eventsData, setEvents] = useState<EventEntity[] | undefined>();
@@ -12,7 +12,7 @@ function BookEventsPage() {
 
   useEffect(() => {
     if (user) {
-      getAllEvents().then((data) => setEvents(data));
+      Events.getEvents(user.email).then((data) => setEvents(data));
     }
   }, []);
 

@@ -12,11 +12,6 @@ export async function login(email: string): Promise<User> {
   return res.data;
 }
 
-export async function getAllEvents(): Promise<EventEntity[]> {
-  const res = await axios.get(`${API_ENDPOINT}/event/get`);
-  return res.data.eventData;
-}
-
 export async function getEventBookings(
   eventID: string | undefined,
   email: string,
