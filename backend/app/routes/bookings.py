@@ -16,20 +16,27 @@ def book_event():
     eventID = bookingInfo["eventID"]
     email = bookingInfo["email"]
 
+    #check if email or event exists
+    if (not isUser(email) or not isEvent(eventID)):
+        return "Incorrect information passed", status.HTTP_400_BAD_REQUEST
+
     try:
-        with db.session as session:
-            newBooking = Bookings(eventID=eventID, email=email)
-            # get number of bookings that are left to do
-            numBookings = session.query(Bookings).filter_by(eventID=eventID).count()
-            # check if the participation limit has been exceed
-            event = session.query(Event).filter_by(email=email).first()
-            if numBookings + 1 >= event.participationLimit:
-                return "Participation limit exceeded", status.HTTP_400_BAD_REQUEST
-            session.add(newBooking)
-            session.commit()
+        newBooking = Bookings(eventID=eventID, email=email)
+        # get number of bookings that are left to do
+        numBookings = db.session.query(Bookings).filter_by(eventID=eventID).count()
+        # check if the participation limit has been exceed
+        event = db.session.get(Event, eventID)
+
+        # check if there is a participant limit
+        if event.participationLimit is not None and numBookings + 1 >= event.participationLimit:
+            return "Participation limit exceeded", status.HTTP_400_BAD_REQUEST
+
+        db.session.add(newBooking)
+        db.session.commit()
 
         return "Booking succesful!", status.HTTP_200_OK
-    except:
+
+    except Exception as e:
         return (
             "An error occured when booking, please try again later",
             status.HTTP_400_BAD_REQUEST,
@@ -43,10 +50,9 @@ def unbook_event():
     eventID = bookingInfo["eventID"]  # eventID to delete
 
     try:
-        with db.session as session:
-            booking = session.get(Bookings, eventID)
-            session.delete(booking)
-            session.commit()
+        booking = db.session.get(Bookings, eventID)
+        db.session.delete(booking)
+        db.session.commit()
 
         return "Event successfully unbooked", status.HTTP_200_OK
     except:
@@ -109,11 +115,10 @@ def is_booked():
     if not isUser(email) or not isEvent(eventID):
         return "Invalid Data Passed", status.HTTP_404_NOT_FOUND
 
-    with Session(engine) as session:
-        # find whether user has booked event
-        count = (
-            session.query(Bookings)
-            .filter(Bookings.email == email, Bookings.eventID == eventID)
-            .count()
-        )
-        return jsonify(booked=count == 1), status.HTTP_200_OK
+    # find whether user has booked event
+    count = (
+        db.session.query(Bookings)
+        .filter(Bookings.email == email, Bookings.eventID == eventID)
+        .count()
+    )
+    return jsonify(booked=count == 1), status.HTTP_200_OK

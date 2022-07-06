@@ -65,34 +65,38 @@ def create_event():
 @event.route("/delete", methods=["DELETE"])
 @cross_origin()
 def delete_event():
-    # theres 2 jsons so two reads are happening, but depending on how the packet looks
-    # we can just do one read and split it into user and event
-    user = request.json
+    req = request.json
+    email = req["email"]
+    eventID = req["eventID"]
+
+    # check if event exists
+    if not isEvent(eventID):
+        return "Event does not exist", status.HTTP_400_BAD_REQUEST
+
     # check if the user is an admin
-    if not isAdmin(user):
+    if not isAdmin(email):
         return "You are not an admin!", status.HTTP_400_BAD_REQUEST
 
-    event = request.json  # check if event exists
-    eventID = event["eventID"]
+    
     try:
         event = db.session.get(Event, eventID)
         db.session.delete(event)
-        db.session.commit()
-        payload = {"text": event["title"] + " has been deleted :pensive:"}
+        payload = {"text": event.title + " has been deleted :pensive:"}
         send_slack_message(payload)
+        db.session.commit()
         return "Event successfully deleted", status.HTTP_200_OK
-    except:
+    except Exception as e:
         return (
             "Error occured when deleting event, please try again later",
             status.HTTP_400_BAD_REQUEST,
         )
 
 
-@event.route("/view", methods=["GET", "POST"])
+@event.route("/view", methods=["GET"])
 @cross_origin()
 def view_event():
     # get data from frontend
-    event = request.json
+    event = request.args
     # check if event exists
     eventID = event["eventID"]
 
@@ -114,7 +118,7 @@ def view_event():
     return "Event Doesn't Exist!", status.HTTP_400_BAD_REQUEST
 
 
-@event.route("/event/get", methods=["GET"])
+@event.route("/get", methods=["GET"])
 @cross_origin()
 def get_events():
     query = db.session.query(Event).all()

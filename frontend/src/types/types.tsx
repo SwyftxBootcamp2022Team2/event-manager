@@ -33,3 +33,9 @@ export interface EventBooking {
 
 export type ToastStatus = "success" | "loading" | "error";
 
+export enum DayType {
+  today = "today",
+  tomorrow = "tomorrow",
+  upcoming = "upcoming",
+  past = "past"
+}

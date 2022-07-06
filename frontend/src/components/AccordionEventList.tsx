@@ -12,20 +12,29 @@ export default function AccordionEventList({ title, events }: AccordionEventList
   return (
     <AccordionItem>
       <h2>
-        <AccordionButton>
+        <AccordionButton fontSize="xl">
           {title}
           <AccordionIcon />
         </AccordionButton>
       </h2>
       <AccordionPanel pb={4}>
         {events && events.length > 0 ? (
-          <VStack spacing={4} divider={<StackDivider borderColor="gray.200" />} align="stretch">
-            {events?.map((e) => <div key={e.bookingID} >
-              <EventBox startTime={e.startTime} title={e.title} />
-            </div>)}
+          <VStack
+            spacing={4}
+            divider={<StackDivider borderColor="gray.200" />}
+            align="stretch"
+          >
+            {events?.map((e) => (
+              <div key={e.bookingID}>
+                <EventBox startTime={e.startTime} title={e.title} />
+              </div>
+            ))}
           </VStack>
-        ) : (<Text px={5} fontSize={12}>No events :(</Text>)
-        }
+        ) : (
+          <Text px={5} fontSize="l">
+            No events :(
+          </Text>
+        )}
       </AccordionPanel>
     </AccordionItem>
   );
