@@ -24,6 +24,8 @@ export interface Booking {
   eventID: number;
 }
 
-export type EventBooking = {
-  eventbooking: [number, boolean, MyEvent];
-};
+export interface EventBooking {
+  count: number;
+  status: boolean;
+  event: MyEvent;
+}

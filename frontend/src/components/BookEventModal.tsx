@@ -26,7 +26,7 @@ import {
   // getTotalBookings,
   makeBooking,
 } from '../api/sessions';
-import { MyEvent, EventBooking } from '../types/types';
+import { EventBooking } from '../types/types';
 import useAuth from '../useAuth';
 import Feature from './Feature';
 import DummyPhoto from '../assets/swyftx_bird.jpeg';
@@ -46,22 +46,22 @@ function BookEventModal() {
     // make booking
     user
       ? makeBooking(id, user.email) //user.email
-          .then((data) => {
-            toast({
-              title: `${eventBooking[2]?.title} booking confirmed`,
-              status: 'success',
-              isClosable: true,
-              position: 'top-right',
-            });
-          })
-          .catch((error) => {
-            toast({
-              title: `error: ${error.response.data}`,
-              status: 'error',
-              isClosable: true,
-              position: 'top-right',
-            });
-          })
+        .then(() => {
+          toast({
+            title: `${eventBooking?.event.title} booking confirmed`,
+            status: 'success',
+            isClosable: true,
+            position: 'top-right',
+          });
+        })
+        .catch((error) => {
+          toast({
+            title: `error: ${error.response.data}`,
+            status: 'error',
+            isClosable: true,
+            position: 'top-right',
+          });
+        })
       : navigate('/login');
     // show  booking confirmed toast
 
@@ -74,47 +74,6 @@ function BookEventModal() {
     onOpen();
     if (user) {
       getEventBookings(id, user.email).then((data) => setEventBooking(data));
-      // get details for the current event
-      // getEventDetails(id)
-      //   .then((data) => {
-      //     setEventData(data);
-      //   })
-      //   .catch((error) => {
-      //     toast({
-      //       title: `error: ${error.response.data}`,
-      //       status: 'error',
-      //       isClosable: true,
-      //       position: 'top-right',
-      //     });
-      //   });
-
-      // // get number of bookings made for the current event
-      // getTotalBookings(id)
-      //   .then((data) => {
-      //     setBookingCount(data);
-      //   })
-      //   .catch((error) => {
-      //     toast({
-      //       title: `error: ${error.response.data}`,
-      //       status: 'error',
-      //       isClosable: true,
-      //       position: 'top-right',
-      //     });
-      //   });
-
-      // // get whether user has booked this event
-      // getBookingStatus(id, user.email)
-      //   .then((data) => {
-      //     setBookingStatus(data);
-      //   })
-      //   .catch((error) => {
-      //     toast({
-      //       title: `error: ${error.response.data}`,
-      //       status: 'error',
-      //       isClosable: true,
-      //       position: 'top-right',
-      //     });
-      //   });
     } else {
       navigate('/login');
     }
@@ -132,7 +91,7 @@ function BookEventModal() {
       <ModalOverlay />
       <ModalContent maxH="90%">
         <ModalHeader paddingBottom="25px" paddingTop="40px">
-          <Heading>{eventBooking[2]?.title}</Heading>
+          <Heading>{eventBooking?.event.title}</Heading>
         </ModalHeader>
 
         <ModalCloseButton size="lg" m="25px" />
@@ -152,18 +111,17 @@ function BookEventModal() {
                 <Text fontSize="xl">{dayjs().format('dddd, MMMM D YYYY')}</Text>
               </Feature>
               <Feature icon={<Location color="white" size="20px" />}>
-                <Text fontSize="xl">{eventBooking[2]?.location}</Text>
+                <Text fontSize="xl">{eventBooking?.event.location}</Text>
               </Feature>
               <Feature icon={<Group color="white" size="20px" />}>
                 <Text fontSize="xl">
                   {eventBooking &&
-                    `${
-                      eventBooking[2].participationLimit - eventBooking[0]
-                    } / ${eventBooking[2].participationLimit} spots left`}
+                    `${eventBooking?.event.participationLimit - eventBooking.count
+                    } / ${eventBooking?.event.participationLimit} spots left`}
                 </Text>
               </Feature>
               <Box maxH="500px" overflow="scroll" p="3">
-                <Text fontSize="md">{eventBooking[2]?.description}</Text>
+                <Text fontSize="md">{eventBooking?.event.description}</Text>
               </Box>
             </Flex>
           </Flex>
@@ -171,12 +129,12 @@ function BookEventModal() {
 
         <ModalFooter>
           <Button
-            bg={eventBooking[1] ? '#0072ed' : '#edbd64'}
+            bg={eventBooking?.status ? '#0072ed' : '#edbd64'}
             color="white"
             mr={3}
-            onClick={eventBooking[1] ? createBooking : () => alert("unrsvp'd")}
+            onClick={eventBooking?.status ? createBooking : () => alert("unrsvp'd")}
           >
-            {eventBooking[1] ? 'RSVP' : 'UN-RSVP'}
+            {eventBooking?.status ? 'RSVP' : 'UN-RSVP'}
           </Button>
         </ModalFooter>
       </ModalContent>

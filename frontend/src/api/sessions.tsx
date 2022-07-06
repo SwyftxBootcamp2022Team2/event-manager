@@ -21,6 +21,7 @@ export async function getEventBookings(
   eventID: string | undefined,
   email: string,
 ): Promise<EventBooking> {
+
   const totalBookingCount = axios.get(`${API_ENDPOINT}/event/bookings/count`, {
     params: {
       eventID,
@@ -40,16 +41,15 @@ export async function getEventBookings(
     },
   });
 
-  let bookingCountTemp: number;
-  let bookingStatusTemp: boolean;
-  let eventDetailsTemp: MyEvent;
   return Promise.all([totalBookingCount, bookingStatus, eventDetails]).then(
     (data) => {
-      bookingCountTemp = data[0].data.count;
-      bookingStatusTemp = data[1].data.booked;
-      eventDetailsTemp = data[2].data;
+      let e: EventBooking = {
+        count: data[0].data.count,
+        status: data[1].data.booked,
+        event: data[2].data
+      }
 
-      return [bookingCountTemp, bookingStatusTemp, eventDetailsTemp];
+      return e;
     },
   );
 }
