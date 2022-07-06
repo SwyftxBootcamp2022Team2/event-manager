@@ -13,6 +13,7 @@ import {
 import { AddIcon } from '@chakra-ui/icons';
 import { NavLink, To } from 'react-router-dom';
 import SwyftxLogo from '../assets/swyftx_bird.webp';
+import Admin from './permissions/Admin';
 
 interface NavigationLink {
   name: string;
@@ -21,11 +22,37 @@ interface NavigationLink {
 }
 
 const NavLinks: NavigationLink[] = [
-  { name: 'Create Event', to: '/create-event', leftIcon: <AddIcon /> },
   { name: 'Book Events', to: '/book-events' },
   { name: 'My Bookings', to: '/my-bookings' },
   { name: 'Profile', to: '/profile' },
 ];
+
+const AdminNavLinks: NavigationLink[] = [
+  { name: 'Create Event', to: '/create-event', leftIcon: <AddIcon /> },
+];
+
+function renderNavLink(navLinks: NavigationLink[]) {
+  return navLinks.map((link) => (
+    <Link
+      key={link.name}
+      as={NavLink}
+      to={link.to}
+      style={{ textDecoration: 'none' }}
+    >
+      <Button
+        key={link.name}
+        variant="solid"
+        bg="#0072ed"
+        _hover={{ bg: '#005de2' }}
+        color="white"
+        size="sm"
+        leftIcon={link.leftIcon}
+      >
+        {link.name}
+      </Button>
+    </Link>
+  ));
+}
 
 function NavigationBar() {
   return (
@@ -41,21 +68,8 @@ function NavigationBar() {
           <Text fontSize="xl">SwyftSocial</Text>
         </HStack>
         <HStack alignItems="center" spacing={2}>
-          {NavLinks.map((link) => (
-            <Link key={link.name} as={NavLink} to={link.to} style={{ textDecoration: 'none' }}>
-              <Button
-                key={link.name}
-                variant="solid"
-                bg="#0072ed"
-                _hover={{ bg: '#005de2' }}
-                color="white"
-                size="sm"
-                leftIcon={link.leftIcon}
-              >
-                {link.name}
-              </Button>
-            </Link>
-          ))}
+          <Admin>{renderNavLink(AdminNavLinks)}</Admin>
+          {renderNavLink(NavLinks)}
         </HStack>
       </Flex>
     </Box>
