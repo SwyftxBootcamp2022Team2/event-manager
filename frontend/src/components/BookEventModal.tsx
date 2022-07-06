@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   Modal,
   ModalOverlay,
@@ -16,27 +16,56 @@ import {
   useToast,
   Flex,
 } from '@chakra-ui/react';
-
 import { useNavigate, useParams } from 'react-router-dom';
 import dayjs from 'dayjs';
 import { Calendar, Group, Location } from 'grommet-icons';
-import LoremIpsum from 'react-lorem-ipsum';
+import {
+  getEventBookings,
+  makeBooking,
+} from '../api/sessions';
+import { EventBooking, ToastStatus } from '../types/types';
+import useAuth from '../useAuth';
 import Feature from './Feature';
-import PancakePhoto from '../assets/pancake.jpeg';
+import DummyPhoto from '../assets/swyftx_bird.webp';
 
 function BookEventModal() {
   // eslint-disable-next-line no-unused-vars
   const { id } = useParams();
   const navigate = useNavigate();
   const { isOpen, onOpen, onClose } = useDisclosure();
-  const data = {
-    title: 'Pancake Tuesday',
-    image: PancakePhoto,
-  };
+
+  const [eventBooking, setEventBooking] = useState<EventBooking>();
+
+  const { user } = useAuth();
   const toast = useToast();
+
+  const showToast = (title: string, status: ToastStatus) => toast({
+    title,
+    status,
+    isClosable: true,
+    position: 'top-right'
+  });
+
+  function createBooking() {
+    if (user)
+      makeBooking(id, user.email)
+        .then(() =>
+          showToast(
+            `${eventBooking?.event.title} booking confirmed`,
+            'success',
+          ),
+        )
+        .catch((error) => showToast(error.respose.data, 'error'));
+
+    onClose();
+    navigate(-1);
+  }
 
   useEffect(() => {
     onOpen();
+    if (user) {
+      getEventBookings(id, user.email).then((data) => setEventBooking(data));
+    }
   }, []);
 
   return (
@@ -49,40 +78,41 @@ function BookEventModal() {
       size="5xl"
     >
       <ModalOverlay />
-      <ModalContent maxH="90%">
-        <ModalHeader paddingBottom="25px" paddingTop="40px">
-          <Heading>Pancake Tuesday</Heading>
+      <ModalContent>
+        <ModalHeader py={5}>
+          <Heading fontSize={30}>{eventBooking?.event.title}</Heading>
         </ModalHeader>
 
-        <ModalCloseButton size="lg" m="25px" />
+        <ModalCloseButton size="md" mr={2} mt={2} />
 
         <ModalBody>
-          <Flex flexDirection="row" alignItems="center">
-            <Image
-              alignContent="center"
-              boxSize="50%"
-              src={data.image}
-              alt="Dan Abramov"
-              borderRadius={5}
-            />
-            <Flex flexDirection="column">
-              <Feature icon={<Calendar color="white" size="20px" />}>
+          <Flex flexDirection="row" alignItems="start">
+            <Box flex={1}>
+              <Image
+                src={DummyPhoto}
+                alt="Dummy photo of swyftx bird"
+                borderRadius={5}
+              />
+            </Box>
+            <Flex flexDirection="column" flex={2} px={10} py={5}>
+              <Feature icon={<Calendar color="white" />}>
                 <Text fontSize="xl">{dayjs().format('dddd, MMMM D YYYY')}</Text>
               </Feature>
-              <Feature icon={<Location color="white" size="20px" />}>
-                <Text fontSize="xl">Kitchen</Text>
+              <Feature icon={<Location color="white" />}>
+                <Text fontSize="xl">{eventBooking?.event.location}</Text>
               </Feature>
-              <Feature icon={<Group color="white" size="20px" />}>
-                <Text fontSize="xl">4 spots left</Text>
-              </Feature>
-              <Box maxH="500px" overflow="scroll" p="3">
-                <Text fontSize="md">
-                  <LoremIpsum
-                    p={5}
-                    avgWordsPerSentence={7}
-                    avgSentencesPerParagraph={6}
-                  />
+              <Feature icon={<Group color="white" />}>
+                <Text fontSize="xl">
+                  {eventBooking?.event.participationLimit
+                    ? `${
+                        eventBooking.event.participationLimit -
+                        eventBooking.count
+                      } spots left`
+                    : `${eventBooking?.count} attending`}
                 </Text>
+              </Feature>
+              <Box mt={2}>
+                <Text fontSize="md">{eventBooking?.event.description}</Text>
               </Box>
             </Flex>
           </Flex>
@@ -90,27 +120,18 @@ function BookEventModal() {
 
         <ModalFooter>
           <Button
-            bg="#0072ed"
+            bg={eventBooking?.status ? '#0072ed' : '#edbd64'}
             color="white"
             mr={3}
-            onClick={() => {
-              toast({
-                title: `${data.title} booking confirmed`,
-                status: 'success',
-                isClosable: true,
-                position: 'top-right',
-                containerStyle: {
-                  maxWidth: '15%',
-                  marginRight: '10%',
-                  marginTop: '15%',
-                },
-              });
-
-              onClose();
-              navigate(-1);
-            }}
+            // TODO: un-rsvp backend integration
+            onClick={
+              eventBooking?.status
+                ? createBooking
+                : // eslint-disable-next-line no-alert
+                  () => alert("TODO: unrsvp'd")
+            }
           >
-            RSVP
+            {eventBooking?.status ? 'RSVP' : 'UN-RSVP'}
           </Button>
         </ModalFooter>
       </ModalContent>

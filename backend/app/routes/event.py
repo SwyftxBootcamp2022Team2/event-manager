@@ -99,12 +99,13 @@ def delete_event():
 @cross_origin()
 def view_event():
     # get data from frontend
-    event = request.json
+    event = request.args
     # check if event exists
     eventID = event["eventID"]
 
     eventInfo = db.session.query(Event).filter_by(eventID=eventID).first()
     if eventInfo is not None:  # if it exists, send that mf back
+        print(eventInfo.participationLimit)
         return (
             jsonify(
                 eventID=eventInfo.eventID,
