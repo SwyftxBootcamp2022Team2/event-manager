@@ -2,7 +2,7 @@ import axios, { AxiosResponse } from 'axios';
 import { EventEntity } from '../types/types';
 
 const instance = axios.create({
-  baseURL: `${process.env.REACT_APP_SERVER_URL}/event`,
+  baseURL: `${process.env.REACT_APP_API_ENDPOINT}/event`,
   timeout: 15000,
 });
 

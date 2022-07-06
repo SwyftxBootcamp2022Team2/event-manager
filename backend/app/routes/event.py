@@ -1,4 +1,4 @@
-from datetime import datetime, timezone
+from datetime import datetime
 from flask import Blueprint, jsonify, request
 from flask_api import status
 from flask_cors import cross_origin
@@ -12,7 +12,7 @@ from app.models import Event
 event = Blueprint("event", __name__, url_prefix="/event")
 
 
-@event.route("/create", methods=["GET", "POST"])
+@event.route("/create", methods=["POST"])
 @cross_origin()
 def create_event():
     requestBody = request.json
