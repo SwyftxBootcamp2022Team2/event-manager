@@ -11,6 +11,7 @@ import {
   Text,
 } from '@chakra-ui/react';
 import { AddIcon } from '@chakra-ui/icons';
+import { Analytics } from 'grommet-icons';
 import { NavLink, To } from 'react-router-dom';
 import SwyftxLogo from '../assets/swyftx_bird.webp';
 import Admin from './permissions/Admin';
@@ -29,6 +30,11 @@ const NavLinks: NavigationLink[] = [
 
 const AdminNavLinks: NavigationLink[] = [
   { name: 'Create Event', to: '/create-event', leftIcon: <AddIcon /> },
+  {
+    name: 'Reporting',
+    to: '/reporting',
+    leftIcon: <Analytics color="white" size="18px" />,
+  },
 ];
 
 function renderNavLink(navLinks: NavigationLink[]) {
