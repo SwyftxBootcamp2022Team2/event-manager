@@ -3,8 +3,8 @@ node_modules
 
 // Flask
 .DS_Store
-.env
 .flaskenv
+__pycache__
 *.pyc
 *.pyo
 env/
