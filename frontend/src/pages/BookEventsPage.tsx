@@ -1,21 +1,19 @@
 import React, { useEffect, useState } from 'react';
-import { useNavigate, Link as ReactRouterLink, Outlet } from 'react-router-dom';
+import { Link as ReactRouterLink, Outlet } from 'react-router-dom';
 import { Box, Heading, Link, Text } from '@chakra-ui/react';
-import { MyEvent } from '../types/types';
+import { EventEntity } from '../types/types';
 import useAuth from '../useAuth';
 import { getAllEvents } from '../api/sessions';
 
 function BookEventsPage() {
-  const [eventsData, setEvents] = useState<MyEvent[] | undefined>();
+  const [eventsData, setEvents] = useState<EventEntity[] | undefined>();
 
   const { user } = useAuth();
-  const navigate = useNavigate();
 
   useEffect(() => {
     if (user) {
       getAllEvents().then((data) => setEvents(data));
     }
-    else navigate('/login');
   }, []);
 
   return (

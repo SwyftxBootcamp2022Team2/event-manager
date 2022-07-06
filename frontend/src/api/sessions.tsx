@@ -1,6 +1,6 @@
 /* eslint-disable import/prefer-default-export */
 import axios from 'axios';
-import { User, MyEvent, Booking, EventBooking } from '../types/types';
+import { User, EventEntity, Booking, EventBooking } from '../types/types';
 
 const API_ENDPOINT = process.env.REACT_APP_API_ENDPOINT;
 
@@ -12,7 +12,7 @@ export async function login(email: string): Promise<User> {
   return res.data;
 }
 
-export async function getAllEvents(): Promise<MyEvent[]> {
+export async function getAllEvents(): Promise<EventEntity[]> {
   const res = await axios.get(`${API_ENDPOINT}/event/get`);
   return res.data.eventData;
 }
@@ -95,7 +95,9 @@ export async function makeBooking(
   return res;
 }
 
-export async function getEventDetails(id: string | undefined): Promise<MyEvent> {
+export async function getEventDetails(
+  id: string | undefined,
+): Promise<EventEntity> {
   const res = await axios.get(`${API_ENDPOINT}/event/view`, {
     params: {
       eventID: id,
@@ -104,11 +106,11 @@ export async function getEventDetails(id: string | undefined): Promise<MyEvent> 
   return res.data;
 }
 
-export async function getEvents(email: string): Promise<MyEvent[]> {
+export async function getEvents(email: string): Promise<EventEntity[]> {
   const res = await axios.get(`${API_ENDPOINT}/bookings/mybookings`, {
     params: {
       email,
-    }
+    },
   });
 
   return res.data;

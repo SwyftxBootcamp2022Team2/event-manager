@@ -49,9 +49,13 @@ function BookEventModal() {
   function createBooking() {
     if (user)
       makeBooking(id, user.email)
-        .then(() => showToast(`${eventBooking?.event.title} booking confirmed`, "success"))
-        .catch((error) => showToast(error.respose.data, "error"))
-    else navigate('/login');
+        .then(() =>
+          showToast(
+            `${eventBooking?.event.title} booking confirmed`,
+            'success',
+          ),
+        )
+        .catch((error) => showToast(error.respose.data, 'error'));
 
     onClose();
     navigate(-1);
@@ -61,8 +65,6 @@ function BookEventModal() {
     onOpen();
     if (user) {
       getEventBookings(id, user.email).then((data) => setEventBooking(data));
-    } else {
-      navigate('/login');
     }
   }, []);
 
@@ -102,11 +104,12 @@ function BookEventModal() {
               <Feature icon={<Group color="white" />}>
                 <Text fontSize="xl">
                   {eventBooking &&
-                    `${eventBooking.event.participationLimit - eventBooking.count} spots left`
-                  }
+                    `${
+                      eventBooking.event.participationLimit - eventBooking.count
+                    } spots left`}
                 </Text>
               </Feature>
-              <Box mt={2} >
+              <Box mt={2}>
                 <Text fontSize="md">{eventBooking?.event.description}</Text>
               </Box>
             </Flex>
@@ -119,7 +122,12 @@ function BookEventModal() {
             color="white"
             mr={3}
             // TODO: un-rsvp backend integration
-            onClick={eventBooking?.status ? createBooking : () => console.log("unrsvp'd")}
+            onClick={
+              eventBooking?.status
+                ? createBooking
+                : // eslint-disable-next-line no-alert
+                  () => alert("TODO: unrsvp'd")
+            }
           >
             {eventBooking?.status ? 'RSVP' : 'UN-RSVP'}
           </Button>
