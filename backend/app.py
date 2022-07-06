@@ -327,9 +327,14 @@ def all_bookings():
         return jsonify(events), status.HTTP_200_OK
 
 
-@app.route("/export/events")
+@app.route("/export/events/", methods=["GET"])
 def export_events():
     try:
+        # get user info
+        userinfo = request.json
+        if not isAdmin(userinfo["email"]):
+            return "Invalid Request", status.HTTP_400_BAD_REQUEST
+
         # connect to testdata.db
         conn = sql.connect("testdata.db")
         cursor = conn.cursor()
@@ -344,6 +349,8 @@ def export_events():
         for row in result:
             writer.writerow(row)
 
+        output.seek(0)  # need to reset the file pointer (doesn't work otherwise)
+
         return Response(
             output,
             mimetype="text/csv",
@@ -356,76 +363,40 @@ def export_events():
         conn.close()
 
 
-@app.route("/export/users")
-def export_users():
-    try:
-        # connect to testdata.db
-        conn = sql.connect("testdata.db")
-        cursor = conn.cursor()
-        # select all values from users table
-        cursor.execute("SELECT * FROM users")
-        result = cursor.fetchall()
-        output = io.StringIO()
-        writer = csv.writer(output)
-        field_names = [i[0] for i in cursor.description]
-        writer.writerow(field_names)
-
-        for row in result:
-            writer.writerow(row)
-
-        return Response(
-            output,
-            mimetype="text/csv",
-            headers={"Content-Disposition": "attachment;filename=user_report.csv"},
-        )
-    except Exception as e:
-        print(e)
-    finally:
-        cursor.close()
-        conn.close()
-
-
 @app.route("/export/calendar", methods=["GET"])
 def create_calendar():
-    newRequest = request.args  # get the EventID from the frontend
+    newRequest = request.json  # get the EventID from the frontend
     # query event info based on eventID from the DB
     eventID = newRequest["eventID"]
-    try:
-        with Session(engine) as session:
-            eventInfo = session.get(Event, eventID)
-        if eventInfo is None:  # email exists in db, so send back user data
-            return "Event doesn't exist", status.HTTP_400_BAD_REQUEST
-        cal = Calendar()
-        event = icalEvent()
-        event.add("title", eventInfo["title"])
-        event.add("name", eventInfo["title"])
-        event.add("description", eventInfo["description"])
+    with Session(engine) as session:
+        eventInfo = session.get(Event, eventID)
+    if eventInfo is None:  # email exists in db, so send back user data
+        return "Event doesn't exist", status.HTTP_400_BAD_REQUEST
+    cal = Calendar()
+    event = icalEvent()
 
-        # convert eventInfo times to datetime object
-        startTime = datetime.strptime(eventInfo["startTime"], "%Y-%m-%d %H:%M")
-        endTime = datetime.strptime(eventInfo["endTime"], "%Y-%m-%d %H:%M")
-        event.add("dtstart", startTime)
-        event.add("dtend", endTime)
+    event.add("title", eventInfo.title)
+    event.add("name", eventInfo.title)
+    event.add("description", eventInfo.description)
 
-        event["location"] = vText(eventInfo["location"])
-        attendee = vCalAddress("MAILTO:{email}".format(email=eventInfo["email"]))
-        event.add("attendee", attendee, encode=0)
+    # convert eventInfo times to datetime object
+    startTime = datetime.strptime(eventInfo.startTime, "%Y-%m-%d %H:%M:%S")
+    endTime = datetime.strptime(eventInfo.startTime, "%Y-%m-%d %H:%M:%S")
+    event.add("dtstart", startTime)
+    event.add("dtend", endTime)
 
-        cal.add_component(event)
+    event["location"] = vText(eventInfo.location)
+    attendee = vCalAddress("MAILTO:{email}".format(email=eventInfo.email))
+    event.add("attendee", attendee, encode=0)
 
-        # write cal to file (**just for testing**)
-        f = open("test.ics", "wb")
-        f.write(cal.to_ical())
-        f.close()
+    cal.add_component(event)
 
-        # send cal back to frontend to download
-        return Response(
-            cal.to_ical(),
-            mimetype="text/calendar",
-            headers={"Content-Disposition": "attachment;filename=calendar.ics"},
-        )
-    except Exception as e:
-        print(e)
+    # send cal back to frontend to download
+    return Response(
+        cal.to_ical(),
+        mimetype="text/calendar",
+        headers={"Content-Disposition": "attachment;filename=calendar.ics"},
+    )
 
 
 #### HELPER FUNCTION ####
