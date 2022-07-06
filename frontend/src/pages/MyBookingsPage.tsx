@@ -2,16 +2,31 @@ import React, { useEffect, useState } from 'react';
 import { Accordion, Flex, Heading, Spinner } from '@chakra-ui/react';
 import { getEvents } from '../api/sessions';
 import AccordionEventList from '../components/AccordionEventList';
-import { EventEntity } from '../types/types';
+import { EventEntity, DayType } from '../types/types';
 import useAuth from '../useAuth';
 
-function MyBookingsPage() {
+export default function MyBookingsPage() {
   const [events, setEvents] = useState<EventEntity[]>();
   const [today, setToday] = useState<EventEntity[]>();
   const [tomorrow, setTomorrow] = useState<EventEntity[]>();
   const [upcoming, setUpcoming] = useState<EventEntity[]>();
 
   const { user } = useAuth();
+
+  const checkDate = (d: Date) => {
+    const today = new Date();
+    const tomorrow = new Date(today);
+    tomorrow.setDate(tomorrow.getDate() + 1);
+
+    if (d > tomorrow) return DayType.upcoming;
+    else if (d < today) return DayType.past;
+    else if (d.getFullYear() == tomorrow.getFullYear() &&
+      d.getMonth() == tomorrow.getMonth() &&
+      d.getDate() == tomorrow.getDate())
+      return DayType.tomorrow;
+
+    return DayType.today;
+  }
 
   useEffect(() => {
     if (user) getEvents(user.email).then((data) => setEvents(data));
@@ -20,24 +35,17 @@ function MyBookingsPage() {
   useEffect(() => {
     if (!events) return;
 
-    const todayDate = new Date();
-
     setToday(
       events.filter(
-        (event) => todayDate.getDate() === new Date(event.startTime).getDate(),
-      ),
+        (event) => checkDate(new Date(event.startTime)) == DayType.today)
     );
     setTomorrow(
       events.filter(
-        (event) =>
-          todayDate.getDate() === new Date(event.startTime).getDate() + 1,
-      ),
+        (event) => checkDate(new Date(event.startTime)) == DayType.tomorrow)
     );
     setUpcoming(
       events.filter(
-        (event) =>
-          todayDate.getDate() > new Date(event.startTime).getDate() + 1,
-      ),
+        (event) => checkDate(new Date(event.startTime)) == DayType.upcoming)
     );
   }, [events]);
 
@@ -56,5 +64,3 @@ function MyBookingsPage() {
     </Flex>
   );
 }
-
-export default MyBookingsPage;
