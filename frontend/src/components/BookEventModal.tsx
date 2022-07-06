@@ -140,13 +140,7 @@ function BookEventModal() {
             bg={eventBooking?.status ? '#edbd64' : '#0072ed'}
             color="white"
             mr={3}
-            // TODO: un-rsvp backend integration
-            onClick={
-              eventBooking?.status
-                ? deleteBooking
-                : // eslint-disable-next-line no-alert
-                  createBooking
-            }
+            onClick={eventBooking?.status ? deleteBooking : createBooking}
           >
             {eventBooking?.status ? 'UN-RSVP' : 'RSVP'}
           </Button>
