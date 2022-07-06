@@ -6,11 +6,12 @@ from database import db
 from app.utils.databaseUtils import create_database, seed_database
 from config import DB_NAME
 
+
 def create_app():
     """Initialise the core application"""
     app = Flask(__name__)
     cors = CORS(app)
-    app.config.from_pyfile('../config.py')
+    app.config.from_pyfile("../config.py")
 
     # Initialise plugins
     db.init_app(app)
@@ -38,4 +39,3 @@ def create_app():
             return "Hello, World!"
 
         return app
-
