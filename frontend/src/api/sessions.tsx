@@ -22,7 +22,7 @@ export async function getEventBookings(
   email: string,
 ): Promise<EventBooking> {
 
-  const totalBookingCount = axios.get(`${API_ENDPOINT}/event/bookings/count`, {
+  const totalBookingCount = axios.get(`${API_ENDPOINT}/bookings/count`, {
     params: {
       eventID,
     },
@@ -46,8 +46,8 @@ export async function getEventBookings(
       const e: EventBooking = {
         count: data[0].data.count,
         status: data[1].data.booked,
-        event: data[2].data
-      }
+        event: data[2].data,
+      };
 
       return e;
     },
