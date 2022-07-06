@@ -21,9 +21,6 @@ import dayjs from 'dayjs';
 import { Calendar, Group, Location } from 'grommet-icons';
 import {
   getEventBookings,
-  // getBookingStatus,
-  // getEventDetails,
-  // getTotalBookings,
   makeBooking,
 } from '../api/sessions';
 import { EventBooking } from '../types/types';
@@ -42,30 +39,21 @@ function BookEventModal() {
   const { user } = useAuth();
   const toast = useToast();
 
-  function createBooking() {
-    // make booking
-    user
-      ? makeBooking(id, user.email) //user.email
-        .then(() => {
-          toast({
-            title: `${eventBooking?.event.title} booking confirmed`,
-            status: 'success',
-            isClosable: true,
-            position: 'top-right',
-          });
-        })
-        .catch((error) => {
-          toast({
-            title: `error: ${error.response.data}`,
-            status: 'error',
-            isClosable: true,
-            position: 'top-right',
-          });
-        })
-      : navigate('/login');
-    // show  booking confirmed toast
+  type status = "success" | "loading" | "error";
+  const showToast = (title: string, status: status) => toast({
+    title,
+    status,
+    isClosable: true,
+    position: 'top-right'
+  });
 
-    //close modal window
+  function createBooking() {
+    user
+      ? makeBooking(id, user.email)
+        .then(() => showToast(`${eventBooking?.event.title} booking confirmed`, "success"))
+        .catch((error) => showToast(error.respose.data, "error"))
+      : navigate('/login');
+
     onClose();
     navigate(-1);
   }
