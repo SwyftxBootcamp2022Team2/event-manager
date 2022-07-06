@@ -35,6 +35,7 @@ function BookEventModal() {
   const { isOpen, onOpen, onClose } = useDisclosure();
 
   const [eventBooking, setEventBooking] = useState<EventBooking>();
+  const [isLoading, setIsLoading] = useState(false);
 
   const { user } = useAuth();
   const toast = useToast();
@@ -75,40 +76,41 @@ function BookEventModal() {
         navigate(-1);
       }}
       size="5xl"
+      isCentered
     >
       <ModalOverlay />
-      <ModalContent maxH="90%">
-        <ModalHeader paddingBottom="25px" paddingTop="40px">
-          <Heading>{eventBooking?.event.title}</Heading>
+      <ModalContent>
+        <ModalHeader py={5}>
+          <Heading fontSize={30}>{eventBooking?.event.title}</Heading>
         </ModalHeader>
 
-        <ModalCloseButton size="lg" m="25px" />
+        <ModalCloseButton size="md" mr={2} mt={2} />
 
         <ModalBody>
-          <Flex flexDirection="row" alignItems="center">
-            <Image
-              alignContent="center"
-              boxSize="50%"
-              src={DummyPhoto}
-              // src={eventData.image}
-              alt="Dummy photo of swyftx bird"
-              borderRadius={5}
-            />
-            <Flex flexDirection="column">
-              <Feature icon={<Calendar color="white" size="20px" />}>
+          <Flex flexDirection="row" alignItems="start">
+            <Box flex={2}>
+              <Image
+                alignContent="center"
+                src={DummyPhoto}
+                alt="Dummy photo of swyftx bird"
+                borderRadius={5}
+              />
+            </Box>
+            <Flex flexDirection="column" flex={3} px={10} py={5}>
+              <Feature icon={<Calendar color="white" />}>
                 <Text fontSize="xl">{dayjs().format('dddd, MMMM D YYYY')}</Text>
               </Feature>
-              <Feature icon={<Location color="white" size="20px" />}>
+              <Feature icon={<Location color="white" />}>
                 <Text fontSize="xl">{eventBooking?.event.location}</Text>
               </Feature>
-              <Feature icon={<Group color="white" size="20px" />}>
+              <Feature icon={<Group color="white" />}>
                 <Text fontSize="xl">
                   {eventBooking &&
                     `${eventBooking?.event.participationLimit - eventBooking.count
                     } / ${eventBooking?.event.participationLimit} spots left`}
                 </Text>
               </Feature>
-              <Box maxH="500px" overflow="scroll" p="3">
+              <Box mt={2}>
                 <Text fontSize="md">{eventBooking?.event.description}</Text>
               </Box>
             </Flex>
