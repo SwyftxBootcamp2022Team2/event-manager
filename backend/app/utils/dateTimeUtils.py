@@ -1,7 +1,5 @@
-from datetime import datetime, tzinfo
-from turtle import left
+from datetime import datetime
 from dateutil import tz
-from datetime import timezone
 
 def convertUTCtoBrisbaneTime(UTCTime: datetime):
     from_zone = tz.gettz('UTC')
