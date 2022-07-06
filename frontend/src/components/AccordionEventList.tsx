@@ -1,11 +1,11 @@
 import React from 'react';
 import { AccordionButton, AccordionIcon, AccordionItem, AccordionPanel, StackDivider, VStack, Text } from "@chakra-ui/react";
 import EventBox from "../pages/EventBox";
-import { MyEvent } from "../types/types";
+import { EventEntity } from '../types/types';
 
 interface AccordionEventListProps {
-  title: string,
-  events: MyEvent[] | undefined
+  title: string;
+  events: EventEntity[] | undefined;
 }
 
 export default function AccordionEventList({ title, events }: AccordionEventListProps) {

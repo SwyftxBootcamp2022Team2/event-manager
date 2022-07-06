@@ -5,7 +5,8 @@ export interface User {
   isAdmin: boolean;
 }
 
-export interface MyEvent {
+export interface EventEntity {
+  description: string;
   bookingID: number;
   eventID: number;
   email: string;
@@ -17,13 +18,17 @@ export interface MyEvent {
   publishTime: string;
 }
 
-export interface EventEntity {
-  eventID?: number;
+export interface Booking {
+  bookingID: number;
   email: string;
-  title: string;
-  location: string;
-  startTime: string;
-  endTime: string;
-  participationLimit: number;
-  publishTime?: string;
+  eventID: number;
 }
+
+export interface EventBooking {
+  count: number;
+  status: boolean;
+  event: EventEntity;
+}
+
+export type ToastStatus = "success" | "loading" | "error";
+

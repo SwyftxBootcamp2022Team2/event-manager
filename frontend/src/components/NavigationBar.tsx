@@ -42,7 +42,7 @@ function NavigationBar() {
         </HStack>
         <HStack alignItems="center" spacing={2}>
           {NavLinks.map((link) => (
-            <Link as={NavLink} to={link.to} style={{ textDecoration: 'none' }}>
+            <Link key={link.name} as={NavLink} to={link.to} style={{ textDecoration: 'none' }}>
               <Button
                 key={link.name}
                 variant="solid"
