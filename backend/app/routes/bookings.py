@@ -46,16 +46,19 @@ def book_event():
 @bookings.route("/delete", methods=["DELETE"])
 @cross_origin()
 def unbook_event():
-    bookingInfo = request.json
+    bookingInfo = request.args
     eventID = bookingInfo["eventID"]  # eventID to delete
+    email = bookingInfo["email"]
 
     try:
-        booking = db.session.get(Bookings, eventID)
-        db.session.delete(booking)
+        #booking = db.session.query.fil(Bookings, eventID)
+        #db.session.delete(booking)
+        Bookings.query.filter(Bookings.eventID == eventID, Bookings.email == email).delete()
         db.session.commit()
 
         return "Event successfully unbooked", status.HTTP_200_OK
-    except:
+    except Exception as e:
+        print(e)
         return (
             "Error occured when unbooking, please try again later",
             status.HTTP_400_BAD_REQUEST,

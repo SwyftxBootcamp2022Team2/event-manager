@@ -99,7 +99,7 @@ def delete_event():
 @cross_origin()
 def view_event():
     # get data from frontend
-    event = request.json
+    event = request.args
     # check if event exists
     eventID = event["eventID"]
 

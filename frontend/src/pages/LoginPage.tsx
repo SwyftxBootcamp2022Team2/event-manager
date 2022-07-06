@@ -2,11 +2,18 @@ import React from 'react';
 import { Formik, Form } from 'formik';
 import * as Yup from 'yup';
 import {
+  Avatar,
   Box,
-  Button, Flex, Heading, VStack,
+  Button,
+  Flex,
+  Heading,
+  HStack,
+  useColorModeValue,
+  VStack,
 } from '@chakra-ui/react';
 import TextField from '../components/TextField';
 import useAuth from '../useAuth';
+import SwyftxLogoWhite from '../assets/swyftx_bird_white.png';
 
 const loginSchema = Yup.object().shape({
   email: Yup.string().email().required('Required'),
@@ -20,31 +27,56 @@ function LoginPage() {
   const { login } = useAuth();
 
   return (
-    <Flex alignItems="center" justifyContent="center" h="100vh">
-      <Box boxShadow="rgba(149, 157, 165, 0.2) 0px 8px 24px" py={10} px={20}>
-        <Formik
-          initialValues={initialValues}
-          validationSchema={loginSchema}
-          onSubmit={(values) => {
-            login(values.email);
-          }}
-        >
-          <VStack as={Form} align="start" spacing={5}>
-            <Heading>Log in</Heading>
-            <TextField name="email" aria-label="email" />
-            <Button
-              bg="#0072ed"
-              _hover={{ bg: '#005de2' }}
-              color="white"
-              type="submit"
-              colorScheme="teal"
-            >
-              Submit
-            </Button>
-          </VStack>
-        </Formik>
+    <>
+      <Box bg={useColorModeValue('#0072ED', '#0a0b0d')} px={4}>
+        <Flex h={20} alignItems="center" justifyContent="space-between">
+          <HStack height="60%">
+            <Heading fontSize="3xl" color="white">
+              SwyftSocial
+            </Heading>
+            <Avatar size="lg" src={SwyftxLogoWhite} bg="transparent" />
+          </HStack>
+        </Flex>
       </Box>
-    </Flex>
+
+      <Flex
+        alignItems="center"
+        justifyContent="center"
+        h="75vh"
+        flexDirection="column"
+      >
+        <Box bg="#FFFEFE" p={10} borderRadius={5}>
+          <Heading size="2xl" paddingBottom="25px" textAlign="center">
+            Sign In
+          </Heading>
+          <Formik
+            initialValues={initialValues}
+            validationSchema={loginSchema}
+            onSubmit={(values) => {
+              login(values.email);
+            }}
+          >
+            <VStack as={Form} align="start" spacing={5}>
+              <TextField
+                name="email"
+                aria-label="Email"
+                placeholder="name@example.com"
+              />
+              <Button
+                bg="#0072ed"
+                _hover={{ bg: '#005de2' }}
+                color="white"
+                type="submit"
+                colorScheme="teal"
+                width="100%"
+              >
+                Login
+              </Button>
+            </VStack>
+          </Formik>
+        </Box>
+      </Flex>
+    </>
   );
 }
 

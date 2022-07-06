@@ -17,7 +17,7 @@ def seed_database():
         },
         {
             "email": "user@gmail.com",
-            "fname": "Admin",
+            "fname": "Normal",
             "lname": "User",
             "isAdmin": False,
         },
@@ -32,16 +32,16 @@ def seed_database():
     events = [
         {
             "createdBy": "admin@gmail.com",
-            "title": "Sunday Funday",
+            "title": "Sunday Monday",
             "location": "Location 1",
-            "startTime": "2020-01-01 00:00",
+            "startTime": "2022-07-07 00:00",
             "endTime": "2020-01-01 00:00",
         },
         {
             "createdBy": "user@gmail.com",
             "title": "Monday (Not) Funday",
             "location": "Swyftx HQ",
-            "startTime": "2020-05-01 00:00",
+            "startTime": "2022-07-07 00:00",
             "endTime": "2020-05-01 12:00",
         },
     ]
