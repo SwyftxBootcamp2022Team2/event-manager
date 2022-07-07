@@ -8,7 +8,6 @@ import {
   useNavigate,
 } from 'react-router-dom';
 import LoginPage from './pages/LoginPage';
-import CalendarPage from './pages/CalendarPage';
 import ProfilePage from './pages/ProfilePage';
 import MyBookingsPage from './pages/MyBookingsPage';
 import CreateEventPage from './pages/CreateEventPage';
@@ -18,6 +17,7 @@ import useAuth, { AuthProvider } from './useAuth';
 import theme from './theme';
 import BookEventModal from './components/BookEventModal';
 import Admin from './components/permissions/Admin';
+import ReportingPage from './pages/ReportingPage';
 
 function Router() {
   const { user } = useAuth();
@@ -41,13 +41,20 @@ function Router() {
         </Route>
         <Route path="/profile" element={<ProfilePage />} />
         <Route path="/my-bookings" element={<MyBookingsPage />} />
-        <Route path="/calendar" element={<CalendarPage />} />
         {/* Admin Routes */}
         <Route
           path="/create-event"
           element={
             <Admin>
               <CreateEventPage />
+            </Admin>
+          }
+        />
+        <Route
+          path="/reporting"
+          element={
+            <Admin>
+              <ReportingPage />
             </Admin>
           }
         />

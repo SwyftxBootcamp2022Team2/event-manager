@@ -27,7 +27,6 @@ function StatsCard(props: StatsCardProps) {
     <Stat
       px={{ base: 2, md: 4 }}
       py="5"
-      shadow="xl"
       border="1px solid"
       borderColor={useColorModeValue('gray.800', 'gray.500')}
       rounded="lg"
@@ -55,8 +54,8 @@ export default function EventsStats(props: EventStatsProps) {
   const { eventCount, rsvpCount } = props;
 
   return (
-    <Box maxW="2xl" mx="auto" mt={5} px={{ base: 2, sm: 12, md: 17 }} py={3}>
-      <chakra.h1 textAlign="center" fontSize="4xl" py={2} fontWeight="bold">
+    <Box maxW="xl" py={3}>
+      <chakra.h1 fontSize="2xl" py={2}>
         As a team, we&apos;ve delivered
       </chakra.h1>
       <SimpleGrid columns={{ base: 1, md: 2 }} spacing={{ base: 5, lg: 10 }}>

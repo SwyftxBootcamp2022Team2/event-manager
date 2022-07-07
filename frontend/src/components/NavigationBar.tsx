@@ -30,6 +30,11 @@ const NavLinks: NavigationLink[] = [
 
 const AdminNavLinks: NavigationLink[] = [
   { name: 'Create Event', to: '/create-event', leftIcon: <AddIcon /> },
+  {
+    name: 'Reporting',
+    to: '/reporting',
+    leftIcon: <Analytics color="white" size="18px" />,
+  },
 ];
 
 function renderNavLink(navLinks: NavigationLink[]) {

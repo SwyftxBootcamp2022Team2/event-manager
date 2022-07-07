@@ -19,32 +19,26 @@ function ReportingPage() {
   }, [user]);
 
   const reportingOptions = [
-    { title: 'Export CSV' },
-    { title: 'Export something else' },
+    { title: 'Export events as CSV' },
+    { title: 'Export bookings' },
   ];
 
   return (
-    <>
-      <div style={{ marginLeft: 75 }}>
-        <Heading size="2xl" paddingBottom="25px" paddingTop="40px">
-          Reporting
-        </Heading>
-        <Box pl={5} borderRadius={5} w="70%" bg="#FFFEFE">
-          <Box pl={5} borderRadius={5} w="70%" bg="#FFFEFE">
-            {reportingOptions.map((option) => (
-              <Box p={4} key={option.title}>
-                <Text fontSize="3xl" paddingBottom={2}>
-                  <Link href="http://localhost:3000/reporting">
-                    {option.title}
-                  </Link>
-                </Text>
-              </Box>
-            ))}
-          </Box>
-        </Box>
-      </div>
+    <div style={{ marginLeft: 75 }}>
+      <Heading size="2xl" paddingBottom="15px" paddingTop="40px">
+        Reporting
+      </Heading>
       <EventStats eventCount={eventsData.length} rsvpCount={rsvpCount} />
-    </>
+      <Box borderRadius={5} p={4} mt={5} w="70%" bg="#FFFEFE">
+        {reportingOptions.map((option) => (
+          <Box key={option.title}>
+            <Text fontSize="3xl" paddingBottom={2}>
+              <Link href="http://localhost:3000/reporting">{option.title}</Link>
+            </Text>
+          </Box>
+        ))}
+      </Box>
+    </div>
   );
 }
 
