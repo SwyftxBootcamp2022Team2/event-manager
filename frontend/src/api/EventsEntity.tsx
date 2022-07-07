@@ -13,6 +13,11 @@ const eventRequests = {
     instance.post<EventEntity>(url, body).then(responseBody),
   get: (url: string, body: any) =>
     instance.get<Promise<EventEntity[]>>(url, body).then(responseBody),
+  delete: (url: string, body: any) =>
+    instance
+      .delete<Promise<string>>(url, body)
+      .then(responseBody)
+      .catch((error) => Promise.reject(error)),
 };
 
 const Events = {
@@ -20,6 +25,16 @@ const Events = {
     eventRequests.post(`/create`, event),
   getEvents: async (email: string): Promise<any> =>
     eventRequests.get('/get', email),
+  deleteEvent: async (
+    email: string | undefined,
+    eventID: number | undefined,
+  ): Promise<any> =>
+    eventRequests.delete('/delete', {
+      params: {
+        eventID,
+        email,
+      },
+    }),
 };
 
 export default Events;

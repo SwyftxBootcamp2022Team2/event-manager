@@ -19,6 +19,7 @@ import theme from './theme';
 import BookEventModal from './components/BookEventModal';
 import Admin from './components/permissions/Admin';
 
+
 function Router() {
   const { user } = useAuth();
   const navigate = useNavigate();
