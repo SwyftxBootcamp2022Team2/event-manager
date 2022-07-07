@@ -20,11 +20,11 @@ function BookEventsPage() {
 
   return (
     <>
-      <div style={{ marginLeft: 75 }}>
+      <Box mx={20}>
         <Heading size="2xl" paddingBottom="25px" paddingTop="40px">
           Our Events
         </Heading>
-        <Box pl={5} borderRadius={5} w="70%">
+        <Box borderRadius={5}>
           {eventsData?.map((e) => (
             <Flex
               alignItems="center"
@@ -42,7 +42,7 @@ function BookEventsPage() {
             </Flex>
           ))}
         </Box>
-      </div>
+      </Box>
       <Outlet />
     </>
   );
