@@ -4,25 +4,49 @@ import {
   Box,
   Flex,
   Heading,
+  Text,
+  Image,
+  Divider,
 } from '@chakra-ui/react';
 import useAuth from '../useAuth';
 import UserDetail from '../components/UserDetail';
-
+import DefaultProfilePhoto from '../assets/profile_icon.png';
 
 function ProfilePage() {
   const { user } = useAuth();
 
   return (
-    <Flex alignItems="center" justifyContent="center" w="100%">
-      <Box boxShadow="rgba(149, 157, 165, 0.2) 0px 8px 24px" py={10} px={20} my={20} mx={10}>
-        <Heading size="lg">Your Details</Heading>
-        <VStack spacing={4} mt={5}>
-          <UserDetail label="Email" value={user?.email} />
-          <UserDetail label="First Name" value={user?.fName} />
-          <UserDetail label="Last Name" value={user?.lName} />
-        </VStack>
-      </Box>
-    </Flex>
+    <Box mx={20}>
+      <Heading size="2xl" paddingBottom="25px" paddingTop="40px">
+        Your Details
+      </Heading>
+      <Flex flexDirection="row" alignItems="start" w="100%" bg="#FFFEFE">
+        <Box>
+          <Image
+            boxSize="150"
+            src={DefaultProfilePhoto}
+            alt="Default profile photo"
+            borderRadius={5}
+          />
+        </Box>
+        <Box borderRadius={5} bg="#FFFEFE">
+          <VStack spacing={4} m={5} align="leading" width="150%">
+            <Text fontSize="3xl" color="#005DE2">
+              {user?.fName} {user?.lName}
+            </Text>
+            <Text fontSize="xl">Swyftx</Text>
+            <Divider
+              orientation="horizontal"
+              borderColor="#ecf0f7"
+              borderWidth={1}
+            />
+            <UserDetail label="Email" value={user?.email} />
+            <UserDetail label="First Name" value={user?.fName} />
+            <UserDetail label="Last Name" value={user?.lName} />
+          </VStack>
+        </Box>
+      </Flex>
+    </Box>
   );
 }
 
