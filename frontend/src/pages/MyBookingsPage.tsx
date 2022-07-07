@@ -20,9 +20,9 @@ export default function MyBookingsPage() {
 
     if (d > tomorrow) return DayType.upcoming;
     else if (d < today) return DayType.past;
-    else if (d.getFullYear() == tomorrow.getFullYear() &&
-      d.getMonth() == tomorrow.getMonth() &&
-      d.getDate() == tomorrow.getDate())
+    else if (d.getFullYear() === tomorrow.getFullYear() &&
+      d.getMonth() === tomorrow.getMonth() &&
+      d.getDate() === tomorrow.getDate())
       return DayType.tomorrow;
 
     return DayType.today;
