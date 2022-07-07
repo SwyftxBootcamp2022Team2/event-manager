@@ -27,7 +27,6 @@ def book_event():
         # check if the participation limit has been exceed
         event = db.session.get(Event, eventID)
 
-        print(type(event.participationLimit))
         # check if there is a participant limit
         if event.participationLimit is not None and numBookings + 1 >= event.participationLimit:
             return "Participation limit exceeded", status.HTTP_400_BAD_REQUEST
@@ -110,7 +109,6 @@ def get_bookings_count():
 # # User not found
 @bookings.errorhandler(400)
 def user_not_found(e):
-    print(e)
     return jsonify(error="User not found"), status.HTTP_400_BAD_REQUEST
 
 @bookings.route("/event", methods=["GET"])
