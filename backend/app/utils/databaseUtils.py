@@ -33,16 +33,30 @@ def seed_database():
         {
             "createdBy": "admin@gmail.com",
             "title": "Sunday Funday",
-            "location": "Location 1",
-            "startTime": "2020-01-01 00:00",
-            "endTime": "2020-01-01 00:00",
+            "location": "Virtual Reality",
+            "startTime": "2022-07-07 09:30",
+            "endTime": "2022-07-07 00:00",
         },
         {
             "createdBy": "user@gmail.com",
-            "title": "Monday (Not) Funday",
+            "title": "Pancakes",
             "location": "Swyftx HQ",
-            "startTime": "2020-05-01 00:00",
-            "endTime": "2020-05-01 12:00",
+            "startTime": "2022-07-07 08:00",
+            "endTime": "2022-07-07 08:00",
+        },
+        {
+            "createdBy": "user@gmail.com",
+            "title": "End of Month Awards",
+            "location": "Swyftx HQ",
+            "startTime": "2022-07-08 16:00",
+            "endTime": "2022-07-08 00:00",
+        },
+        {
+            "createdBy": "user@gmail.com",
+            "title": "NAIDOC Week - Bush Tucker Morning Tea",
+            "location": "Kitchen",
+            "startTime": "2022-07-08 09:30",
+            "endTime": "2022-07-08 00:00",
         },
     ]
 
