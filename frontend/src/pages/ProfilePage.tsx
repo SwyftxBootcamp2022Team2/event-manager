@@ -5,17 +5,13 @@ import {
   Flex,
   Heading,
   Text,
-  Image,
   Divider,
   Avatar,
-  AvatarBadge,
-  AvatarGroup,
   WrapItem,
   Wrap,
 } from '@chakra-ui/react';
 import useAuth from '../useAuth';
 import UserDetail from '../components/UserDetail';
-import DefaultProfilePhoto from '../assets/profile_icon.png';
 
 function ProfilePage() {
   const { user } = useAuth();
