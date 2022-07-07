@@ -139,8 +139,7 @@ def get_events():
             "publishTime": q.publishTime,
         }
         events.append(temp)
-    # remove strings from each event in array
     return (
-        jsonify(eventData=events),
+        jsonify(events),
         status.HTTP_200_OK,
-    )  # jsonify(events=events), status.HTTP_200_OK
+    )  #

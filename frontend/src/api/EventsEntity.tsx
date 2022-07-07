@@ -10,13 +10,16 @@ const responseBody = (response: AxiosResponse) => response.data;
 
 const eventRequests = {
   post: (url: string, body: any) =>
-    instance.post<Event>(url, body).then(responseBody),
+    instance.post<EventEntity>(url, body).then(responseBody),
+  get: (url: string, body: any) =>
+    instance.get<Promise<EventEntity[]>>(url, body).then(responseBody),
 };
 
 const Events = {
-  createEvent: async (event: EventEntity): Promise<any> => {
-    eventRequests.post(`/create`, event);
-  },
+  createEvent: async (event: EventEntity): Promise<any> =>
+    eventRequests.post(`/create`, event),
+  getEvents: async (email: string): Promise<any> =>
+    eventRequests.get('/get', email),
 };
 
 export default Events;

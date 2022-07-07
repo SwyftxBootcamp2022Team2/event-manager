@@ -11,6 +11,7 @@ import {
   Text,
 } from '@chakra-ui/react';
 import { AddIcon } from '@chakra-ui/icons';
+import { Analytics } from 'grommet-icons';
 import { NavLink, To } from 'react-router-dom';
 import SwyftxLogo from '../assets/swyftx_bird.webp';
 import Admin from './permissions/Admin';

@@ -27,7 +27,6 @@ def book_event():
         # check if the participation limit has been exceed
         event = db.session.get(Event, eventID)
 
-        print(type(event.participationLimit))
         # check if there is a participant limit
         if event.participationLimit is not None and numBookings + 1 >= event.participationLimit:
             return "Participation limit exceeded", status.HTTP_400_BAD_REQUEST
@@ -98,11 +97,19 @@ def all_bookings():
 @cross_origin()
 def get_bookings_count():
     # get data from frontend
-    eventID = request.args["eventID"]
+    if ("eventID" in request.args):
+        eventID = request.args["eventID"]
+        count = db.session.query(Bookings).filter_by(eventID=eventID).count()
+    else:
+         count = db.session.query(Bookings).count()
 
-    eventInfo = db.session.query(Bookings).filter_by(eventID=eventID).count()
-    return jsonify(count=eventInfo), status.HTTP_200_OK
+    return jsonify(count), status.HTTP_200_OK
 
+
+# # User not found
+@bookings.errorhandler(400)
+def user_not_found(e):
+    return jsonify(error="User not found"), status.HTTP_400_BAD_REQUEST
 
 @bookings.route("/event", methods=["GET"])
 @cross_origin()
