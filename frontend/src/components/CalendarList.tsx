@@ -1,6 +1,7 @@
 import React from 'react';
 import FullCalendar from '@fullcalendar/react'; // must go before plugins
 import listPlugin from '@fullcalendar/list'; // plugin
+import dayGridPlugin from '@fullcalendar/daygrid'; // a plugin!
 import { EventEntity } from '../types/types';
 
 interface Event {
@@ -10,10 +11,11 @@ interface Event {
 
 interface CalendarListProps {
   bookings: EventEntity[];
+  fullCalendar?: boolean;
 }
 
 function CalendarList(props: CalendarListProps) {
-  const { bookings } = props;
+  const { bookings, fullCalendar } = props;
 
   const eventsData: Event[] = [];
 
@@ -23,11 +25,15 @@ function CalendarList(props: CalendarListProps) {
 
   return (
     <FullCalendar
-      plugins={[listPlugin]}
-      initialView="listWeek"
-      weekends={false}
+      plugins={[fullCalendar ? dayGridPlugin : listPlugin]}
+      initialView={fullCalendar ? 'dayGridMonth' : 'listWeek'}
       events={eventsData}
-      eventClick={() => console.log('open the modal here')}
+      weekends={false}
+      eventTimeFormat={{
+        hour: 'numeric',
+        minute: '2-digit',
+        meridiem: 'short',
+      }}
     />
   );
 }
