@@ -7,6 +7,11 @@ import {
   Text,
   Image,
   Divider,
+  Avatar,
+  AvatarBadge,
+  AvatarGroup,
+  WrapItem,
+  Wrap,
 } from '@chakra-ui/react';
 import useAuth from '../useAuth';
 import UserDetail from '../components/UserDetail';
@@ -21,13 +26,12 @@ function ProfilePage() {
         Your Details
       </Heading>
       <Flex flexDirection="row" alignItems="start" w="100%" bg="#FFFEFE">
-        <Box>
-          <Image
-            boxSize="150"
-            src={DefaultProfilePhoto}
-            alt="Default profile photo"
-            borderRadius={5}
-          />
+        <Box margin={5}>
+          <Wrap>
+            <WrapItem>
+              <Avatar size="lg" />
+            </WrapItem>
+          </Wrap>
         </Box>
         <Box borderRadius={5} bg="#FFFEFE">
           <VStack spacing={4} m={5} align="leading" width="150%">
