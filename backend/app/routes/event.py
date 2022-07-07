@@ -2,7 +2,7 @@ from datetime import datetime
 from flask import Blueprint, jsonify, request
 from flask_api import status
 from flask_cors import cross_origin
-from app.utils.authUtils import isAdmin
+from app.utils.authUtils import isAdmin, isEvent
 from app.utils.slackUtils import send_slack_message
 from app.utils.dateTimeUtils import convertUTCtoBrisbaneTime
 from app.utils.authUtils import isEvent
@@ -61,7 +61,6 @@ def create_event():
         send_slack_message(payload)
         return "Event successfully created", status.HTTP_201_CREATED
     except Exception as e:
-        print(e)
         return "Error occurred when creating an event", status.HTTP_400_BAD_REQUEST
 
 

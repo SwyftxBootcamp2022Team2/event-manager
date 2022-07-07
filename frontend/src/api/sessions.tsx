@@ -90,6 +90,22 @@ export async function makeBooking(
   return res;
 }
 
+export async function removeBooking(
+  eventID: string | undefined,
+  email: string,
+): Promise<Booking> {
+  const res = axios
+    .delete(`${API_ENDPOINT}/bookings/delete`, {
+      params: {
+        eventID,
+        email,
+      },
+    })
+    .then((data) => data.data)
+    .catch((error) => Promise.reject(error));
+  return res;
+}
+
 export async function getEventDetails(
   id: string | undefined,
 ): Promise<EventEntity> {

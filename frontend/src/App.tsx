@@ -18,7 +18,6 @@ import useAuth, { AuthProvider } from './useAuth';
 import theme from './theme';
 import BookEventModal from './components/BookEventModal';
 import Admin from './components/permissions/Admin';
-import ReportingPage from './pages/ReportingPage';
 
 function Router() {
   const { user } = useAuth();
@@ -49,14 +48,6 @@ function Router() {
           element={
             <Admin>
               <CreateEventPage />
-            </Admin>
-          }
-        />
-        <Route
-          path="/reporting"
-          element={
-            <Admin>
-              <ReportingPage />
             </Admin>
           }
         />

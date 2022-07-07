@@ -1,14 +1,16 @@
 import React, { useEffect, useState } from 'react';
-import { Link as ReactRouterLink, Outlet } from 'react-router-dom';
-import { Box, Heading, Link, Text } from '@chakra-ui/react';
+import { Link as ReactRouterLink, Outlet, useNavigate } from 'react-router-dom';
+import { Box, Button, Flex, Heading, Link, Text } from '@chakra-ui/react';
 import { EventEntity } from '../types/types';
 import useAuth from '../useAuth';
+import { InfoOutlineIcon } from '@chakra-ui/icons';
 import Events from '../api/EventsEntity';
 
 function BookEventsPage() {
   const [eventsData, setEvents] = useState<EventEntity[] | undefined>();
 
   const { user } = useAuth();
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (user) {
@@ -18,22 +20,29 @@ function BookEventsPage() {
 
   return (
     <>
-      <div style={{ marginLeft: 75 }}>
+      <Box mx={20}>
         <Heading size="2xl" paddingBottom="25px" paddingTop="40px">
           Our Events
         </Heading>
-        <Box pl={5} borderRadius={5} w="70%" bg="#FFFEFE">
+        <Box borderRadius={5}>
           {eventsData?.map((e) => (
-            <Box p={4} key={e.eventID}>
+            <Flex
+              alignItems="center"
+              justifyContent="space-between"
+              p={4}
+              key={e.eventID}
+              mb={3}
+              bg="#FFFEFE"
+              borderRadius={6}
+            >
               <Text fontSize="3xl" paddingBottom={2}>
-                <Link as={ReactRouterLink} to={`/book-events/${e.eventID}`}>
-                  {e.title}
-                </Link>
+                {e.title}
               </Text>
-            </Box>
+              <Button leftIcon={<InfoOutlineIcon />} onClick={() => navigate(`/book-events/${e.eventID}`)}>View more</Button>
+            </Flex>
           ))}
         </Box>
-      </div>
+      </Box>
       <Outlet />
     </>
   );
