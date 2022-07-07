@@ -5,15 +5,14 @@ import {
   Button,
   Flex,
   Heading,
-  Link,
-  Stack,
+  HStack,
   Text,
   useToast,
 } from '@chakra-ui/react';
+import { DeleteIcon, InfoOutlineIcon } from '@chakra-ui/icons';
 import { EventEntity, ToastStatus } from '../types/types';
 import useAuth from '../useAuth';
 import Events from '../api/EventsEntity';
-import { DeleteIcon, InfoOutlineIcon } from '@chakra-ui/icons';
 import Admin from '../components/permissions/Admin';
 
 function BookEventsPage() {
@@ -30,21 +29,25 @@ function BookEventsPage() {
   }, []);
 
   const showToast = (title: string, status: ToastStatus) =>
-  toast({
-    title,
-    status,
-    isClosable: true,
-    position: 'top-right',
-  });
+    toast({
+      title,
+      status,
+      isClosable: true,
+      position: 'top-right',
+    });
 
   const deleteEvent = (eventID: number | undefined) => {
     if (user && eventID) {
-      Events.deleteEvent(user.email, eventID).then((data) => {
-        showToast(data, 'success');
-        Events.getEvents(user.email).then((eventData) => setEvents(eventData));
-      }).catch((error) => showToast(error.response.data, 'error'));
+      Events.deleteEvent(user.email, eventID)
+        .then((data) => {
+          showToast(data, 'success');
+          Events.getEvents(user.email).then((eventData) =>
+            setEvents(eventData),
+          );
+        })
+        .catch((error) => showToast(error.response.data, 'error'));
     }
-  }
+  };
 
   return (
     <>
@@ -66,7 +69,7 @@ function BookEventsPage() {
               <Text fontSize="3xl" paddingBottom={2}>
                 {e.title}
               </Text>
-              <Stack spacing={4} direction="row" align="center">
+              <HStack spacing={4}>
                 <Admin>
                   <Button
                     leftIcon={<DeleteIcon />}
@@ -83,7 +86,7 @@ function BookEventsPage() {
                 >
                   View more
                 </Button>
-              </Stack>
+              </HStack>
             </Flex>
           ))}
         </Box>
