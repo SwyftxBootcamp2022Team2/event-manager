@@ -17,6 +17,7 @@ import BookEventsPage from './pages/BookEventsPage';
 import useAuth, { AuthProvider } from './useAuth';
 import theme from './theme';
 import BookEventModal from './components/BookEventModal';
+import Admin from './components/permissions/Admin';
 
 function Router() {
   const { user } = useAuth();
@@ -41,7 +42,15 @@ function Router() {
         <Route path="/profile" element={<ProfilePage />} />
         <Route path="/my-bookings" element={<MyBookingsPage />} />
         <Route path="/calendar" element={<CalendarPage />} />
-        <Route path="/create-event" element={<CreateEventPage />} />
+        {/* Admin Routes */}
+        <Route
+          path="/create-event"
+          element={
+            <Admin>
+              <CreateEventPage />
+            </Admin>
+          }
+        />
       </Routes>
     </>
   );
